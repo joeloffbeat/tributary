@@ -1,0 +1,12 @@
+[submodule "contracts/dependencies/forge-std"]
+	path = contracts/dependencies/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "contracts/dependencies/openzeppelin-contracts"]
+	path = contracts/dependencies/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "contracts/dependencies/solmate"]
+	path = contracts/dependencies/solmate
+	url = https://github.com/transmissions11/solmate
+[submodule "contracts/dependencies/solady"]
+	path = contracts/dependencies/solady
+	url = https://github.com/Vectorized/solady

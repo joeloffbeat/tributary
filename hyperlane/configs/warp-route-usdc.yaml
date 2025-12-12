@@ -1,0 +1,41 @@
+# =============================================================================
+# Warp Route: USDC Token Bridge (4 Chains)
+# Sepolia (collateral) <-> Story Aenid, Fuji, Polygon Amoy (synthetic)
+# =============================================================================
+# Circle's official test USDC on Sepolia: 0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238
+# This creates a unified USDC bridge across all 4 testnets
+# =============================================================================
+
+---
+# Sepolia - Collateral (source of truth for USDC)
+sepolia:
+  type: collateral
+  token: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
+  mailbox: "0x60c3ca08D3df3F5fA583c535D9E44F3629F52452"
+  name: "USD Coin"
+  symbol: "USDC"
+  decimals: 6
+
+# Story Aenid - Synthetic
+storyaenid:
+  type: synthetic
+  mailbox: "0x6feB4f3eeD23D6cdDa54ec67d5d649BE015f782d"
+  name: "USD Coin"
+  symbol: "USDC"
+  decimals: 6
+
+# Avalanche Fuji - Synthetic
+fuji:
+  type: synthetic
+  mailbox: "0x60c3ca08D3df3F5fA583c535D9E44F3629F52452"
+  name: "USD Coin"
+  symbol: "USDC"
+  decimals: 6
+
+# Polygon Amoy - Synthetic
+polygonamoy:
+  type: synthetic
+  mailbox: "0xD8f50a509EFe389574dD378b0EF03e33558222eA"
+  name: "USD Coin"
+  symbol: "USDC"
+  decimals: 6

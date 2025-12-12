@@ -1,0 +1,16 @@
+# Warp Route: Native IP Token Bridge
+# Story Aenid (native) <-> Fuji (synthetic)
+---
+storyaenid:
+  type: native
+  mailbox: "0x6feB4f3eeD23D6cdDa54ec67d5d649BE015f782d"
+  name: "IP Token"
+  symbol: "IP"
+  decimals: 18
+
+fuji:
+  type: synthetic
+  mailbox: "0x60c3ca08D3df3F5fA583c535D9E44F3629F52452"
+  name: "IP Token"
+  symbol: "IP"
+  decimals: 18

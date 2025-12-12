@@ -1,0 +1,40 @@
+# =============================================================================
+# Polygon Amoy Testnet - Chain Metadata for Hyperlane
+# =============================================================================
+# Documentation: https://polygon.technology/
+# Faucet: https://faucet.polygon.technology/
+
+# Chain identification
+chainId: 80002
+domainId: 80002
+name: polygonamoy
+displayName: Polygon Amoy Testnet
+protocol: ethereum
+isTestnet: true
+
+# RPC endpoints (add multiple for redundancy)
+rpcUrls:
+  - http: https://rpc-amoy.polygon.technology
+  - http: https://polygon-amoy.public.blastapi.io
+
+# Native token configuration
+nativeToken:
+  name: Polygon
+  symbol: POL
+  decimals: 18
+
+# Block configuration
+blocks:
+  confirmations: 1
+  estimateBlockTime: 2
+  reorgPeriod: 1
+
+# Block explorer configuration
+blockExplorers:
+  - name: PolygonScan
+    url: https://amoy.polygonscan.com
+    apiUrl: https://api-amoy.polygonscan.com/api
+    family: etherscan
+
+# Gas price configuration
+gasCurrencyCoinGeckoId: matic-network

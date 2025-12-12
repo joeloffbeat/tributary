@@ -1,0 +1,35 @@
+{
+  "version": "1",
+  "name": "SUBGRAPH_NAME",
+  "abis": {
+    "ContractName": {
+      "path": "./abis/ContractName.json"
+    }
+  },
+  "instances": [
+    {
+      "abi": "ContractName",
+      "address": "0x...",
+      "chain": "mainnet",
+      "startBlock": 0
+    },
+    {
+      "abi": "ContractName",
+      "address": "0x...",
+      "chain": "base",
+      "startBlock": 0
+    },
+    {
+      "abi": "ContractName",
+      "address": "0x...",
+      "chain": "arbitrum-one",
+      "startBlock": 0
+    },
+    {
+      "abi": "ContractName",
+      "address": "0x...",
+      "chain": "optimism",
+      "startBlock": 0
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Frontend
+frontend/.next/
+frontend/out/
+frontend/.turbo/
+
+# Contracts
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+contracts/dependencies/
+
+# Scripts
+scripts/node_modules/
+
+# Playwright
+.playwright-data/session-*/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build artifacts
+*.tsbuildinfo
+
+.playwright-mcp
+broadcast/
+cache

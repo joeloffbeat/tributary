@@ -1,0 +1,41 @@
+# =============================================================================
+# Ethereum Sepolia Testnet - Chain Metadata for Hyperlane
+# =============================================================================
+# Documentation: https://sepolia.dev/
+# Faucet: https://sepoliafaucet.com/
+
+# Chain identification
+chainId: 11155111
+domainId: 11155111
+name: sepolia
+displayName: Ethereum Sepolia Testnet
+protocol: ethereum
+isTestnet: true
+
+# RPC endpoints (add multiple for redundancy)
+rpcUrls:
+  - http: https://rpc.sepolia.org
+  - http: https://ethereum-sepolia-rpc.publicnode.com
+  - http: https://sepolia.drpc.org
+
+# Native token configuration
+nativeToken:
+  name: Ethereum
+  symbol: ETH
+  decimals: 18
+
+# Block configuration
+blocks:
+  confirmations: 1
+  estimateBlockTime: 12
+  reorgPeriod: 2
+
+# Block explorer configuration
+blockExplorers:
+  - name: Etherscan
+    url: https://sepolia.etherscan.io
+    apiUrl: https://api-sepolia.etherscan.io/api
+    family: etherscan
+
+# Gas price configuration
+gasCurrencyCoinGeckoId: ethereum

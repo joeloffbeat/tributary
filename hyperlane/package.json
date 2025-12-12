@@ -1,0 +1,32 @@
+{
+  "name": "hyperlane-deployment",
+  "version": "1.0.0",
+  "description": "Hyperlane cross-chain messaging infrastructure deployment",
+  "private": true,
+  "scripts": {
+    "registry:init": "hyperlane registry init",
+    "core:init": "hyperlane core init",
+    "core:deploy": "hyperlane core deploy",
+    "core:read": "hyperlane core read",
+    "warp:init": "hyperlane warp init",
+    "warp:deploy": "hyperlane warp deploy",
+    "warp:read": "hyperlane warp read",
+    "warp:send": "hyperlane warp send --relay",
+    "relayer": "hyperlane relayer",
+    "deploy:story-aenid": "./scripts/deploy-core.sh story-aenid",
+    "deploy:avalanche-fuji": "./scripts/deploy-core.sh avalanche-fuji",
+    "deploy:warp-route": "./scripts/deploy-warp-route.sh",
+    "sync:frontend": "./scripts/sync-to-frontend.sh",
+    "enroll:ica-routers": "./scripts/enroll-ica-routers.sh",
+    "enroll:warp-routers": "./scripts/enroll-warp-routers.sh"
+  },
+  "dependencies": {
+    "@hyperlane-xyz/cli": "19.12.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "yaml": "^2.8.2"
+  }
+}

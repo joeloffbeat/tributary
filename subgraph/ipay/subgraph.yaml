@@ -1,0 +1,37 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: IPayRegistry
+    network: fuji
+    source:
+      address: "0x883172EDFF24FE83FDE776f7A9Aaa59CCe5ABA2B"
+      abi: IPayRegistry
+      startBlock: 48922200
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Listing
+        - Usage
+        - Creator
+        - User
+        - ProtocolStats
+        - DailyStats
+      abis:
+        - name: IPayRegistry
+          file: ./abis/IPayRegistry.json
+      eventHandlers:
+        - event: ListingCreated(indexed uint256,indexed address,indexed bytes32,uint256,string,string)
+          handler: handleListingCreated
+        - event: IPUsed(indexed uint256,indexed address,uint256)
+          handler: handleIPUsed
+        - event: ListingUpdated(indexed uint256,uint256)
+          handler: handleListingUpdated
+        - event: ListingDeactivated(indexed uint256)
+          handler: handleListingDeactivated
+      file: ./src/ipay-registry.ts

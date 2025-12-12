@@ -1,0 +1,18 @@
+# Compiler files
+cache/
+out/
+
+# Ignores development broadcast logs
+/broadcast
+!/broadcast/*/43113/
+!/broadcast/*/43114/
+
+# Docs
+docs/
+
+# Dotenv file
+.env
+
+# Coverage
+lcov.info
+coverage/

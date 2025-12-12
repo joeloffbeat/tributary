@@ -1,0 +1,487 @@
+// =============================================================================
+// Hyperlane Hosted - MerkleTreeHook Addresses
+// =============================================================================
+// Source: https://docs.hyperlane.xyz/docs/reference/contract-addresses
+// Last updated: 2025-01-12
+// =============================================================================
+
+import type { Address } from 'viem'
+
+/**
+ * MerkleTreeHook contract addresses for official Hyperlane deployments
+ * Key: chainId, Value: MerkleTreeHook address
+ *
+ * Note: Some chains use domainId different from chainId.
+ * See chain-metadata.ts for the mapping.
+ */
+export const HOSTED_MERKLE_TREE_HOOK: Record<number, Address> = {
+  // =============================================================================
+  // MAINNETS
+  // =============================================================================
+
+  // Abstract (2741)
+  2741: '0x11b69aB33AD8a550dcF9B4A041AA1121255F08A5',
+
+  // ADI Chain (36900)
+  36900: '0x76F2cC245882ceFf209A61d75b9F0f1A3b7285fB',
+
+  // Ancient8 (888888888)
+  888888888: '0x811808Dd29ba8B0FC6C0ec0b5537035E59745162',
+
+  // ApeChain (33139)
+  33139: '0x886BB0f329781b98f98FDeb1ce7a8957F2d43B9F',
+
+  // AppChain (466)
+  466: '0xcd90D49b046772F710250b9119117169CB2e4D8b',
+
+  // Arbitrum (42161)
+  42161: '0x748040afB89B8FdBb992799808215419d36A0930',
+
+  // Arbitrum Nova (42170)
+  42170: '0x6963480b05EB58f4d624B014ab92e9aD4d21df6D',
+
+  // Arcadia (4278608)
+  4278608: '0x6e1B9f776bd415d7cC3C7458A5f0d801016918f8',
+
+  // Artela (11820)
+  11820: '0x7B032cBB00AD7438E802A66D8b64761A06E5df22',
+
+  // Astar (592)
+  592: '0x441a01Fca2eD731C0Fc4633998332f9FEDB17575',
+
+  // Aurora (1313161554)
+  1313161554: '0xA8A311B69f688c1D9928259D872C31ca0d473642',
+
+  // Avalanche (43114)
+  43114: '0x84eea61D679F42D92145fA052C89900CBAccE95A',
+
+  // B3 (8333)
+  8333: '0x6963480b05EB58f4d624B014ab92e9aD4d21df6D',
+
+  // Base (8453)
+  8453: '0x19dc38aeae620380430C200a6E990D5Af5480117',
+
+  // Berachain (80094)
+  80094: '0x8F23872dAb3B166cef411EeB6C391Ff6Ce419532',
+
+  // Bitlayer (200901)
+  200901: '0x441a01Fca2eD731C0Fc4633998332f9FEDB17575',
+
+  // Blast (81457)
+  81457: '0xC9B8ea6230d6687a4b13fD3C0b8f0Ec607B26465',
+
+  // BOB (60808)
+  60808: '0x781bE492F1232E66990d83a9D3AC3Ec26f56DAfB',
+
+  // Boba Mainnet (288)
+  288: '0x9eaaC366BFD70430cFee6E70265fefFf1CfC9E47',
+
+  // Botanix (3637)
+  3637: '0x2ed6030D204745aC0Cd6be8301C3a63bf14D97Cc',
+
+  // Binance Smart Chain (56)
+  56: '0xFDb9Cd5f9daAA2E4474019405A328a88E7484f26',
+
+  // B² Network (223)
+  223: '0xbb0AE51BCa526cF313b6a95BfaB020794af6C394',
+
+  // CarrChain (7667)
+  7667: '0x7947b7Fe737B4bd1D3387153f32148974066E591',
+
+  // Celo (42220)
+  42220: '0x04dB778f05854f26E67e0a66b740BBbE9070D366',
+
+  // Chiliz (88888) - Note: domainId is 1000088888
+  88888: '0x9c2214467Daf9e2e1F45b36d08ce0b9C65BFeA88',
+
+  // Core (1116)
+  1116: '0x441a01Fca2eD731C0Fc4633998332f9FEDB17575',
+
+  // Coti (2632500)
+  2632500: '0x6D48135b7584E8Bf828B6e23110Bc0Da4252704f',
+
+  // Cyber (7560)
+  7560: '0xF5da68b2577EF5C0A0D98aA2a58483a68C2f232a',
+
+  // Degen (666666666)
+  666666666: '0xF5da68b2577EF5C0A0D98aA2a58483a68C2f232a',
+
+  // Dogechain (2000)
+  2000: '0x441a01Fca2eD731C0Fc4633998332f9FEDB17575',
+
+  // Electroneum (52014)
+  52014: '0xA7d42B7a7603bEb87f84a1f3D5C97a033DFd2Cc9',
+
+  // Endurance (648)
+  648: '0xC831271c1fB212012811a91Dd43e5926C1020563',
+
+  // Ethereum (1)
+  1: '0x48e6c30B97748d1e2e03bf3e9FbE3890ca5f8CCA',
+
+  // Everclear (25327)
+  25327: '0xCC3D1659D50461d27a2F025dDb2c9B06B584B7e1',
+
+  // Fantom Opera (250)
+  250: '0x6963480b05EB58f4d624B014ab92e9aD4d21df6D',
+
+  // Flare (14)
+  14: '0x441a01Fca2eD731C0Fc4633998332f9FEDB17575',
+
+  // EVM on Flow (747) - Note: domainId is 1000000747
+  747: '0x2783D98CC073dbcDa90241C804d16982D3d75821',
+
+  // Fluence (9999999)
+  9999999: '0x2FF6cf2651fec512D0618E33c9d1374aaCd8b310',
+
+  // Form (478)
+  478: '0xDc1508844B99C606E16C2Ae87f33c373edD4B0F6',
+
+  // Fraxtal (252)
+  252: '0x8358D8291e3bEDb04804975eEa0fe9fe0fAfB147',
+
+  // Fuse (122)
+  122: '0xfBc08389224d23b79cb21cDc16c5d42F0ad0F57f',
+
+  // Galactica (613419)
+  613419: '0x64F077915B41479901a23Aa798B30701589C5063',
+
+  // Gnosis (100)
+  100: '0x2684C6F89E901987E1FdB7649dC5Be0c57C61645',
+
+  // Gravity Alpha Mainnet (1625)
+  1625: '0x5090dF2FBDa7127c7aDa41f60B79F5c55D380Dd8',
+
+  // Harmony One (1666600000)
+  1666600000: '0x6963480b05EB58f4d624B014ab92e9aD4d21df6D',
+
+  // Hashkey (177)
+  177: '0x5B7a808CaA2C3F1378B07cDd46eB8ccA52F67e3B',
+
+  // Hemi Network (43111)
+  43111: '0x7B032cBB00AD7438E802A66D8b64761A06E5df22',
+
+  // HyperEVM (999)
+  999: '0x3862A9B1aCd89245a59002C2a08658EC1d5690E3',
+
+  // Immutable zkEVM (13371) - Note: domainId is 1000013371
+  13371: '0xdAa1B65547fB969c9ff5678956AB2FF9771B883D',
+
+  // Incentiv (24101)
+  24101: '0x7947b7Fe737B4bd1D3387153f32148974066E591',
+
+  // Ink (57073)
+  57073: '0xA8A311B69f688c1D9928259D872C31ca0d473642',
+
+  // Kaia (8217)
+  8217: '0x6963480b05EB58f4d624B014ab92e9aD4d21df6D',
+
+  // Katana (747474)
+  747474: '0x2ed6030D204745aC0Cd6be8301C3a63bf14D97Cc',
+
+  // LazAI (52924)
+  52924: '0xBCD18636e5876DFd7AAb5F2B2a5Eb5ca168BA1d8',
+
+  // Linea (59144)
+  59144: '0xC077A0Cc408173349b1c9870C667B40FE3C01dd7',
+
+  // Lisk (1135)
+  1135: '0xF5da68b2577EF5C0A0D98aA2a58483a68C2f232a',
+
+  // Lit Chain (175200)
+  175200: '0xC4F464C89184c7870858A8B12ca822daB6ed04F3',
+
+  // LUKSO (42)
+  42: '0x062200d92dF6bB7bA89Ce4D6800110450f94784e',
+
+  // Lumia Prism (994873017) - Note: domainId is 1000073017
+  994873017: '0xC88636fFdFAc7cb87b7A76310B7a62AF0A000595',
+
+  // Manta Pacific (169)
+  169: '0x149db7afD694722747035d5AEC7007ccb6F8f112',
+
+  // Mantle (5000)
+  5000: '0x5332D1AC0A626D265298c14ff681c0A8D28dB86d',
+
+  // Mantra (5888)
+  5888: '0xC4F464C89184c7870858A8B12ca822daB6ed04F3',
+
+  // Matchain (698)
+  698: '0x021D2810a758c833080DEc2F1Fa8F571Aae97D45',
+
+  // MegaETH (4326)
+  4326: '0x2FF6cf2651fec512D0618E33c9d1374aaCd8b310',
+
+  // Merlin (4200)
+  4200: '0xF5da68b2577EF5C0A0D98aA2a58483a68C2f232a',
+
+  // Metal L2 (1750) - Note: domainId is 1000001750
+  1750: '0x9c64f327F0140DeBd430aab3E2F1d6cbcA921227',
+
+  // Metis Andromeda (1088)
+  1088: '0xF5da68b2577EF5C0A0D98aA2a58483a68C2f232a',
+
+  // Mint (185)
+  185: '0xF5da68b2577EF5C0A0D98aA2a58483a68C2f232a',
+
+  // Miraclechain (92278)
+  92278: '0x64F077915B41479901a23Aa798B30701589C5063',
+
+  // Mitosis (124816)
+  124816: '0x1e4dE25C3b07c8DF66D4c193693d8B5f3b431d51',
+
+  // Mode (34443)
+  34443: '0xE2ee936bEa8e42671c400aC96dE198E06F2bA2A6',
+
+  // Molten (360)
+  360: '0x441a01Fca2eD731C0Fc4633998332f9FEDB17575',
+
+  // Monad (143)
+  143: '0x7947b7Fe737B4bd1D3387153f32148974066E591',
+
+  // Moonbeam (1284)
+  1284: '0x87403b85f6f316e7ba91ba1fa6C3Fb7dD4095547',
+
+  // Morph (2818)
+  2818: '0x6963480b05EB58f4d624B014ab92e9aD4d21df6D',
+
+  // Nibiru (6900)
+  6900: '0x72246331d057741008751AB3976a8297Ce7267Bc',
+
+  // Ontology (58)
+  58: '0xb5668713E9BA8bC96f97D691663E70b54CE90b0A',
+
+  // Oort (970)
+  970: '0x3E969bA938E6A993eeCD6F65b0dd8712B07dFe59',
+
+  // opBNB (204)
+  204: '0xcDD89f19b2d00DCB9510BB3fBd5eCeCa761fe5Ab',
+
+  // Optimism (10)
+  10: '0x68eE9bec9B4dbB61f69D9D293Ae26a5AACb2e28f',
+
+  // Orderly L2 (291)
+  291: '0x6963480b05EB58f4d624B014ab92e9aD4d21df6D',
+
+  // Peaq (3338)
+  3338: '0x2FF6cf2651fec512D0618E33c9d1374aaCd8b310',
+
+  // Plasma (9745)
+  9745: '0xA7d42B7a7603bEb87f84a1f3D5C97a033DFd2Cc9',
+
+  // Plume (98866)
+  98866: '0x25C87e735021F72d8728438C2130b02E3141f2cb',
+
+  // Polygon (137)
+  137: '0x73FbD25c3e817DC4B4Cd9d00eff6D83dcde2DfF6',
+
+  // Polygon zkEVM (1101)
+  1101: '0x149db7afD694722747035d5AEC7007ccb6F8f112',
+
+  // Polynomial (8008) - Note: domainId is 1000008008
+  8008: '0xC8E323036AAFB4B4201e7B640E79C4Db285A3FC8',
+
+  // Prom (227)
+  227: '0xf147bBD944C610F86DaE6C7668497D22932C1E4A',
+
+  // PulseChain (369)
+  369: '0x9DaC51dF95298453C7fb5b43233818CfA4604daC',
+
+  // RARI Chain (1380012617) - Note: domainId is 1000012617
+  1380012617: '0x8c794a781327b819416E7b67908f1D22397f1E67',
+
+  // Reactive Mainnet (1597)
+  1597: '0xcDD89f19b2d00DCB9510BB3fBd5eCeCa761fe5Ab',
+
+  // Redstone (690)
+  690: '0x8F1E22d309baa69D398a03cc88E9b46037e988AA',
+
+  // Ronin (2020)
+  2020: '0xa377b8269e0A47cdd2fD5AAeAe860b45623c6d82',
+
+  // Scroll (534352)
+  534352: '0x6119E37Bd66406A1Db74920aC79C15fB8411Ba76',
+
+  // Sei (1329)
+  1329: '0xca1b69fA4c4a7c7fD839bC50867c589592bcfe49',
+
+  // Shibarium (109)
+  109: '0x441a01Fca2eD731C0Fc4633998332f9FEDB17575',
+
+  // Somnia (5031)
+  5031: '0x11EF91d17c5ad3330DbCa709a8841743d3Af6819',
+
+  // Soneium (1868)
+  1868: '0xDc1508844B99C606E16C2Ae87f33c373edD4B0F6',
+
+  // Sonic (146)
+  146: '0xDc1508844B99C606E16C2Ae87f33c373edD4B0F6',
+
+  // Sophon (50104)
+  50104: '0x697a90753B7dCf6512189c239E612fC12baaE500',
+
+  // Stable (988)
+  988: '0x9fE454AA2B01fc7A2a777AE561bc58Ce560CD5a9',
+
+  // Story Mainnet (1514)
+  1514: '0xa377b8269e0A47cdd2fD5AAeAe860b45623c6d82',
+
+  // Subtensor (964)
+  964: '0xB2b0A80b2fa3fC9aB1564A4FaF013d4D6084B325',
+
+  // Superposition (55244) - Note: domainId is 1000055244
+  55244: '0x2f536FB7a37bd817Af644072a904Ddc02Dae429f',
+
+  // Superseed (5330)
+  5330: '0x9eaaC366BFD70430cFee6E70265fefFf1CfC9E47',
+
+  // Swell (1923)
+  1923: '0x5C02157068a52cEcfc98EDb6115DE6134EcB4764',
+
+  // TAC (239)
+  239: '0x58CA3F0D65FFd40727cF6Eb2f323151853Ad3D44',
+
+  // Taiko (167000)
+  167000: '0x6A55822cf11f9fcBc4c75BC2638AfE8Eb942cAdd',
+
+  // Tangle (5845)
+  5845: '0xF5da68b2577EF5C0A0D98aA2a58483a68C2f232a',
+
+  // Torus (21000)
+  21000: '0x1c6f404800bA49Ed581af734eA0d25c0c7d017B2',
+
+  // Unichain (130)
+  130: '0x9eaaC366BFD70430cFee6E70265fefFf1CfC9E47',
+
+  // Vana (1480)
+  1480: '0x9eaaC366BFD70430cFee6E70265fefFf1CfC9E47',
+
+  // Viction (88)
+  88: '0x149db7afD694722747035d5AEC7007ccb6F8f112',
+
+  // World Chain (480)
+  480: '0x0054D19613f20dD72721A146ED408971a2CCA9BD',
+
+  // Xai (660279)
+  660279: '0xF5da68b2577EF5C0A0D98aA2a58483a68C2f232a',
+
+  // XLayer (196)
+  196: '0x0054D19613f20dD72721A146ED408971a2CCA9BD',
+
+  // XRPL EVM (1440000)
+  1440000: '0x64F077915B41479901a23Aa798B30701589C5063',
+
+  // 0G (16661)
+  16661: '0x5887BDA66EC9e854b0da6BFFe423511e69d327DC',
+
+  // Zero Network (543210)
+  543210: '0x55379421409961Ef129738c24261379ef8A547Df',
+
+  // ZetaChain (7000)
+  7000: '0xE2ee936bEa8e42671c400aC96dE198E06F2bA2A6',
+
+  // Zircuit (48900)
+  48900: '0x4C97D35c668EE5194a13c8DE8Afc18cce40C9F28',
+
+  // zkSync (324)
+  324: '0x823500D69D77A52212DC93f8836E9c08581487eE',
+
+  // Zora (7777777)
+  7777777: '0x886BB0f329781b98f98FDeb1ce7a8957F2d43B9F',
+
+  // =============================================================================
+  // TESTNETS
+  // =============================================================================
+
+  // Arbitrum Sepolia (421614)
+  421614: '0xAD34A66Bf6dB18E858F6B686557075568c6E031C',
+
+  // Arcadia Testnet v2 (1098411886)
+  1098411886: '0xEa7e618Bee8927fBb2fA20Bc41eE8DEA51838aAD',
+
+  // Aurora Testnet (1313161555)
+  1313161555: '0x6d6a9bDDea1456673062633b7a4823dB13bDB9fb',
+
+  // Basecamp Testnet (123420001114) - Note: domainId is 1000001114
+  123420001114: '0x86abe4c3493A1eE0Aa42f0231b5594D42aBdA36e',
+
+  // Base Sepolia (84532)
+  84532: '0x86fb9F1c124fB20ff130C41a79a432F770f67AFD',
+
+  // BSC Testnet (97)
+  97: '0xc6cbF39A747f5E28d1bDc8D9dfDAb2960Abd5A8f',
+
+  // CarrChain Testnet (76672)
+  76672: '0xb3D796584fDeBE2321894eeF31e0C3ec52169C61',
+
+  // Celo Sepolia (11142220)
+  11142220: '0x1b0d4c88288258D57998F0bdb30489007A42B834',
+
+  // Citrea Testnet (5115)
+  5115: '0x783c4a0bB6663359281aD4a637D5af68F83ae213',
+
+  // Coti Testnet (7082400)
+  7082400: '0x413c74F3D034dB54A1ecfFbd0Ad74Cb25E59f579',
+
+  // Fuji (43113)
+  43113: '0x9ff6ac3dAf63103620BBf76136eA1AFf43c2F612',
+
+  // GIWA Sepolia (91342)
+  91342: '0xA9999B4abC373FF2BB95B8725FABC96CA883d811',
+
+  // Hyperliquid EVM Testnet (998)
+  998: '0x1b33611fCc073aB0737011d5512EF673Bff74962',
+
+  // Incentiv Testnet v2 (28802)
+  28802: '0x7740342863717e26E3d5B828639834ADfce8a061',
+
+  // MegaETH Testnet (6342)
+  6342: '0x0C16e730090cb681460516428c3b2D1BBCB1b647',
+
+  // Mode Testnet (919)
+  919: '0xf83416bA0491C8BC80Dad259Fc7C007bC57Bd766',
+
+  // Monad Testnet (10143)
+  10143: '0xE1CCB130389f687bf745Dd6dc05E50da17d9ea96',
+
+  // Neura Testnet (267)
+  267: '0x36502C6e24C51ba4839c4c4A070aeB52E1adB672',
+
+  // Optimism Sepolia (11155420)
+  11155420: '0x86fb9F1c124fB20ff130C41a79a432F770f67AFD',
+
+  // Polygon Amoy (80002)
+  80002: '0xddf4C3e791caCaFd26D7fb275549739B38ae6e75',
+
+  // Scroll Sepolia (534351)
+  534351: '0x863E8c26621c52ACa1849C53500606e73BA272F0',
+
+  // Sepolia (11155111)
+  11155111: '0x4917a9746A7B6E0A57159cCb7F5a6744247f2d0d',
+
+  // Somnia Testnet (50312)
+  50312: '0x7d811da36c48cfDc7C445F14252F102bF06E3Fd7',
+
+  // Sonic Testnet (64165)
+  64165: '0x086E902d2f99BcCEAa28B31747eC6Dc5fd43B1bE',
+
+  // SUAVE Toliman Testnet (33626250)
+  33626250: '0xD5eB5fa3f470eBBB93a4A58C644c87031268a04A',
+
+  // Subtensor Testnet (945)
+  945: '0x342B5630Ba1C1e4d3048E51Dad208201aF52692c',
+}
+
+// Helper to check if a chain has a hosted MerkleTreeHook
+export const hasHostedMerkleTreeHook = (chainId: number): boolean =>
+  chainId in HOSTED_MERKLE_TREE_HOOK
+
+// Helper to get MerkleTreeHook address
+export const getHostedMerkleTreeHook = (chainId: number): Address | undefined =>
+  HOSTED_MERKLE_TREE_HOOK[chainId]
+
+// Get all chain IDs with MerkleTreeHook addresses
+export const getHostedMerkleTreeHookChainIds = (): number[] =>
+  Object.keys(HOSTED_MERKLE_TREE_HOOK).map(Number)
+
+// Count of supported chains
+export const HOSTED_MERKLE_TREE_HOOK_COUNT = Object.keys(HOSTED_MERKLE_TREE_HOOK).length

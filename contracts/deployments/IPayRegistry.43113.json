@@ -1,0 +1,10 @@
+{
+  "contractName": "IPayRegistry",
+  "address": "0x883172EDFF24FE83FDE776f7A9Aaa59CCe5ABA2B",
+  "chainId": 43113,
+  "chainName": "Avalanche Fuji",
+  "deployer": "0x32FE11d9900D63350016374BE98ff37c3Af75847",
+  "deployedAt": "2024-12-12T14:15:00Z",
+  "txHash": "see broadcast/DeployIPayRegistry.s.sol/43113/run-latest.json",
+  "explorer": "https://testnet.snowtrace.io/address/0x883172EDFF24FE83FDE776f7A9Aaa59CCe5ABA2B"
+}

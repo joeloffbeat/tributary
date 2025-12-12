@@ -1,0 +1,17 @@
+{
+  "version": "1",
+  "name": "SUBGRAPH_NAME",
+  "abis": {
+    "ContractName": {
+      "path": "./abis/ContractName.json"
+    }
+  },
+  "instances": [
+    {
+      "abi": "ContractName",
+      "address": "0x...",
+      "chain": "sepolia",
+      "startBlock": 0
+    }
+  ]
+}

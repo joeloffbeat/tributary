@@ -1,0 +1,68 @@
+# IPay Registry Subgraph Schema
+# Indexes IP asset listings and usage events
+
+type Listing @entity {
+  id: ID! # listingId from contract
+  storyIPId: Bytes! # Story Protocol IP Asset ID
+  creator: Creator! # Reference to creator
+  pricePerUse: BigInt! # Price in wei
+  metadataUri: String! # IPFS URI for metadata
+  assetIpfsHash: String! # IPFS hash of the actual asset
+  totalUses: BigInt! # Total number of times used
+  totalRevenue: BigInt! # Total revenue generated
+  active: Boolean! # Whether listing is active
+  createdAt: BigInt! # Block timestamp of creation
+  createdAtBlock: BigInt! # Block number of creation
+  transactionHash: Bytes! # Transaction hash of creation
+  usages: [Usage!]! @derivedFrom(field: "listing") # All usages of this listing
+}
+
+type Usage @entity(immutable: true) {
+  id: Bytes! # tx hash + log index
+  listing: Listing! # Reference to listing
+  user: User! # Reference to user
+  amount: BigInt! # Amount paid
+  timestamp: BigInt! # Block timestamp
+  blockNumber: BigInt! # Block number
+  txHash: Bytes! # Transaction hash
+}
+
+type Creator @entity {
+  id: Bytes! # Creator address
+  totalListings: BigInt! # Number of listings created
+  totalRevenue: BigInt! # Total revenue earned
+  totalUses: BigInt! # Total uses across all listings
+  listings: [Listing!]! @derivedFrom(field: "creator") # All listings by this creator
+  firstListingAt: BigInt! # Timestamp of first listing
+  lastActivityAt: BigInt! # Timestamp of last activity
+}
+
+type User @entity {
+  id: Bytes! # User address
+  totalSpent: BigInt! # Total amount spent
+  usageCount: BigInt! # Total number of usages
+  usages: [Usage!]! @derivedFrom(field: "user") # All usages by this user
+  firstUsageAt: BigInt! # Timestamp of first usage
+  lastUsageAt: BigInt! # Timestamp of last usage
+}
+
+# Aggregate stats for the protocol
+type ProtocolStats @entity {
+  id: ID! # "protocol"
+  totalListings: BigInt!
+  activeListings: BigInt!
+  totalUsages: BigInt!
+  totalVolume: BigInt!
+  uniqueCreators: BigInt!
+  uniqueUsers: BigInt!
+}
+
+# Daily aggregated stats
+type DailyStats @entity {
+  id: ID! # date string (YYYY-MM-DD format as timestamp / 86400)
+  date: BigInt! # Start of day timestamp
+  newListings: BigInt!
+  usageCount: BigInt!
+  volume: BigInt!
+  uniqueUsers: BigInt!
+}

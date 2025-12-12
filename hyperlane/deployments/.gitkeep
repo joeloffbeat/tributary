@@ -1,0 +1,6 @@
+# Deployment files are generated after running:
+#   ./scripts/deploy-core.sh <chain-name>
+#
+# Example:
+#   ./scripts/deploy-core.sh story-aenid
+#   ./scripts/deploy-core.sh avalanche-fuji

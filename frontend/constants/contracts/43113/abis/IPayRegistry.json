@@ -1,0 +1,244 @@
+[
+  {
+    "type": "constructor",
+    "inputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "createListing",
+    "inputs": [
+      { "name": "storyIPId", "type": "bytes32", "internalType": "bytes32" },
+      { "name": "pricePerUse", "type": "uint256", "internalType": "uint256" },
+      { "name": "metadataUri", "type": "string", "internalType": "string" },
+      { "name": "assetIpfsHash", "type": "string", "internalType": "string" }
+    ],
+    "outputs": [{ "name": "listingId", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "deactivateListing",
+    "inputs": [{ "name": "listingId", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getCreatorListings",
+    "inputs": [{ "name": "creator", "type": "address", "internalType": "address" }],
+    "outputs": [{ "name": "", "type": "uint256[]", "internalType": "uint256[]" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getListingByStoryIPId",
+    "inputs": [{ "name": "storyIPId", "type": "bytes32", "internalType": "bytes32" }],
+    "outputs": [
+      { "name": "listingId", "type": "uint256", "internalType": "uint256" },
+      {
+        "name": "listing",
+        "type": "tuple",
+        "internalType": "struct IPayRegistry.Listing",
+        "components": [
+          { "name": "storyIPId", "type": "bytes32", "internalType": "bytes32" },
+          { "name": "creator", "type": "address", "internalType": "address" },
+          { "name": "pricePerUse", "type": "uint256", "internalType": "uint256" },
+          { "name": "metadataUri", "type": "string", "internalType": "string" },
+          { "name": "assetIpfsHash", "type": "string", "internalType": "string" },
+          { "name": "totalUses", "type": "uint256", "internalType": "uint256" },
+          { "name": "totalRevenue", "type": "uint256", "internalType": "uint256" },
+          { "name": "active", "type": "bool", "internalType": "bool" },
+          { "name": "createdAt", "type": "uint256", "internalType": "uint256" }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getUserUsages",
+    "inputs": [{ "name": "user", "type": "address", "internalType": "address" }],
+    "outputs": [{ "name": "", "type": "uint256[]", "internalType": "uint256[]" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "listingCounter",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "listings",
+    "inputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [
+      { "name": "storyIPId", "type": "bytes32", "internalType": "bytes32" },
+      { "name": "creator", "type": "address", "internalType": "address" },
+      { "name": "pricePerUse", "type": "uint256", "internalType": "uint256" },
+      { "name": "metadataUri", "type": "string", "internalType": "string" },
+      { "name": "assetIpfsHash", "type": "string", "internalType": "string" },
+      { "name": "totalUses", "type": "uint256", "internalType": "uint256" },
+      { "name": "totalRevenue", "type": "uint256", "internalType": "uint256" },
+      { "name": "active", "type": "bool", "internalType": "bool" },
+      { "name": "createdAt", "type": "uint256", "internalType": "uint256" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "owner",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "recordUsage",
+    "inputs": [
+      { "name": "listingId", "type": "uint256", "internalType": "uint256" },
+      { "name": "user", "type": "address", "internalType": "address" },
+      { "name": "amount", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [{ "name": "usageId", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "storyIPIdToListingId",
+    "inputs": [{ "name": "", "type": "bytes32", "internalType": "bytes32" }],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "transferOwnership",
+    "inputs": [{ "name": "newOwner", "type": "address", "internalType": "address" }],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "updatePrice",
+    "inputs": [
+      { "name": "listingId", "type": "uint256", "internalType": "uint256" },
+      { "name": "newPrice", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "usageCounter",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "usageRecords",
+    "inputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [
+      { "name": "listingId", "type": "uint256", "internalType": "uint256" },
+      { "name": "user", "type": "address", "internalType": "address" },
+      { "name": "amount", "type": "uint256", "internalType": "uint256" },
+      { "name": "timestamp", "type": "uint256", "internalType": "uint256" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "verifyReceipt",
+    "inputs": [{ "name": "usageId", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [
+      { "name": "valid", "type": "bool", "internalType": "bool" },
+      {
+        "name": "record",
+        "type": "tuple",
+        "internalType": "struct IPayRegistry.UsageRecord",
+        "components": [
+          { "name": "listingId", "type": "uint256", "internalType": "uint256" },
+          { "name": "user", "type": "address", "internalType": "address" },
+          { "name": "amount", "type": "uint256", "internalType": "uint256" },
+          { "name": "timestamp", "type": "uint256", "internalType": "uint256" }
+        ]
+      },
+      {
+        "name": "listing",
+        "type": "tuple",
+        "internalType": "struct IPayRegistry.Listing",
+        "components": [
+          { "name": "storyIPId", "type": "bytes32", "internalType": "bytes32" },
+          { "name": "creator", "type": "address", "internalType": "address" },
+          { "name": "pricePerUse", "type": "uint256", "internalType": "uint256" },
+          { "name": "metadataUri", "type": "string", "internalType": "string" },
+          { "name": "assetIpfsHash", "type": "string", "internalType": "string" },
+          { "name": "totalUses", "type": "uint256", "internalType": "uint256" },
+          { "name": "totalRevenue", "type": "uint256", "internalType": "uint256" },
+          { "name": "active", "type": "bool", "internalType": "bool" },
+          { "name": "createdAt", "type": "uint256", "internalType": "uint256" }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "event",
+    "name": "IPUsed",
+    "inputs": [
+      { "name": "usageId", "type": "uint256", "indexed": true, "internalType": "uint256" },
+      { "name": "listingId", "type": "uint256", "indexed": true, "internalType": "uint256" },
+      { "name": "user", "type": "address", "indexed": true, "internalType": "address" },
+      { "name": "amount", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      { "name": "timestamp", "type": "uint256", "indexed": false, "internalType": "uint256" }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "ListingCreated",
+    "inputs": [
+      { "name": "listingId", "type": "uint256", "indexed": true, "internalType": "uint256" },
+      { "name": "storyIPId", "type": "bytes32", "indexed": true, "internalType": "bytes32" },
+      { "name": "creator", "type": "address", "indexed": true, "internalType": "address" },
+      { "name": "pricePerUse", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      { "name": "metadataUri", "type": "string", "indexed": false, "internalType": "string" },
+      { "name": "assetIpfsHash", "type": "string", "indexed": false, "internalType": "string" }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "ListingDeactivated",
+    "inputs": [
+      { "name": "listingId", "type": "uint256", "indexed": true, "internalType": "uint256" }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "ListingUpdated",
+    "inputs": [
+      { "name": "listingId", "type": "uint256", "indexed": true, "internalType": "uint256" },
+      { "name": "newPrice", "type": "uint256", "indexed": false, "internalType": "uint256" }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "OwnershipTransferred",
+    "inputs": [
+      { "name": "previousOwner", "type": "address", "indexed": true, "internalType": "address" },
+      { "name": "newOwner", "type": "address", "indexed": true, "internalType": "address" }
+    ],
+    "anonymous": false
+  },
+  { "type": "error", "name": "InvalidPrice", "inputs": [] },
+  { "type": "error", "name": "InvalidStoryIPId", "inputs": [] },
+  { "type": "error", "name": "ListingNotActive", "inputs": [] },
+  { "type": "error", "name": "ListingNotFound", "inputs": [] },
+  { "type": "error", "name": "OnlyCreator", "inputs": [] },
+  { "type": "error", "name": "OnlyOwner", "inputs": [] },
+  { "type": "error", "name": "StoryIPIdAlreadyListed", "inputs": [] }
+]

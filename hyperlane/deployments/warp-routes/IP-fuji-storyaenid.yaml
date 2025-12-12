@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../schema.json
+tokens:
+  - addressOrDenom: "0x87Da1De8beDC98BfE27EddF3dcfCa8BEbc2425B3"
+    chainName: storyaenid
+    connections:
+      - token: ethereum|fuji|0x2F427125E2Cc9fd050e46bA646B75490176fDe27
+    decimals: 18
+    name: IP
+    standard: EvmHypNative
+    symbol: IP
+  - addressOrDenom: "0x2F427125E2Cc9fd050e46bA646B75490176fDe27"
+    chainName: fuji
+    connections:
+      - token: ethereum|storyaenid|0x87Da1De8beDC98BfE27EddF3dcfCa8BEbc2425B3
+    decimals: 18
+    name: IP Token
+    standard: EvmHypSynthetic
+    symbol: IP

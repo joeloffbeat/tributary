@@ -1,0 +1,40 @@
+# Example schema for an ERC20 token
+# Modify this to match your contract's events
+
+type Transfer @entity(immutable: true) {
+  id: Bytes!
+  from: Bytes! # address
+  to: Bytes! # address
+  value: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Approval @entity(immutable: true) {
+  id: Bytes!
+  owner: Bytes! # address
+  spender: Bytes! # address
+  value: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+# Example: Token holder balance tracking
+type TokenHolder @entity {
+  id: Bytes! # address
+  balance: BigInt!
+  transferCount: BigInt!
+  firstTransferBlock: BigInt!
+  lastTransferBlock: BigInt!
+}
+
+# Example: Daily stats aggregation
+type DailyStats @entity {
+  id: ID! # date string (YYYY-MM-DD)
+  date: BigInt! # timestamp
+  transferCount: BigInt!
+  totalVolume: BigInt!
+  uniqueUsers: BigInt!
+}

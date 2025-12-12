@@ -1,0 +1,30 @@
+{
+  "name": "PROTOCOL_NAME",
+  "displayName": "Protocol Display Name",
+  "version": "1.0.0",
+  "description": "One-line description of what the protocol does",
+  "category": "dex",
+  "dependencies": {},
+  "devDependencies": {},
+  "envVars": [],
+  "files": [
+    {
+      "source": "frontend/app/swap/PROTOCOL_NAME/page.tsx",
+      "target": "app/swap/PROTOCOL_NAME/page.tsx"
+    },
+    {
+      "source": "frontend/lib/services/PROTOCOL_NAME-service.ts",
+      "target": "lib/services/PROTOCOL_NAME-service.ts"
+    },
+    {
+      "source": "frontend/hooks/protocols/PROTOCOL_NAME/use-PROTOCOL_NAME-quote.ts",
+      "target": "hooks/protocols/PROTOCOL_NAME/use-PROTOCOL_NAME-quote.ts"
+    },
+    {
+      "source": "frontend/constants/protocols/PROTOCOL_NAME/index.ts",
+      "target": "constants/protocols/PROTOCOL_NAME/index.ts"
+    }
+  ],
+  "supportedChains": [1, 10, 137, 42161, 8453],
+  "features": ["Feature 1", "Feature 2"]
+}

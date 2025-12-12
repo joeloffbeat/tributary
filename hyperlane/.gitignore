@@ -1,0 +1,19 @@
+# Environment variables
+.env
+
+# Node modules
+node_modules/
+
+# Hyperlane database (relayer/validator state)
+db/
+
+# Generated configs (contain addresses/keys)
+configs/core-config.yaml
+configs/warp-route-deployment.yaml
+configs/agent-config*.json
+
+# Keep templates
+!configs/*.template.yaml
+
+# OS files
+.DS_Store

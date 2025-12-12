@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=../schema.json
+tokens:
+  - addressOrDenom: "0x33641e15d8f590161a47Fe696cF3C819d5636e71"
+    chainName: storyaenid
+    connections:
+      - token: ethereum|fuji|0x42E86212057aD345B164EeEAc2F410Ca96a68200
+      - token: ethereum|polygonamoy|0x6751dcD58F63dB5b1175d8668d7cF2CeE38D07A8
+      - token: ethereum|sepolia|0x2F427125E2Cc9fd050e46bA646B75490176fDe27
+    decimals: 6
+    name: USD Coin
+    standard: EvmHypSynthetic
+    symbol: USDC
+  - addressOrDenom: "0x42E86212057aD345B164EeEAc2F410Ca96a68200"
+    chainName: fuji
+    connections:
+      - token: ethereum|storyaenid|0x33641e15d8f590161a47Fe696cF3C819d5636e71
+      - token: ethereum|polygonamoy|0x6751dcD58F63dB5b1175d8668d7cF2CeE38D07A8
+      - token: ethereum|sepolia|0x2F427125E2Cc9fd050e46bA646B75490176fDe27
+    decimals: 6
+    name: USD Coin
+    standard: EvmHypSynthetic
+    symbol: USDC
+  - addressOrDenom: "0x6751dcD58F63dB5b1175d8668d7cF2CeE38D07A8"
+    chainName: polygonamoy
+    connections:
+      - token: ethereum|storyaenid|0x33641e15d8f590161a47Fe696cF3C819d5636e71
+      - token: ethereum|fuji|0x42E86212057aD345B164EeEAc2F410Ca96a68200
+      - token: ethereum|sepolia|0x2F427125E2Cc9fd050e46bA646B75490176fDe27
+    decimals: 6
+    name: USD Coin
+    standard: EvmHypSynthetic
+    symbol: USDC
+  - addressOrDenom: "0x2F427125E2Cc9fd050e46bA646B75490176fDe27"
+    chainName: sepolia
+    collateralAddressOrDenom: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
+    connections:
+      - token: ethereum|storyaenid|0x33641e15d8f590161a47Fe696cF3C819d5636e71
+      - token: ethereum|fuji|0x42E86212057aD345B164EeEAc2F410Ca96a68200
+      - token: ethereum|polygonamoy|0x6751dcD58F63dB5b1175d8668d7cF2CeE38D07A8
+    decimals: 6
+    name: USDC
+    standard: EvmHypCollateral
+    symbol: USDC
