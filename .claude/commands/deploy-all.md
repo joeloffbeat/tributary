@@ -24,7 +24,7 @@ Execute the complete deployment workflow automatically:
 ## Prerequisites
 
 - Load `contracts-dev` skill for contract deployment
-- Load `thegraph-dev` or `goldsky-dev` skill for subgraph deployment
+- Load `goldsky-dev` skill for subgraph deployment
 - Read `contracts/deployment.config.json` for all network/contract info
 - Ensure `.env` has `PRIVATE_KEY` and RPC URLs configured
 
@@ -32,7 +32,7 @@ Execute the complete deployment workflow automatically:
 
 Before executing, look up current syntax if needed:
 - Foundry deployment: `mcp__context7__get-library-docs({ context7CompatibleLibraryID: "/foundry-rs/foundry", topic: "forge script broadcast" })`
-- TheGraph CLI: `mcp__context7__get-library-docs({ context7CompatibleLibraryID: "/graphprotocol/graph-tooling", topic: "graph deploy" })`
+- Graph CLI: `mcp__context7__get-library-docs({ context7CompatibleLibraryID: "/graphprotocol/graph-tooling", topic: "graph deploy" })`
 
 ## Phase 1: Contract Deployment
 
@@ -113,7 +113,6 @@ Execute any post-deployment initialization calls:
    - If build fails -> STOP, check mapping code
 
 3. **Deploy:**
-   - TheGraph: `graph deploy --studio {name}`
    - Goldsky: `goldsky subgraph deploy {name}/{version} --path . --tag prod`
 
 4. **Verify sync status:**
@@ -194,11 +193,11 @@ cd ../frontend && npm run build && echo "Build passed"
 
 #### Error: "Authentication failed"
 **Cause:** Missing deploy key.
-**Fix:** Set `THEGRAPH_DEPLOY_KEY` or `GOLDSKY_API_KEY` in environment.
+**Fix:** Set `GOLDSKY_API_KEY` in environment or run `goldsky login`.
 
 #### Error: "Subgraph not found"
-**Cause:** Subgraph not created on indexer dashboard.
-**Fix:** Create subgraph on TheGraph Studio or Goldsky dashboard first.
+**Cause:** Subgraph not created on Goldsky dashboard.
+**Fix:** Create subgraph on Goldsky dashboard first.
 
 ### Phase 5/6 Errors (Frontend Subgraph Sync)
 

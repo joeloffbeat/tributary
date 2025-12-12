@@ -1,16 +1,16 @@
 # Subgraph Development
 
-This directory contains the subgraph configuration for indexing your smart contracts.
+This directory contains the subgraph configuration for indexing your smart contracts using Goldsky.
 
 ## Quick Start
 
 ### 1. Install Dependencies
 
 ```bash
-# Install The Graph CLI
+# Install The Graph CLI (for codegen and build)
 npm install -g @graphprotocol/graph-cli
 
-# Or install Goldsky CLI
+# Install Goldsky CLI
 curl https://goldsky.com | sh  # macOS/Linux
 npm install -g @goldskycom/cli  # Windows
 ```
@@ -34,10 +34,7 @@ npm run codegen
 # Build
 npm run build
 
-# Deploy to The Graph Studio
-npm run deploy:thegraph
-
-# Or deploy to Goldsky
+# Deploy to Goldsky
 npm run deploy:goldsky
 ```
 
@@ -130,9 +127,6 @@ npm run codegen
 # Build the subgraph
 npm run build
 
-# Deploy to The Graph Studio
-npm run deploy:thegraph
-
 # Deploy to Goldsky
 npm run deploy:goldsky
 
@@ -147,6 +141,5 @@ npm run prepare:base
 
 ## Resources
 
-- [The Graph Documentation](https://thegraph.com/docs/)
 - [Goldsky Documentation](https://docs.goldsky.com/)
-- [AssemblyScript API Reference](https://thegraph.com/docs/en/subgraphs/developing/assemblyscript-api/)
+- [AssemblyScript API Reference](https://docs.goldsky.com/subgraphs/building-subgraphs/subgraph-mapping)

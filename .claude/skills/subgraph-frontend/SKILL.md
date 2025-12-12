@@ -1,6 +1,6 @@
 ---
 name: subgraph-frontend
-description: Query blockchain data from TheGraph or Goldsky subgraphs using Apollo Client. Use when fetching indexed blockchain data, building data displays, or implementing real-time updates.
+description: Query blockchain data from Goldsky subgraphs using Apollo Client. Use when fetching indexed blockchain data, building data displays, or implementing real-time updates.
 ---
 
 # Subgraph Frontend Skill
@@ -149,13 +149,9 @@ frontend/
 // frontend/constants/subgraphs/11155111/freemint.ts
 export const freemintSubgraph = {
   name: 'freemint',
-  thegraph: {
-    endpoint: 'https://api.studio.thegraph.com/query/[id]/freemint/version/latest',
-  },
   goldsky: {
     endpoint: 'https://api.goldsky.com/api/public/[project-id]/subgraphs/freemint/prod/gn',
   },
-  activeProvider: 'goldsky' as const,
 }
 ```
 
@@ -207,7 +203,7 @@ const GET_ACCOUNT_TRANSFERS = gql`
 ## Related Skills
 
 - **ui-dev** - For building data display components
-- **thegraph-dev** / **goldsky-dev** - For building the subgraphs being queried
+- **goldsky-dev** - For building the subgraphs being queried
 
 ## Quick Reference
 

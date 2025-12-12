@@ -1,5 +1,5 @@
 // Subgraph endpoint configurations
-// Each subgraph supports both TheGraph and Goldsky endpoints
+// Using Goldsky for indexing
 
 export interface IndexedContract {
   name: string
@@ -13,14 +13,10 @@ export interface IndexedContract {
 export interface SubgraphConfig {
   name: string
   description?: string
-  thegraph: {
-    endpoint: string
-  }
   goldsky: {
     endpoint: string
     versionEndpoint?: string
   }
-  activeProvider: 'thegraph' | 'goldsky'
   // Contracts indexed by this subgraph
   contracts: IndexedContract[]
   schemaContent?: string
@@ -54,7 +50,7 @@ export function getSubgraphEndpoint(chainId: number, name: string): string {
     throw new Error(`Subgraph "${name}" not found for chain ${chainId}`)
   }
 
-  return config[config.activeProvider].endpoint
+  return config.goldsky.endpoint
 }
 
 /**
@@ -72,14 +68,14 @@ export function hasSubgraph(chainId: number, name: string): boolean {
 }
 
 /**
- * Get all subgraphs that have a valid endpoint for the specified provider
+ * Get all subgraphs that have a valid endpoint for Goldsky
  */
-export function getSubgraphsByProvider(provider: 'thegraph' | 'goldsky'): SubgraphConfig[] {
+export function getSubgraphsByProvider(provider: 'goldsky'): SubgraphConfig[] {
   const result: SubgraphConfig[] = []
   for (const chainSubgraphs of Object.values(subgraphs)) {
     for (const config of Object.values(chainSubgraphs)) {
       // Include if the provider has a valid endpoint
-      if (config[provider].endpoint) {
+      if (config.goldsky.endpoint) {
         result.push(config)
       }
     }

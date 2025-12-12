@@ -34,17 +34,15 @@ Load this skill when:
 - Creating instant (no-code) subgraphs
 - Setting up webhooks for real-time notifications
 - Using tagging for zero-downtime upgrades
-- Migrating from TheGraph to Goldsky
-
 ## Why Goldsky?
 
-| Feature | Goldsky | TheGraph |
-|---------|---------|----------|
-| Deployment | Instant | Requires sync time |
-| Webhooks | Native | Not available |
-| Tags | Built-in | Manual versioning |
-| Multi-chain | Native | Per-network deploy |
-| No-code option | Instant Subgraphs | Not available |
+| Feature | Goldsky |
+|---------|---------|
+| Deployment | Instant |
+| Webhooks | Native |
+| Tags | Built-in |
+| Multi-chain | Native |
+| No-code option | Instant Subgraphs |
 
 ## Critical Rules
 
@@ -52,7 +50,7 @@ Load this skill when:
 2. **Copy ABIs from contracts/out/** - Never mock ABI data
 3. **NO markdown/temp files** - Only code files
 4. **Use tags for production** - Stable endpoints with zero-downtime
-5. **Goldsky is TheGraph-compatible** - Same subgraph format
+5. **Uses standard subgraph format** - Compatible with graph-cli tooling
 
 ## Decision Tree
 
@@ -98,7 +96,7 @@ Upgrading subgraph?
 
 ### Method 1: Standard Subgraph (Full Control)
 
-Same format as TheGraph:
+Standard subgraph format:
 
 ```bash
 cd subgraphs/[name]
@@ -193,7 +191,6 @@ goldsky subgraph webhook create <name>/<version> --name webhook --entity Transfe
 
 - **contracts-dev** - For deploying contracts to index
 - **subgraph-frontend** - For querying Goldsky endpoints
-- **thegraph-dev** - Same subgraph format
 
 ## Quick Reference
 

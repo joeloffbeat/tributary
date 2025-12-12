@@ -31,8 +31,7 @@ registry/
 │   ├── foundry/
 │   └── hardhat3/
 ├── indexers/                  # Pick ONE or NONE
-│   ├── goldsky/
-│   └── thegraph/
+│   └── goldsky/
 ├── database/                  # Optional
 │   └── supabase/
 └── protocols/                 # Add MANY anytime

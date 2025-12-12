@@ -225,7 +225,6 @@ Before adding a new network, ensure you have:
 - [ ] nativeCurrency
 
 **Required in `subgraphs/deployment.config.json`:**
-- [ ] Network name for TheGraph
 - [ ] Network name for Goldsky
 
 ## Output Report

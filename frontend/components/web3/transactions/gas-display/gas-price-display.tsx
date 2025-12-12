@@ -7,20 +7,25 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { formatGasPrice, formatUSD } from '@/lib/web3/format'
+import { getChainById } from '@/lib/config/chains'
 
 interface GasPriceDisplayProps {
   showUSD?: boolean
-  ethPrice?: number
+  nativeTokenPrice?: number
   className?: string
 }
 
 export function GasPriceDisplay({
   showUSD = true,
-  ethPrice = 2500, // Default ETH price for demo
+  nativeTokenPrice = 2500, // Default price for demo
   className
 }: GasPriceDisplayProps) {
-  const { isConnected, chain } = useAccount()
+  const { isConnected, chain, chainId } = useAccount()
   const { gasPrice, isLoading, refetch } = useGasPrice()
+
+  // Get chain config for native currency info
+  const chainConfig = chainId ? getChainById(chainId) : undefined
+  const nativeCurrency = chainConfig?.chain?.nativeCurrency || chain?.nativeCurrency || { symbol: 'ETH', name: 'Ether', decimals: 18 }
 
   const isError = !isLoading && !gasPrice && isConnected
 
@@ -61,11 +66,14 @@ export function GasPriceDisplay({
 
   const gasPriceGwei = formatGasPrice(gasPrice)
 
-  // Calculate cost for a simple ETH transfer (21000 gas)
+  // Calculate cost for a simple native transfer (21000 gas)
   const transferGasLimit = 21000n
   const transferCostWei = gasPrice * transferGasLimit
-  const transferCostEth = Number(transferCostWei) / 1e18
-  const transferCostUSD = transferCostEth * ethPrice
+  const transferCostNative = Number(transferCostWei) / 1e18
+  const transferCostUSD = transferCostNative * nativeTokenPrice
+
+  // Get display name for chain (use config name or chain name)
+  const chainName = chainConfig?.name || chain?.name
 
   return (
     <div className={cn('space-y-3', className)}>
@@ -83,14 +91,14 @@ export function GasPriceDisplay({
           <RefreshCw className="h-3 w-3" />
         </Button>
       </div>
-      
+
       <div className="flex items-center gap-3">
         <Badge variant="outline" className="text-lg px-3 py-1">
           {gasPriceGwei}
         </Badge>
-        {chain?.name && (
+        {chainName && (
           <span className="text-xs text-muted-foreground">
-            on {chain.name}
+            on {chainName}
           </span>
         )}
       </div>
@@ -99,7 +107,7 @@ export function GasPriceDisplay({
         <div className="text-sm text-muted-foreground">
           <p>Simple transfer would cost:</p>
           <p className="font-medium text-foreground">
-            ~{transferCostEth.toFixed(6)} ETH 
+            ~{transferCostNative.toFixed(6)} {nativeCurrency.symbol}
             <span className="text-muted-foreground ml-2">
               ({formatUSD(transferCostUSD)})
             </span>

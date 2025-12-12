@@ -297,10 +297,7 @@ export function AddSubgraphDialog({ open, onOpenChange, provider, onAdd }: AddSu
                   setFormData(prev => ({ ...prev, endpoint: e.target.value }))
                   setConnectionResult(null)
                 }}
-                placeholder={provider.id === 'thegraph'
-                  ? 'https://api.studio.thegraph.com/query/...'
-                  : 'https://api.goldsky.com/api/public/...'
-                }
+                placeholder="https://api.goldsky.com/api/public/..."
                 className={errors.endpoint ? 'border-red-500' : ''}
               />
               <Button

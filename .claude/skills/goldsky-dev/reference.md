@@ -10,7 +10,6 @@
 | Zero-downtime upgrade | Deploy new version + move tag | Redeploy same version | No interruption |
 | Real-time notifications | Webhooks | Polling | Lower latency |
 | Multi-chain | Single instant config | Separate deploys | Easier management |
-| Migrate from TheGraph | Same code, `goldsky deploy` | Rewrite | Backwards compatible |
 
 ---
 
@@ -38,8 +37,8 @@ goldsky subgraph deploy <name>/<version> --from-abi config.json
 # Deploy from IPFS hash
 goldsky subgraph deploy <name>/<version> --from-ipfs-hash <IPFS_HASH>
 
-# Deploy from TheGraph endpoint
-goldsky subgraph deploy <name>/<version> --from-url <THEGRAPH_URL>
+# Deploy from existing subgraph endpoint
+goldsky subgraph deploy <name>/<version> --from-url <SUBGRAPH_URL>
 ```
 
 ### Subgraph Management
@@ -243,34 +242,6 @@ When an entity is created/updated, Goldsky sends:
 }
 ```
 
-## Comparison with TheGraph
-
-| Feature | Goldsky | TheGraph |
-|---------|---------|----------|
-| Deployment | Instant | Requires sync |
-| No-code option | Instant Subgraphs | Not available |
-| Webhooks | Native support | Not available |
-| Zero-downtime | Tag system | Manual |
-| Multi-chain | Single config | Separate deploys |
-| Pricing | Usage-based | GRT staking |
-| Backwards compatible | Yes (same format) | N/A |
-
-## Migration from TheGraph
-
-```bash
-# From local subgraph (same code works)
-cd your-subgraph
-graph build
-goldsky subgraph deploy my-subgraph/1.0.0 --path .
-
-# From existing TheGraph deployment
-goldsky subgraph deploy my-subgraph/1.0.0 --from-url \
-  "https://api.thegraph.com/subgraphs/name/owner/subgraph"
-
-# From IPFS
-goldsky subgraph deploy my-subgraph/1.0.0 --from-ipfs-hash QmYour...
-```
-
 ## Webhook Setup Examples
 
 ### Notify on Large Transfers
@@ -294,7 +265,7 @@ goldsky subgraph webhook create my-app/1.0.0 \
 ## Deployment Workflow
 
 ```bash
-# 1. Build subgraph (same as TheGraph)
+# 1. Build subgraph
 cd subgraphs/my-subgraph
 graph codegen
 graph build

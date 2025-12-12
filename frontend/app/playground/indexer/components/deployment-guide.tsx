@@ -48,32 +48,17 @@ export function DeploymentGuide({ provider }: DeploymentGuideProps) {
                 <li>Contract ABI file (JSON)</li>
                 <li>Contract address and network</li>
                 <li>Start block number (recommended for faster indexing)</li>
-                {provider.id === 'thegraph' && (
-                  <li>
-                    Subgraph Studio account -{' '}
-                    <a
-                      href="https://thegraph.com/studio/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline"
-                    >
-                      Sign up here
-                    </a>
-                  </li>
-                )}
-                {provider.id === 'goldsky' && (
-                  <li>
-                    Goldsky account -{' '}
-                    <a
-                      href="https://app.goldsky.com/signup"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline"
-                    >
-                      Sign up here
-                    </a>
-                  </li>
-                )}
+                <li>
+                  Goldsky account -{' '}
+                  <a
+                    href="https://app.goldsky.com/signup"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Sign up here
+                  </a>
+                </li>
               </ul>
             </AlertDescription>
           </Alert>
@@ -124,15 +109,6 @@ export function DeploymentGuide({ provider }: DeploymentGuideProps) {
                       </div>
                     )}
                     {/* Additional context for specific steps */}
-                    {step.id === 'init' && provider.id === 'thegraph' && (
-                      <Alert>
-                        <Info className="h-4 w-4" />
-                        <AlertDescription>
-                          This will prompt you to select the protocol (Ethereum/contract),
-                          enter your contract address, and choose which events to index.
-                        </AlertDescription>
-                      </Alert>
-                    )}
                     {step.id === 'deploy-abi' && provider.id === 'goldsky' && (
                       <Alert>
                         <Info className="h-4 w-4" />
@@ -177,47 +153,6 @@ export function DeploymentGuide({ provider }: DeploymentGuideProps) {
               </Button>
             </div>
           </div>
-
-          {provider.id === 'thegraph' && (
-            <>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">2. Initialize Subgraph</label>
-                <div className="flex items-center gap-2 bg-muted rounded-lg p-3 font-mono text-sm">
-                  <Terminal className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <code className="flex-1">graph init --studio my-subgraph</code>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => copyCommand('graph init --studio my-subgraph', 'init')}
-                  >
-                    {copiedStep === 'init' ? (
-                      <Check className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">3. Build & Deploy</label>
-                <div className="flex items-center gap-2 bg-muted rounded-lg p-3 font-mono text-sm">
-                  <Terminal className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <code className="flex-1">graph codegen && graph build && graph deploy --studio my-subgraph</code>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => copyCommand('graph codegen && graph build && graph deploy --studio my-subgraph', 'deploy')}
-                  >
-                    {copiedStep === 'deploy' ? (
-                      <Check className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </>
-          )}
 
           {provider.id === 'goldsky' && (
             <>
@@ -301,37 +236,6 @@ export function DeploymentGuide({ provider }: DeploymentGuideProps) {
               </div>
               <ExternalLink className="h-4 w-4" />
             </a>
-
-            {provider.id === 'thegraph' && (
-              <>
-                <a
-                  href="https://thegraph.com/docs/en/subgraphs/developing/creating-a-subgraph/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                >
-                  <Terminal className="h-6 w-6 text-primary" />
-                  <div className="flex-1">
-                    <p className="font-medium">Creating a Subgraph</p>
-                    <p className="text-sm text-muted-foreground">Step-by-step tutorial</p>
-                  </div>
-                  <ExternalLink className="h-4 w-4" />
-                </a>
-                <a
-                  href="https://thegraph.com/docs/en/subgraphs/developing/assemblyscript-api/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                >
-                  <Terminal className="h-6 w-6 text-primary" />
-                  <div className="flex-1">
-                    <p className="font-medium">AssemblyScript API</p>
-                    <p className="text-sm text-muted-foreground">Mapping functions reference</p>
-                  </div>
-                  <ExternalLink className="h-4 w-4" />
-                </a>
-              </>
-            )}
 
             {provider.id === 'goldsky' && (
               <>

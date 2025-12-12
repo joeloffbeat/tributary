@@ -1,7 +1,7 @@
 /**
  * Indexer Module
  *
- * Unified indexer integration for The Graph and Goldsky
+ * Unified indexer integration for Goldsky
  */
 
 // Types
@@ -19,5 +19,4 @@ export {
   detectProviderFromEndpoint,
 } from './providers';
 
-export { theGraphProvider } from './providers/thegraph';
 export { goldskyProvider } from './providers/goldsky';

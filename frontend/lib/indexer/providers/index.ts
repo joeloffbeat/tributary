@@ -3,16 +3,13 @@
  */
 
 export * from './base';
-export * from './thegraph';
 export * from './goldsky';
 
-import { theGraphProvider } from './thegraph';
 import { goldskyProvider } from './goldsky';
 import { IIndexerProvider, IndexerProvider, ProviderInfo } from '../types';
 
 // Provider registry
 const providers: Record<IndexerProvider, IIndexerProvider> = {
-  thegraph: theGraphProvider,
   goldsky: goldskyProvider,
 };
 

@@ -9,7 +9,6 @@
     "prepare:mainnet": "mustache config/mainnet.json subgraph.template.yaml > subgraph.yaml",
     "prepare:sepolia": "mustache config/sepolia.json subgraph.template.yaml > subgraph.yaml",
     "prepare:base": "mustache config/base.json subgraph.template.yaml > subgraph.yaml",
-    "deploy:thegraph": "graph deploy --studio $npm_package_name",
     "deploy:goldsky": "goldsky subgraph deploy $npm_package_name/1.0.0 --path .",
     "create:local": "graph create --node http://localhost:8020/ $npm_package_name",
     "deploy:local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 $npm_package_name",

@@ -297,9 +297,9 @@ export function seedDatabase(db: Database.Database) {
     },
     {
       user_id: userIds[1],
-      title: 'The Graph Docs',
-      url: 'https://thegraph.com/docs',
-      description: 'Documentation for The Graph Protocol',
+      title: 'Goldsky Docs',
+      url: 'https://docs.goldsky.com',
+      description: 'Documentation for Goldsky subgraph indexing',
       category: 'documentation',
       tags: JSON.stringify(['docs', 'graphql', 'indexing']),
       is_favorite: false

@@ -1,10 +1,10 @@
 /**
  * Indexer Types
- * Core type definitions for The Graph and Goldsky indexer integration
+ * Core type definitions for Goldsky indexer integration
  */
 
 // Provider Types
-export type IndexerProvider = 'thegraph' | 'goldsky';
+export type IndexerProvider = 'goldsky';
 
 export interface ProviderInfo {
   id: IndexerProvider;
@@ -37,7 +37,6 @@ export interface SubgraphConfig {
   schemaContent: string;
   description?: string;
   // Provider-specific
-  studioUrl?: string;        // The Graph Studio URL
   dashboardUrl?: string;     // Goldsky dashboard URL
   // Status
   status: SubgraphStatus;
@@ -139,9 +138,6 @@ export interface EndpointConfig {
   version?: string;
   tag?: string;  // Goldsky-specific
   apiKey?: string;
-  // The Graph specific
-  studioId?: string;
-  subgraphId?: string;
   // Goldsky specific
   projectId?: string;
 }

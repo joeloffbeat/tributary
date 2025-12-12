@@ -5,13 +5,9 @@
 
 export interface SubgraphConfig {
   name: string
-  thegraph: {
-    endpoint: string
-  }
   goldsky: {
     endpoint: string
   }
-  activeProvider: 'thegraph' | 'goldsky'
 }
 
 // Per-chain subgraph configs
@@ -19,29 +15,19 @@ export const subgraphConfigs: Record<number, SubgraphConfig> = {
   // Sepolia (chainId: 11155111)
   11155111: {
     name: 'SUBGRAPH_NAME',
-    thegraph: {
-      endpoint:
-        'https://api.studio.thegraph.com/query/[SUBGRAPH_ID]/SUBGRAPH_NAME/version/latest',
-    },
     goldsky: {
       endpoint:
         'https://api.goldsky.com/api/public/[PROJECT_ID]/subgraphs/SUBGRAPH_NAME/prod/gn',
     },
-    activeProvider: 'goldsky',
   },
 
   // Mainnet (chainId: 1)
   1: {
     name: 'SUBGRAPH_NAME',
-    thegraph: {
-      endpoint:
-        'https://gateway.thegraph.com/api/[API_KEY]/subgraphs/id/[DEPLOYMENT_ID]',
-    },
     goldsky: {
       endpoint:
         'https://api.goldsky.com/api/public/[PROJECT_ID]/subgraphs/SUBGRAPH_NAME/prod/gn',
     },
-    activeProvider: 'goldsky',
   },
 }
 
@@ -53,7 +39,7 @@ export function getSubgraphEndpoint(chainId: number): string {
   if (!config) {
     throw new Error(`No subgraph config for chain ${chainId}`)
   }
-  return config[config.activeProvider].endpoint
+  return config.goldsky.endpoint
 }
 
 /**

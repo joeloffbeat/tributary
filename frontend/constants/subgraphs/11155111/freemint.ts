@@ -3,14 +3,10 @@ import type { SubgraphConfig } from '../index'
 export const freemintSubgraph: SubgraphConfig = {
   name: 'freemint-token',
   description: 'Indexes FreeMintToken ERC20 transfers and approvals',
-  thegraph: {
-    endpoint: 'https://api.studio.thegraph.com/query/1718541/testing/version/latest',
-  },
   goldsky: {
     endpoint: 'https://api.goldsky.com/api/public/project_cmemwacolly2301xs17yy3d6z/subgraphs/freemint-token/prod/gn',
     versionEndpoint: 'https://api.goldsky.com/api/public/project_cmemwacolly2301xs17yy3d6z/subgraphs/freemint-token/1.0.0/gn',
   },
-  activeProvider: 'goldsky',
   contracts: [
     {
       name: 'FreeMintToken',

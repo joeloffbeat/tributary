@@ -7,7 +7,6 @@
     "build": "graph build",
     "test": "graph test",
     "prepare:fuji": "mustache config/fuji.json subgraph.template.yaml > subgraph.yaml",
-    "deploy:thegraph": "graph deploy --studio ipay-subgraph",
     "deploy:goldsky": "goldsky subgraph deploy ipay-subgraph/1.0.0 --path .",
     "create:local": "graph create --node http://localhost:8020/ ipay-subgraph",
     "deploy:local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 ipay-subgraph"

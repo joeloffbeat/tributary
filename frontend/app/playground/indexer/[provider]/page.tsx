@@ -32,7 +32,7 @@ interface ExtendedSubgraphConfig {
   endpoint: string
   network: string
   schemaContent: string
-  provider: 'thegraph' | 'goldsky'
+  provider: 'goldsky'
   createdAt: Date
   updatedAt: Date
   contracts: IndexedContract[]
@@ -40,8 +40,8 @@ interface ExtendedSubgraphConfig {
 }
 
 // Convert constants subgraph to indexer SubgraphConfig format
-function convertConstantsSubgraph(config: ConstantsSubgraphConfig, provider: 'thegraph' | 'goldsky'): ExtendedSubgraphConfig {
-  const endpoint = provider === 'goldsky' ? config.goldsky.endpoint : config.thegraph.endpoint
+function convertConstantsSubgraph(config: ConstantsSubgraphConfig, provider: 'goldsky'): ExtendedSubgraphConfig {
+  const endpoint = config.goldsky.endpoint
   // Derive network from contracts
   const networks = [...new Set(config.contracts.map(c => c.chainName))]
   const network = networks.length === 1 ? networks[0] : `${networks.length} chains`
@@ -65,8 +65,8 @@ function useSubgraphStore(providerId: string) {
   const [configs, setConfigs] = useState<ExtendedSubgraphConfig[]>([])
 
   useEffect(() => {
-    const preconfigured = getSubgraphsByProvider(providerId as 'thegraph' | 'goldsky')
-      .map(c => convertConstantsSubgraph(c, providerId as 'thegraph' | 'goldsky'))
+    const preconfigured = getSubgraphsByProvider(providerId as 'goldsky')
+      .map(c => convertConstantsSubgraph(c, providerId as 'goldsky'))
       .filter(c => c.endpoint)
     setConfigs(preconfigured)
   }, [providerId])
@@ -145,7 +145,7 @@ export default function ProviderDashboard() {
       router.push('/indexer')
       return
     }
-    setProvider(getProvider(providerId as 'thegraph' | 'goldsky'))
+    setProvider(getProvider(providerId as 'goldsky'))
   }, [providerId, router])
 
   // Auto-select first subgraph if available

@@ -329,21 +329,7 @@ const getErrorMessage = (error: ApolloError) => {
 }
 ```
 
-## Subgraph Endpoints
-
-### TheGraph Studio
-
-```
-https://api.studio.thegraph.com/query/[SUBGRAPH_ID]/[NAME]/version/latest
-```
-
-### TheGraph Decentralized Network
-
-```
-https://gateway.thegraph.com/api/[API_KEY]/subgraphs/id/[DEPLOYMENT_ID]
-```
-
-### Goldsky
+## Subgraph Endpoints (Goldsky)
 
 ```
 # Version-specific

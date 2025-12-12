@@ -21,7 +21,7 @@ Strategic debugging system that identifies issues across the entire stack: **con
 If unsure about debugging techniques:
 - Foundry debugging: `mcp__context7__get-library-docs({ context7CompatibleLibraryID: "/foundry-rs/foundry", topic: "forge test debug" })`
 - Viem errors: `mcp__context7__get-library-docs({ context7CompatibleLibraryID: "/wevm/viem", topic: "errors" })`
-- TheGraph debugging: `mcp__context7__get-library-docs({ context7CompatibleLibraryID: "/graphprotocol/graph-tooling", topic: "debugging" })`
+- Graph CLI debugging: `mcp__context7__get-library-docs({ context7CompatibleLibraryID: "/graphprotocol/graph-tooling", topic: "debugging" })`
 
 ## Debug Strategy
 

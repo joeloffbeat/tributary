@@ -32,12 +32,6 @@ npm run build
 
 ## Deploy
 
-### The Graph Studio
-```bash
-graph auth --studio <deploy-key>
-npm run deploy:thegraph
-```
-
 ### Goldsky
 ```bash
 goldsky login

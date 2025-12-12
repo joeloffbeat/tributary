@@ -181,7 +181,7 @@ ARBITRUM_SEPOLIA_RPC_URL=https://...
 ## Related Skills
 
 - **web3-integration** - After deployment, use contracts from frontend
-- **thegraph-dev** / **goldsky-dev** - Index contract events
+- **goldsky-dev** - Index contract events
 
 ## Quick Reference
 

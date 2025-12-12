@@ -47,7 +47,7 @@ export function Navbar({ className }: NavbarProps) {
         {/* Logo and App Name */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <img src={config.appIcon || "/logo.png"} alt="Logo" className="h-8 w-8" />
+            <img src={config.appIcon || "/logo.png"} alt="Logo" className="h-8 w-8 rounded-full" />
             <h1 className="text-xl font-semibold">{config.appName}</h1>
           </Link>
           {/* Configuration Status Indicator */}

@@ -6,10 +6,11 @@
 
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useActiveAccount, useActiveWallet, useWalletBalance } from 'thirdweb/react'
 import { defineChain } from 'thirdweb'
 import { getThirdwebClient } from './thirdweb-client'
+import { getChainById } from '@/lib/config/chains'
 import type { UseBalanceParams, UseBalanceReturn } from './types'
 
 /**
@@ -47,6 +48,31 @@ export function useBalance(params: UseBalanceParams = {}): UseBalanceReturn {
   // Get chain ID from wallet if not provided
   const effectiveChainId = chainId || wallet?.getChain()?.id
 
+  // Create thirdweb chain with full config including native currency
+  const thirdwebChain = useMemo(() => {
+    if (!effectiveChainId) return undefined
+
+    const chainConfig = getChainById(effectiveChainId)
+    if (chainConfig) {
+      // Use full chain config to get correct native currency (e.g., IP for Story)
+      return defineChain({
+        id: chainConfig.chain.id,
+        rpc: chainConfig.rpcUrl,
+        name: chainConfig.name,
+        nativeCurrency: chainConfig.chain.nativeCurrency,
+        blockExplorers: chainConfig.chain.blockExplorers ? [
+          {
+            name: chainConfig.chain.blockExplorers.default.name,
+            url: chainConfig.chain.blockExplorers.default.url,
+          }
+        ] : undefined,
+        testnet: chainConfig.isTestnet || undefined,
+      })
+    }
+    // Fallback for chains not in our config
+    return defineChain(effectiveChainId)
+  }, [effectiveChainId])
+
   // Use Thirdweb's balance hook for native balance
   const {
     data: balanceData,
@@ -56,7 +82,7 @@ export function useBalance(params: UseBalanceParams = {}): UseBalanceReturn {
     refetch: thirdwebRefetch,
   } = useWalletBalance({
     client: getThirdwebClient(),
-    chain: effectiveChainId ? defineChain(effectiveChainId) : undefined,
+    chain: thirdwebChain,
     address: targetAddress as `0x${string}`,
     tokenAddress: token,
   })

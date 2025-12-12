@@ -1,12 +1,11 @@
-import IPayRegistryABI from "./abis/IPayRegistry.json";
+import type { ContractRegistry } from '../index'
 
-export const IPAY_REGISTRY_ADDRESS = "0x883172EDFF24FE83FDE776f7A9Aaa59CCe5ABA2B" as const;
-
-export const contracts = {
+const contracts: ContractRegistry = {
   IPayRegistry: {
-    address: IPAY_REGISTRY_ADDRESS,
-    abi: IPayRegistryABI,
+    address: '0x883172EDFF24FE83FDE776f7A9Aaa59CCe5ABA2B',
+    name: 'IPayRegistry',
+    description: 'IPay Registry - Pay-per-use IP licensing on Avalanche Fuji',
   },
-} as const;
+}
 
-export { IPayRegistryABI };
+export default contracts

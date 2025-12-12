@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Sora } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
 import './globals.css'
 import { Toaster } from '@/components/ui/sonner'
@@ -7,7 +7,10 @@ import { Navbar } from '@/components/layout/navbar'
 import { Web3Provider } from '@/providers/web3-provider'
 import { ConfigurationProvider } from '@/components/config/configuration-provider'
 
-const inter = Inter({ subsets: ['latin'] })
+const sora = Sora({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+})
 
 export const metadata: Metadata = {
   title: process.env.NEXT_PUBLIC_APP_NAME || 'Web3 App',
@@ -24,7 +27,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={sora.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

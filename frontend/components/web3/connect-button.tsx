@@ -1,25 +1,26 @@
 /**
  * Connect Button - Thirdweb Implementation
  *
- * Provides a wallet connection button using Thirdweb's ConnectButton for connection,
- * but uses a custom dropdown for the connected state to avoid thirdweb's
- * nested button hydration error.
+ * Uses useConnectModal hook for connection and a custom dropdown for the
+ * connected state to completely avoid thirdweb's nested button hydration error.
  */
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
-  ConnectButton as ThirdwebConnectButton,
   useActiveAccount,
   useActiveWallet,
   useDisconnect,
   useWalletBalance,
+  useConnectModal,
+  useAutoConnect,
 } from 'thirdweb/react'
 import { createWallet, inAppWallet } from 'thirdweb/wallets'
 import { thirdwebClient, isThirdwebConfigured } from '@/lib/web3/thirdweb-client'
-import { getSupportedChainList } from '@/lib/config/chains'
+import { getSupportedChainList, getChainById } from '@/lib/config/chains'
 import { defineChain } from 'thirdweb'
+import { useTheme } from 'next-themes'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -62,7 +63,24 @@ function WalletDetailsDropdown({ className }: { className?: string }) {
   const [copied, setCopied] = useState(false)
 
   // Get the current chain from the wallet
-  const chain = wallet?.getChain()
+  const walletChain = wallet?.getChain()
+  const chainId = walletChain?.id
+
+  // Get full chain config for correct native currency
+  const chainConfig = chainId ? getChainById(chainId) : undefined
+  const chain = chainConfig ? defineChain({
+    id: chainConfig.chain.id,
+    rpc: chainConfig.rpcUrl,
+    name: chainConfig.name,
+    nativeCurrency: chainConfig.chain.nativeCurrency,
+    blockExplorers: chainConfig.chain.blockExplorers ? [
+      {
+        name: chainConfig.chain.blockExplorers.default.name,
+        url: chainConfig.chain.blockExplorers.default.url,
+      }
+    ] : undefined,
+    testnet: chainConfig.isTestnet || undefined,
+  }) : walletChain
 
   const { data: balance } = useWalletBalance({
     client: thirdwebClient!,
@@ -143,9 +161,9 @@ function WalletDetailsDropdown({ className }: { className?: string }) {
 /**
  * Connect Button Component
  *
- * Renders a button that opens the Thirdweb wallet connection modal.
- * When connected, shows a custom dropdown instead of thirdweb's modal
- * to avoid nested button hydration errors.
+ * Uses useConnectModal hook for connection and custom dropdown for connected state.
+ * This approach completely avoids thirdweb's internal button components that
+ * cause nested button hydration errors.
  *
  * @example
  * ```tsx
@@ -161,6 +179,44 @@ function WalletDetailsDropdown({ className }: { className?: string }) {
  * ```
  */
 export function ConnectButton({ className }: ConnectButtonProps) {
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  const account = useActiveAccount()
+  const { connect } = useConnectModal()
+
+  // Ensure we're mounted to avoid hydration mismatch with theme
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Get supported chains - memoized to avoid recreation
+  const chains = useMemo(() => {
+    const chainConfigs = getSupportedChainList()
+    return chainConfigs.map((config) =>
+      defineChain({
+        id: config.chain.id,
+        rpc: config.rpcUrl,
+        name: config.name,
+        nativeCurrency: config.chain.nativeCurrency,
+        blockExplorers: config.chain.blockExplorers
+          ? [
+              {
+                name: config.chain.blockExplorers.default.name,
+                url: config.chain.blockExplorers.default.url,
+              },
+            ]
+          : undefined,
+        testnet: config.isTestnet || undefined,
+      })
+    )
+  }, [])
+
+  // Auto-connect on mount if previously connected
+  useAutoConnect({
+    client: thirdwebClient!,
+    wallets,
+  })
+
   // Don't render if Thirdweb is not configured
   if (!isThirdwebConfigured() || !thirdwebClient) {
     return (
@@ -174,55 +230,34 @@ export function ConnectButton({ className }: ConnectButtonProps) {
     )
   }
 
-  // Get supported chains and convert to Thirdweb chains with native RPC URLs
-  const chainConfigs = getSupportedChainList()
-  const chains = chainConfigs.map((config) =>
-    defineChain({
-      id: config.chain.id,
-      rpc: config.rpcUrl,
-      name: config.name,
-      nativeCurrency: config.chain.nativeCurrency,
-      blockExplorers: config.chain.blockExplorers
-        ? [
-            {
-              name: config.chain.blockExplorers.default.name,
-              url: config.chain.blockExplorers.default.url,
-            },
-          ]
-        : undefined,
-      testnet: config.isTestnet || undefined,
-    })
-  )
+  // Use dark theme as default until mounted, then use resolved theme
+  const thirdwebTheme = mounted ? (resolvedTheme === 'light' ? 'light' : 'dark') : 'dark'
 
+  // Handle connect button click - opens thirdweb modal
+  const handleConnect = async () => {
+    await connect({
+      client: thirdwebClient,
+      wallets,
+      chains,
+      theme: thirdwebTheme,
+      size: 'wide',
+      title: 'Connect Wallet',
+      showThirdwebBranding: false,
+    })
+  }
+
+  // If connected, show custom dropdown (no thirdweb components)
+  if (account) {
+    return <WalletDetailsDropdown className={className} />
+  }
+
+  // If not connected, show connect button
   return (
-    <ThirdwebConnectButton
-      client={thirdwebClient}
-      wallets={wallets}
-      chains={chains}
-      theme="dark"
-      connectButton={{
-        label: 'Connect Wallet',
-        className,
-      }}
-      detailsButton={{
-        // Use custom dropdown instead of thirdweb's modal
-        render: () => <WalletDetailsDropdown className={className} />,
-      }}
-      connectModal={{
-        size: 'wide',
-        title: 'Connect Wallet',
-        showThirdwebBranding: false,
-      }}
-      // Note: accountAbstraction is intentionally disabled by default.
-      // Smart accounts are not supported on all chains (e.g., Story Aeneid).
-      // To enable smart accounts, uncomment and configure:
-      // accountAbstraction={{
-      //   chain: chains[0],
-      //   sponsorGas: false,
-      // }}
-    />
+    <button
+      onClick={handleConnect}
+      className={`inline-flex items-center justify-center px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors text-sm font-medium text-white ${className || ''}`}
+    >
+      Connect Wallet
+    </button>
   )
 }
-
-// Re-export for convenience when using Thirdweb features directly
-export { ThirdwebConnectButton }

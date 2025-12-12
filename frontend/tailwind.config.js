@@ -53,11 +53,27 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Logo-specific gradient stops
+        "gradient-from": "hsl(var(--gradient-from))",
+        "gradient-to": "hsl(var(--gradient-to))",
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-primary": "linear-gradient(135deg, hsl(var(--gradient-from)) 0%, hsl(var(--gradient-to)) 100%)",
+        "gradient-primary-reverse": "linear-gradient(135deg, hsl(var(--gradient-to)) 0%, hsl(var(--gradient-from)) 100%)",
+        "gradient-primary-vertical": "linear-gradient(180deg, hsl(var(--gradient-from)) 0%, hsl(var(--gradient-to)) 100%)",
+      },
+      boxShadow: {
+        "glow-primary": "0 0 20px hsl(var(--primary) / 0.4), 0 0 40px hsl(var(--primary) / 0.2)",
+        "glow-accent": "0 0 20px hsl(var(--accent) / 0.4), 0 0 40px hsl(var(--accent) / 0.2)",
+        "glow-secondary": "0 0 20px hsl(var(--secondary) / 0.4), 0 0 40px hsl(var(--secondary) / 0.2)",
+        "glow-sm": "0 0 10px hsl(var(--primary) / 0.3)",
+        "glow-lg": "0 0 30px hsl(var(--primary) / 0.5), 0 0 60px hsl(var(--primary) / 0.3)",
       },
       keyframes: {
         "accordion-down": {
@@ -68,10 +84,21 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "pulse-glow": {
+          "0%, 100%": { boxShadow: "0 0 20px hsl(var(--primary) / 0.4)" },
+          "50%": { boxShadow: "0 0 30px hsl(var(--primary) / 0.6), 0 0 50px hsl(var(--primary) / 0.3)" },
+        },
+        "gradient-shift": {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "gradient-shift": "gradient-shift 3s ease infinite",
       },
     },
   },

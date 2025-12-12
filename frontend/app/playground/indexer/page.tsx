@@ -1,18 +1,13 @@
 'use client'
 
 import { HoverEffect } from '@/components/ui/hover-effect'
-import { Database, Zap } from 'lucide-react'
+import { Zap } from 'lucide-react'
 
 const providers = [
   {
-    title: 'The Graph',
-    icon: Database,
-    link: '/indexer/thegraph',
-  },
-  {
     title: 'Goldsky',
     icon: Zap,
-    link: '/indexer/goldsky',
+    link: '/playground/indexer/goldsky',
   },
 ]
 

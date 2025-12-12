@@ -8,7 +8,7 @@
 # Navigate to subgraph directory
 cd subgraphs/my-token
 
-# Generate types and build (same as TheGraph)
+# Generate types and build
 graph codegen
 graph build
 
@@ -235,47 +235,6 @@ goldsky subgraph tag create my-dapp/2.0.0 --tag prod
 goldsky subgraph tag create my-dapp/1.0.0 --tag prod
 
 # Frontend immediately switches back to v1
-```
-
-## Migration from TheGraph
-
-### From Hosted Service
-
-```bash
-# Direct migration
-goldsky subgraph deploy my-subgraph/1.0.0 \
-  --from-url "https://api.thegraph.com/subgraphs/name/username/subgraph-name"
-
-# Creates identical subgraph on Goldsky
-```
-
-### From Studio
-
-```bash
-# Build locally first
-cd your-subgraph
-graph codegen
-graph build
-
-# Deploy same build to Goldsky
-goldsky subgraph deploy my-subgraph/1.0.0 --path .
-```
-
-### Parallel Running
-
-Run both during migration:
-
-```typescript
-// lib/subgraph-client.ts
-const THEGRAPH_ENDPOINT = 'https://api.thegraph.com/...'
-const GOLDSKY_ENDPOINT = 'https://api.goldsky.com/...'
-
-// Feature flag for gradual migration
-const USE_GOLDSKY = process.env.NEXT_PUBLIC_USE_GOLDSKY === 'true'
-
-export function getSubgraphEndpoint() {
-  return USE_GOLDSKY ? GOLDSKY_ENDPOINT : THEGRAPH_ENDPOINT
-}
 ```
 
 ## Debugging
