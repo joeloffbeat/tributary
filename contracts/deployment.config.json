@@ -1,0 +1,96 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2024-12-13",
+  "networks": {
+    "avalanche_fuji": {
+      "chainId": 43113,
+      "name": "Avalanche Fuji",
+      "rpcUrl": "https://api.avax-test.network/ext/bc/C/rpc",
+      "explorer": "https://testnet.snowtrace.io",
+      "blockscoutApi": "https://api.routescan.io/v2/network/testnet/evm/43113/etherscan/api"
+    },
+    "story_aeneid": {
+      "chainId": 1315,
+      "name": "Story Aeneid",
+      "rpcUrl": "https://aeneid.storyrpc.io",
+      "explorer": "https://aeneid.storyscan.xyz",
+      "blockscoutApi": "https://aeneid.storyscan.xyz/api"
+    }
+  },
+  "contracts": {
+    "IPayRegistry": {
+      "description": "Registry for IP listings with x402 micropayment integration",
+      "network": "avalanche_fuji",
+      "address": "0x883172EDFF24FE83FDE776f7A9Aaa59CCe5ABA2B",
+      "verified": true,
+      "deployedAt": "2024-12-12T14:15:00Z",
+      "deployer": "0x32FE11d9900D63350016374BE98ff37c3Af75847",
+      "txHash": "0x8a3e35678b4175cbfec81f9e4f6c6054bc17babb5d0acb662521a8f6a4a230b1"
+    },
+    "IPayReceiver": {
+      "description": "Cross-chain payment receiver for Story Protocol operations",
+      "network": "story_aeneid",
+      "address": "0xe4c7f7d38C2F6a3f7ac61821C70BB7D18CdCECFE",
+      "verified": false,
+      "deployedAt": "2024-12-13T07:48:00Z",
+      "deployer": "0x32FE11d9900D63350016374BE98ff37c3Af75847",
+      "txHash": "0x2ae8399b03ddecba9e0458be4a2916a6a9417968d6616ac3ef93f86e33c79ee1",
+      "constructorArgs": {
+        "mailbox": "0x6feB4f3eeD23D6cdDa54ec67d5d649BE015f782d",
+        "usdc": "0x33641e15d8f590161a47Fe696cF3C819d5636e71",
+        "wip": "0x1514000000000000000000000000000000000000",
+        "royaltyModule": "0xD2f60c40fEbccf6311f8B47c4f2Ec6b040400086",
+        "licensingModule": "0x04fbd8a2e56dd85CFD5500A4A4DfA955B9f1dE6f",
+        "pilTemplate": "0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316",
+        "ipAssetRegistry": "0x77319B4031e6eF1250907aa00018B8B1c67a244b",
+        "disputeModule": "0x3F03e6aD8B8B82017cAb15f7d9e4d52b7aA25e63",
+        "licenseToken": "0xfE3838BFb30b34170F00030b52efa71999C4ec3B",
+        "initialRate": "10000000000000000000"
+      }
+    },
+    "LicenseMarketplace": {
+      "description": "Marketplace for trading Story Protocol license tokens",
+      "network": "avalanche_fuji",
+      "address": "0x4D3ADE52F597e5F09F4dB6c9138fCcF5DB55b8A8",
+      "verified": false,
+      "deployedAt": "2024-12-13T07:52:00Z",
+      "deployer": "0x32FE11d9900D63350016374BE98ff37c3Af75847",
+      "constructorArgs": {
+        "usdc": "0x5425890298aed601595a70AB815c96711a31Bc65",
+        "feeRecipient": "0x32FE11d9900D63350016374BE98ff37c3Af75847",
+        "platformFee": 250
+      }
+    }
+  },
+  "externalContracts": {
+    "avalanche_fuji": {
+      "USDC": "0x5425890298aed601595a70AB815c96711a31Bc65",
+      "USDC_WARP_ROUTER": "0x42E86212057aD345B164EeEAc2F410Ca96a68200",
+      "HYPERLANE_MAILBOX": "0x60c3ca08D3df3F5fA583c535D9E44F3629F52452"
+    },
+    "story_aeneid": {
+      "WIP_TOKEN": "0x1514000000000000000000000000000000000000",
+      "USDC_BRIDGED": "0x33641e15d8f590161a47Fe696cF3C819d5636e71",
+      "HYPERLANE_MAILBOX": "0x6feB4f3eeD23D6cdDa54ec67d5d649BE015f782d",
+      "ROYALTY_MODULE": "0xD2f60c40fEbccf6311f8B47c4f2Ec6b040400086",
+      "LICENSING_MODULE": "0x04fbd8a2e56dd85CFD5500A4A4DfA955B9f1dE6f",
+      "PIL_TEMPLATE": "0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316",
+      "IP_REGISTRY": "0x77319B4031e6eF1250907aa00018B8B1c67a244b",
+      "DISPUTE_MODULE": "0x3F03e6aD8B8B82017cAb15f7d9e4d52b7aA25e63",
+      "LICENSE_TOKEN": "0xfE3838BFb30b34170F00030b52efa71999C4ec3B"
+    }
+  },
+  "deploymentInstructions": {
+    "IPayReceiver": {
+      "steps": [
+        "1. Ensure PRIVATE_KEY is set in .env",
+        "2. Ensure STORY_AENEID_RPC_URL is set (default: https://aeneid.storyrpc.io)",
+        "3. Run: forge script script/DeployIPayReceiver.s.sol:DeployIPayReceiver --rpc-url $STORY_AENEID_RPC_URL --broadcast -vvv",
+        "4. Update this config with deployed address",
+        "5. Set trusted sender (server wallet): receiver.setTrustedSender(bytes32(serverWallet))",
+        "6. Deposit WIP liquidity: receiver.depositWIP(amount)",
+        "7. Verify on explorer: forge verify-contract <address> src/IPayReceiver.sol:IPayReceiver --chain-id 1315 --verifier blockscout --verifier-url https://aeneid.storyscan.xyz/api --watch"
+      ]
+    }
+  }
+}

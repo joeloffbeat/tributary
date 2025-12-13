@@ -8,9 +8,15 @@ import {
   Zap,
   Blocks,
   Palette,
+  FileCode2,
 } from 'lucide-react'
 
 const sections = [
+  {
+    title: 'Contracts',
+    icon: FileCode2,
+    link: '/playground/contracts',
+  },
   {
     title: 'Cross-Chain',
     icon: Repeat,

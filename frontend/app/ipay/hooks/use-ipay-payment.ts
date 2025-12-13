@@ -5,7 +5,13 @@ import { wrapFetchWithPayment } from 'thirdweb/x402'
 import { useAccount, useThirdwebWallet, thirdwebClient } from '@/lib/web3'
 import { createNormalizedFetch } from '@/lib/utils/x402-payment'
 import type { IPListing, UsageReceipt, IPPayStep } from '../types'
-import { IPAY_CHAINS, USDC_FUJI_ADDRESS } from '../constants'
+import {
+  DEFAULT_SOURCE_CHAIN_ID,
+  getIPayChainConfig,
+  getAllSupportedChains,
+  getSupportedChainIds,
+  type IPayChainConfig,
+} from '@/constants/ipay'
 import { toast } from 'sonner'
 
 export interface PaymentResult {
@@ -13,6 +19,7 @@ export interface PaymentResult {
   txHash?: string
   receipt?: UsageReceipt
   error?: string
+  sourceChainId?: number
 }
 
 export interface UseIPayPaymentReturn {
@@ -23,6 +30,12 @@ export interface UseIPayPaymentReturn {
   lastReceipt: UsageReceipt | null
   error: string | null
   resetPayment: () => void
+  // Chain selection
+  selectedChainId: number
+  setSelectedChainId: (chainId: number) => void
+  selectedChain: IPayChainConfig | undefined
+  supportedChains: IPayChainConfig[]
+  supportedChainIds: number[]
 }
 
 const INITIAL_STEPS: IPPayStep[] = [
@@ -33,6 +46,7 @@ const INITIAL_STEPS: IPPayStep[] = [
 
 /**
  * Hook for paying for IP assets using x402 payment protocol
+ * Supports multi-chain payments from Avalanche Fuji, ETH Sepolia, and Polygon Amoy
  */
 export function useIPayPayment(): UseIPayPaymentReturn {
   const { address, isConnected } = useAccount()
@@ -43,6 +57,12 @@ export function useIPayPayment(): UseIPayPaymentReturn {
   const [currentStep, setCurrentStep] = useState<IPPayStep | null>(null)
   const [lastReceipt, setLastReceipt] = useState<UsageReceipt | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  // Chain selection state
+  const [selectedChainId, setSelectedChainId] = useState<number>(DEFAULT_SOURCE_CHAIN_ID)
+  const selectedChain = getIPayChainConfig(selectedChainId)
+  const supportedChains = getAllSupportedChains()
+  const supportedChainIds = getSupportedChainIds()
 
   // Update step status helper
   const updateStep = useCallback(
@@ -91,12 +111,17 @@ export function useIPayPayment(): UseIPayPaymentReturn {
       resetPayment()
 
       try {
+        // Validate selected chain
+        if (!selectedChain) {
+          throw new Error(`Invalid chain selected: ${selectedChainId}`)
+        }
+
         // Step 1: Approve USDC
         updateStep('approve', 'in_progress')
-        toast.info('Preparing payment...')
+        toast.info(`Preparing payment on ${selectedChain.displayName}...`)
 
-        // Create normalized fetch for signature compatibility
-        const normalizedFetch = createNormalizedFetch(IPAY_CHAINS.AVALANCHE_FUJI)
+        // Create normalized fetch for signature compatibility using selected chain
+        const normalizedFetch = createNormalizedFetch(selectedChainId)
 
         // Wrap fetch with x402 payment
         const fetchWithPay = wrapFetchWithPayment(normalizedFetch, thirdwebClient, wallet, {
@@ -109,15 +134,14 @@ export function useIPayPayment(): UseIPayPaymentReturn {
         updateStep('pay', 'in_progress')
         toast.info('Processing payment...')
 
-        // Call the IPay payment endpoint
-        const paymentUrl = `/api/ipay/pay/${listing.id}`
+        // Call the IPay payment endpoint with source chain
+        const paymentUrl = `/api/ipay/pay/${listing.id}?sourceChain=${selectedChainId}&recipient=${address}`
         const response = await fetchWithPay(paymentUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            listingId: listing.id,
-            buyer: address,
-          }),
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-source-chain': String(selectedChainId),
+          },
         })
 
         if (!response.ok) {
@@ -151,6 +175,7 @@ export function useIPayPayment(): UseIPayPaymentReturn {
           success: true,
           txHash: paymentData.txHash,
           receipt,
+          sourceChainId: selectedChainId,
         }
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Payment failed'
@@ -169,7 +194,7 @@ export function useIPayPayment(): UseIPayPaymentReturn {
         setCurrentStep(null)
       }
     },
-    [isConnected, address, wallet, updateStep, resetPayment, steps]
+    [isConnected, address, wallet, updateStep, resetPayment, steps, selectedChainId, selectedChain]
   )
 
   return {
@@ -180,6 +205,12 @@ export function useIPayPayment(): UseIPayPaymentReturn {
     lastReceipt,
     error,
     resetPayment,
+    // Chain selection
+    selectedChainId,
+    setSelectedChainId,
+    selectedChain,
+    supportedChains,
+    supportedChainIds,
   }
 }
 

@@ -1,0 +1,65 @@
+specVersion: 0.0.5
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: IPayReceiver
+    network: story-aeneid
+    source:
+      address: "0xA5Cf9339908C3970c2e9Ac4aC0105367f53B80cB"
+      abi: IPayReceiver
+      startBlock: 12168199
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Payment
+        - LicenseMint
+        - DerivativeCreation
+        - IPRegistration
+        - LicenseTransfer
+        - Dispute
+        - PaymentFailure
+        - Listing
+        - ListingUsage
+        - TrustedDomain
+        - LiquidityEvent
+        - ExchangeRateUpdate
+        - ProtocolStats
+      abis:
+        - name: IPayReceiver
+          file: IPayReceiver/abis/IPayReceiver.json
+      eventHandlers:
+        - event: PaymentReceived(indexed bytes32,indexed address,indexed address,uint256,uint256)
+          handler: handlePaymentReceived
+        - event: LicenseMinted(indexed bytes32,indexed address,indexed address,uint256,uint256)
+          handler: handleLicenseMinted
+        - event: DerivativeCreated(indexed bytes32,indexed address,indexed address,uint256)
+          handler: handleDerivativeCreated
+        - event: IPRegistered(indexed bytes32,indexed address,indexed uint256,address)
+          handler: handleIPRegistered
+        - event: LicenseTransferred(indexed bytes32,indexed uint256,indexed address,address)
+          handler: handleLicenseTransferred
+        - event: DisputeRaised(indexed bytes32,indexed uint256,indexed address,address,uint256)
+          handler: handleDisputeRaised
+        - event: PaymentFailed(indexed bytes32,uint8,string)
+          handler: handlePaymentFailed
+        - event: ListingCreated(indexed uint256,indexed address,indexed
+            address,uint256,uint32,string,string)
+          handler: handleListingCreated
+        - event: ListingUpdated(indexed uint256,uint256)
+          handler: handleListingUpdated
+        - event: ListingDeactivated(indexed uint256)
+          handler: handleListingDeactivated
+        - event: ListingUsed(indexed uint256,indexed address,uint256)
+          handler: handleListingUsed
+        - event: TrustedDomainUpdated(indexed uint32,bytes32,bool)
+          handler: handleTrustedDomainUpdated
+        - event: WIPDeposited(indexed address,uint256,uint256)
+          handler: handleWIPDeposited
+        - event: WIPWithdrawn(indexed address,uint256,uint256)
+          handler: handleWIPWithdrawn
+        - event: ExchangeRateUpdated(uint256,uint256)
+          handler: handleExchangeRateUpdated
+      file: IPayReceiver/IPayReceiver.wasm

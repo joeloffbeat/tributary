@@ -9,10 +9,27 @@ import type {
   MarketplaceFilters,
   IPCategory,
 } from '@/app/ipay/types'
-import { getSubgraphEndpoint } from '@/constants/subgraphs'
+import { getSubgraphEndpoint, hasSubgraph } from '@/constants/subgraphs'
+import { STORY_CHAIN_ID } from '@/constants/ipay'
+import {
+  getEnrichedIPAsset,
+  getIPAssetDisplayName,
+  getIPAssetImageUrl,
+  wipToUsdcEstimate,
+  type EnrichedIPAsset,
+} from './story-api-service'
 
-// Get IPay subgraph endpoint from constants (Avalanche Fuji = 43113)
-const IPAY_SUBGRAPH_URL = getSubgraphEndpoint(43113, 'ipay')
+// Get IPay subgraph endpoint from constants (Story Aeneid = 1315)
+function getIPAYSubgraphUrl(): string {
+  try {
+    if (hasSubgraph(STORY_CHAIN_ID, 'ipay')) {
+      return getSubgraphEndpoint(STORY_CHAIN_ID, 'ipay')
+    }
+    return ''
+  } catch {
+    return ''
+  }
+}
 
 // Subgraph response types
 interface SubgraphListing {
@@ -60,8 +77,16 @@ const LISTING_FIELDS = `
 `
 
 // GraphQL query helper
-async function querySubgraph<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
-  const response = await fetch(IPAY_SUBGRAPH_URL, {
+async function querySubgraph<T>(query: string, variables?: Record<string, unknown>): Promise<T | null> {
+  const subgraphUrl = getIPAYSubgraphUrl()
+
+  // Return null if subgraph endpoint not configured (pending deployment)
+  if (!subgraphUrl) {
+    console.warn('iPay subgraph endpoint not configured - pending Story Aeneid deployment')
+    return null
+  }
+
+  const response = await fetch(subgraphUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query, variables }),
@@ -144,6 +169,7 @@ class IPayService {
       }
     `
     const data = await querySubgraph<{ listings: SubgraphListing[] }>(query)
+    if (!data) return [] // Subgraph not configured
     return data.listings.map(mapListing)
   }
 
@@ -155,6 +181,7 @@ class IPayService {
       }
     `
     const data = await querySubgraph<{ listing: SubgraphListing | null }>(query, { id })
+    if (!data) return null // Subgraph not configured
     return data.listing ? mapListing(data.listing) : null
   }
 
@@ -170,6 +197,7 @@ class IPayService {
     const data = await querySubgraph<{ listings: SubgraphListing[] }>(query, {
       creator: address.toLowerCase(),
     })
+    if (!data) return [] // Subgraph not configured
     return data.listings.map(mapListing)
   }
 
@@ -190,11 +218,25 @@ class IPayService {
     const data = await querySubgraph<{ usages: SubgraphUsage[] }>(query, {
       user: address.toLowerCase(),
     })
+    if (!data) return [] // Subgraph not configured
     return data.usages.map(mapUsage)
   }
 
   /** Get analytics for a creator */
   async getCreatorAnalytics(address: Address): Promise<CreatorAnalytics> {
+    const emptyRevenue: Record<IPCategory, bigint> = {
+      images: 0n, music: 0n, code: 0n, data: 0n, templates: 0n, other: 0n,
+    }
+    const emptyAnalytics: CreatorAnalytics = {
+      totalListings: 0,
+      activeListings: 0,
+      totalUses: 0,
+      totalRevenue: 0n,
+      topListings: [],
+      recentReceipts: [],
+      revenueByCategory: emptyRevenue,
+    }
+
     const query = `
       query GetCreatorAnalytics($creator: Bytes!) {
         creator(id: $creator) {
@@ -222,21 +264,7 @@ class IPayService {
       usages: SubgraphUsage[]
     }>(query, { creator: address.toLowerCase() })
 
-    const emptyRevenue: Record<IPCategory, bigint> = {
-      images: 0n, music: 0n, code: 0n, data: 0n, templates: 0n, other: 0n,
-    }
-
-    if (!data.creator) {
-      return {
-        totalListings: 0,
-        activeListings: 0,
-        totalUses: 0,
-        totalRevenue: 0n,
-        topListings: [],
-        recentReceipts: [],
-        revenueByCategory: emptyRevenue,
-      }
-    }
+    if (!data || !data.creator) return emptyAnalytics
 
     const listings = data.creator.listings.map(mapListing)
 
@@ -256,6 +284,40 @@ class IPayService {
       revenueByCategory,
     }
   }
+
+  /** Enrich a listing with Story Protocol API data */
+  async enrichListing(listing: IPListing): Promise<EnrichedIPListing> {
+    const enriched = await getEnrichedIPAsset(listing.storyIPId)
+
+    // Get mint price from license terms (first commercial license found)
+    let mintPriceUSDC = 0n
+    const commercialLicense = enriched.licenseTerms.find((t) => t.commercialUse)
+    if (commercialLicense?.defaultMintingFee) {
+      mintPriceUSDC = wipToUsdcEstimate(commercialLicense.defaultMintingFee)
+    }
+
+    return {
+      ...listing,
+      // Override with enriched data if available
+      title: getIPAssetDisplayName(enriched.ipAsset) || listing.title,
+      imageUrl: getIPAssetImageUrl(enriched.ipAsset) || listing.imageUrl,
+      description: enriched.ipAsset?.metadata?.description || listing.description,
+      // Story Protocol data
+      enrichedData: enriched,
+      mintPriceUSDC,
+    }
+  }
+
+  /** Batch enrich listings */
+  async enrichListings(listings: IPListing[]): Promise<EnrichedIPListing[]> {
+    return Promise.all(listings.map((l) => this.enrichListing(l)))
+  }
+}
+
+/** Enriched listing with Story Protocol data */
+export interface EnrichedIPListing extends IPListing {
+  enrichedData: EnrichedIPAsset
+  mintPriceUSDC: bigint
 }
 
 // Export singleton instance

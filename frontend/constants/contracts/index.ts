@@ -18,11 +18,16 @@ export type ContractRegistry = Record<string, ContractConfig>
 // Dynamic imports for contract configs and ABIs by chain
 const contractImports: Record<number, () => Promise<{ default: ContractRegistry }>> = {
   43113: () => import('./43113/contracts'),
+  1315: () => import('./1315/contracts'),
 }
 
 const abiImports: Record<number, Record<string, () => Promise<{ default: Abi }>>> = {
   43113: {
     IPayRegistry: () => import('./43113/abis/IPayRegistry.json').then(m => ({ default: m.default as Abi })),
+  },
+  // Story Aeneid (1315)
+  1315: {
+    IPayReceiver: () => import('./1315/abis/IPayReceiver.json').then(m => ({ default: m.default as Abi })),
   },
 }
 
@@ -111,4 +116,6 @@ export function isChainContractsSupported(chainId: number): boolean {
 
 // Legacy exports for backward compatibility
 export const AVALANCHE_FUJI_CHAIN_ID = 43113
+export const STORY_AENEID_CHAIN_ID = 1315
 export const IPAY_REGISTRY_ADDRESS = '0x883172EDFF24FE83FDE776f7A9Aaa59CCe5ABA2B' as const
+export const IPAY_RECEIVER_ADDRESS = '0xA5Cf9339908C3970c2e9Ac4aC0105367f53B80cB' as const

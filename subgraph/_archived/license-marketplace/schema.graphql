@@ -1,0 +1,63 @@
+# License token listing on the marketplace
+type LicenseListing @entity {
+  id: ID!
+  listingId: BigInt!
+  seller: Seller!
+  sellerAddress: Bytes!
+  buyer: Bytes
+  licenseTokenId: BigInt!
+  ipId: Bytes!
+  licenseTermsId: BigInt!
+  priceUSDC: BigInt!
+  active: Boolean!
+  sold: Boolean!
+  createdAt: BigInt!
+  createdAtBlock: BigInt!
+  soldAt: BigInt
+  transactionHash: Bytes!
+  saleTransactionHash: Bytes
+  feeAmount: BigInt
+}
+
+# Seller statistics
+type Seller @entity {
+  id: Bytes!
+  totalListings: BigInt!
+  activeListings: BigInt!
+  totalSales: BigInt!
+  totalRevenue: BigInt!
+  listings: [LicenseListing!]! @derivedFrom(field: "seller")
+  firstListingAt: BigInt!
+  lastActivityAt: BigInt!
+}
+
+# Buyer statistics
+type Buyer @entity {
+  id: Bytes!
+  totalPurchases: BigInt!
+  totalSpent: BigInt!
+  firstPurchaseAt: BigInt!
+  lastPurchaseAt: BigInt!
+}
+
+# Marketplace protocol stats
+type MarketplaceStats @entity {
+  id: ID!
+  totalListings: BigInt!
+  activeListings: BigInt!
+  totalSales: BigInt!
+  totalVolume: BigInt!
+  totalFees: BigInt!
+  uniqueSellers: BigInt!
+  uniqueBuyers: BigInt!
+}
+
+# Daily stats for analytics
+type DailyStats @entity {
+  id: ID!
+  date: BigInt!
+  newListings: BigInt!
+  sales: BigInt!
+  volume: BigInt!
+  fees: BigInt!
+}

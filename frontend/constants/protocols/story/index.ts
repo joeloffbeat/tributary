@@ -33,7 +33,8 @@ export const STORY_EXPLORER = 'https://aeneid.explorer.story.foundation'
 export const STORY_FAUCET = 'https://faucet.story.foundation'
 export const STORY_DOCS = 'https://docs.story.foundation'
 
-// API endpoint (proxied through our API route)
+// API endpoints
+export const STORY_API_BASE = 'https://api.story.foundation'
 export const STORY_API_PROXY = '/api/story'
 
 // Chain configuration

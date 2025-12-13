@@ -9,6 +9,7 @@ optimizer_runs = 200
 [rpc_endpoints]
 avalanche_fuji = "${AVALANCHE_FUJI_RPC_URL}"
 avalanche_mainnet = "${AVALANCHE_MAINNET_RPC_URL}"
+story_aeneid = "${STORY_AENEID_RPC_URL}"
 
 # Etherscan/Snowtrace verification (optional)
 # [etherscan]

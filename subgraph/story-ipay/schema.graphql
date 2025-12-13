@@ -1,0 +1,151 @@
+# iPay Subgraph Schema for Story Aeneid
+# Indexes IPayReceiver contract events
+
+type Payment @entity {
+  id: ID!
+  messageId: Bytes!
+  payer: Bytes!
+  ipId: Bytes!
+  usdcAmount: BigInt!
+  wipAmount: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type LicenseMint @entity {
+  id: ID!
+  messageId: Bytes!
+  ipId: Bytes!
+  recipient: Bytes!
+  licenseTokenId: BigInt!
+  wipAmount: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type DerivativeCreation @entity {
+  id: ID!
+  messageId: Bytes!
+  parentIpId: Bytes!
+  derivativeIpId: Bytes!
+  wipAmount: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type IPRegistration @entity {
+  id: ID!
+  messageId: Bytes!
+  nftContract: Bytes!
+  tokenId: BigInt!
+  ipId: Bytes!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type LicenseTransfer @entity {
+  id: ID!
+  messageId: Bytes!
+  licenseTokenId: BigInt!
+  from: Bytes!
+  to: Bytes!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type Dispute @entity {
+  id: ID!
+  messageId: Bytes!
+  disputeId: BigInt!
+  targetIpId: Bytes!
+  disputant: Bytes!
+  bondAmount: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type PaymentFailure @entity {
+  id: ID!
+  messageId: Bytes!
+  operationType: Int!
+  reason: String!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type Listing @entity {
+  id: ID!
+  listingId: BigInt!
+  storyIPId: Bytes!
+  creator: Bytes!
+  priceUSDC: BigInt!
+  sourceChain: BigInt!
+  title: String!
+  category: String!
+  isActive: Boolean!
+  useCount: BigInt!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type ListingUsage @entity {
+  id: ID!
+  listingId: BigInt!
+  user: Bytes!
+  paymentAmount: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type TrustedDomain @entity {
+  id: ID!
+  domain: BigInt!
+  sender: Bytes!
+  enabled: Boolean!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type LiquidityEvent @entity {
+  id: ID!
+  eventType: String! # "deposit" or "withdraw"
+  actor: Bytes!
+  amount: BigInt!
+  newLiquidity: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type ExchangeRateUpdate @entity {
+  id: ID!
+  oldRate: BigInt!
+  newRate: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type ProtocolStats @entity {
+  id: ID!
+  totalPayments: BigInt!
+  totalLicensesMinted: BigInt!
+  totalDerivativesCreated: BigInt!
+  totalIPsRegistered: BigInt!
+  totalDisputesRaised: BigInt!
+  totalListingsCreated: BigInt!
+  totalListingUsages: BigInt!
+  totalWIPDeposited: BigInt!
+  totalWIPWithdrawn: BigInt!
+}

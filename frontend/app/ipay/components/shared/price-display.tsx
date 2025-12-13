@@ -1,6 +1,7 @@
 'use client'
 
 import { formatUnits } from 'viem'
+import Image from 'next/image'
 
 interface PriceDisplayProps {
   /** Price in smallest unit (wei for 6 decimals USDC) */
@@ -31,8 +32,9 @@ export function PriceDisplay({
         : numValue.toFixed(2)
 
   return (
-    <span className={`font-medium ${className}`}>
-      ${displayValue}
+    <span className={`font-medium inline-flex items-center gap-1 ${className}`}>
+      <Image src="/usdc.png" alt="USDC" width={16} height={16} className="rounded-full" />
+      {displayValue} USDC
     </span>
   )
 }
