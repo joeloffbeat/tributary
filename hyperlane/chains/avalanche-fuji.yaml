@@ -12,10 +12,9 @@ displayName: Avalanche Fuji Testnet
 protocol: ethereum
 isTestnet: true
 
-# RPC endpoints (add multiple for redundancy)
+# RPC endpoints (fallback - override via RPC_AVALANCHE_FUJI env var)
 rpcUrls:
   - http: https://api.avax-test.network/ext/bc/C/rpc
-  - http: https://avalanche-fuji-c-chain-rpc.publicnode.com
 
 # Native token configuration
 nativeToken:
@@ -29,6 +28,11 @@ blocks:
   estimateBlockTime: 2
   reorgPeriod: 1
 
+# Index configuration (for Alchemy free tier compatibility)
+index:
+  chunk: 9
+  from: 49000000
+
 # Block explorer configuration
 blockExplorers:
   - name: Snowtrace
@@ -38,8 +42,3 @@ blockExplorers:
 
 # Gas price configuration
 gasCurrencyCoinGeckoId: avalanche-2
-
-# Technical parameters (optional overrides)
-# transactionOverrides:
-#   maxFeePerGas: 50000000000
-#   maxPriorityFeePerGas: 5000000000

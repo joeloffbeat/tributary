@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { ipayService } from '@/lib/services/ipay-service'
-import type { MarketplaceFilters } from '@/app/ipay/types'
+import type { MarketplaceFilters } from '@/lib/types/ipay'
 
 /**
  * GET /api/ipay/listings

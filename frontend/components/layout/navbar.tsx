@@ -21,7 +21,7 @@ interface NavbarProps {
 }
 
 // Separate component to avoid fetching balance when not connected
-function BalanceDisplay({ address, chainId }: { address: string; chainId: number }) {
+function BalanceDisplay({ address, chainId }: { address: `0x${string}`; chainId: number }) {
   const { formatted: balanceFormatted, symbol: balanceSymbol } = useBalance({
     address,
     chainId,

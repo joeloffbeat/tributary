@@ -213,7 +213,7 @@ export function ConnectButton({ className }: ConnectButtonProps) {
 
   // Auto-connect on mount if previously connected
   useAutoConnect({
-    client: thirdwebClient!,
+    client: thirdwebClient as NonNullable<typeof thirdwebClient>,
     wallets,
   })
 
@@ -235,6 +235,7 @@ export function ConnectButton({ className }: ConnectButtonProps) {
 
   // Handle connect button click - opens thirdweb modal
   const handleConnect = async () => {
+    if (!thirdwebClient) return
     await connect({
       client: thirdwebClient,
       wallets,

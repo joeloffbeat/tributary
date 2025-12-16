@@ -8,7 +8,7 @@ import type {
   CreatorAnalytics,
   MarketplaceFilters,
   IPCategory,
-} from '@/app/ipay/types'
+} from '@/lib/types/ipay'
 import { getSubgraphEndpoint, hasSubgraph } from '@/constants/subgraphs'
 import { STORY_CHAIN_ID } from '@/constants/ipay'
 import {
@@ -62,7 +62,40 @@ interface SubgraphCreator {
   listings: SubgraphListing[]
 }
 
+interface SubgraphLicenseListing {
+  id: string
+  licenseTokenId: string
+  seller: { id: string }
+  price: string
+  active: boolean
+  createdAt: string
+  purchasedBy: { id: string } | null
+  purchasedAt: string | null
+}
+
+export interface LicenseListing {
+  id: string
+  licenseTokenId: bigint
+  seller: Address
+  price: bigint
+  isActive: boolean
+  createdAt: number
+  purchasedBy?: Address
+  purchasedAt?: number
+}
+
 // GraphQL listing fields fragment
+const LICENSE_LISTING_FIELDS = `
+  id
+  licenseTokenId
+  seller { id }
+  price
+  active
+  createdAt
+  purchasedBy { id }
+  purchasedAt
+`
+
 const LISTING_FIELDS = `
   id
   storyIPId
@@ -120,6 +153,20 @@ function mapListing(listing: SubgraphListing): IPListing {
     totalRevenue: BigInt(listing.totalRevenue),
     isActive: listing.active,
     createdAt: parseInt(listing.createdAt),
+  }
+}
+
+// Convert subgraph license listing to LicenseListing type
+function mapLicenseListing(listing: SubgraphLicenseListing): LicenseListing {
+  return {
+    id: listing.id,
+    licenseTokenId: BigInt(listing.licenseTokenId),
+    seller: listing.seller.id as Address,
+    price: BigInt(listing.price),
+    isActive: listing.active,
+    createdAt: parseInt(listing.createdAt),
+    purchasedBy: listing.purchasedBy?.id as Address | undefined,
+    purchasedAt: listing.purchasedAt ? parseInt(listing.purchasedAt) : undefined,
   }
 }
 
@@ -183,6 +230,48 @@ class IPayService {
     const data = await querySubgraph<{ listing: SubgraphListing | null }>(query, { id })
     if (!data) return null // Subgraph not configured
     return data.listing ? mapListing(data.listing) : null
+  }
+
+  /** Get a license listing by ID */
+  async getLicenseListingById(id: string): Promise<LicenseListing | null> {
+    const query = `
+      query GetLicenseListing($id: ID!) {
+        licenseListing(id: $id) { ${LICENSE_LISTING_FIELDS} }
+      }
+    `
+    const data = await querySubgraph<{ licenseListing: SubgraphLicenseListing | null }>(query, { id })
+    if (!data) return null // Subgraph not configured
+    return data.licenseListing ? mapLicenseListing(data.licenseListing) : null
+  }
+
+  /** Get all active license listings */
+  async getActiveLicenseListings(): Promise<LicenseListing[]> {
+    const query = `
+      query GetActiveLicenseListings {
+        licenseListings(where: { active: true }, orderBy: createdAt, orderDirection: desc) {
+          ${LICENSE_LISTING_FIELDS}
+        }
+      }
+    `
+    const data = await querySubgraph<{ licenseListings: SubgraphLicenseListing[] }>(query)
+    if (!data) return [] // Subgraph not configured
+    return data.licenseListings.map(mapLicenseListing)
+  }
+
+  /** Get license listings by seller */
+  async getLicenseListingsBySeller(seller: Address): Promise<LicenseListing[]> {
+    const query = `
+      query GetLicenseListingsBySeller($seller: Bytes!) {
+        licenseListings(where: { seller: $seller }, orderBy: createdAt, orderDirection: desc) {
+          ${LICENSE_LISTING_FIELDS}
+        }
+      }
+    `
+    const data = await querySubgraph<{ licenseListings: SubgraphLicenseListing[] }>(query, {
+      seller: seller.toLowerCase(),
+    })
+    if (!data) return [] // Subgraph not configured
+    return data.licenseListings.map(mapLicenseListing)
   }
 
   /** Get all listings by a specific creator */

@@ -31,7 +31,7 @@ export interface IPayChainConfig {
 /**
  * Operation types for IPayReceiver contract
  */
-export type IPayOperationType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+export type IPayOperationType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14
 
 /**
  * Operation type names for display
@@ -45,6 +45,12 @@ export type IPayOperationName =
   | 'CREATE_LISTING'
   | 'UPDATE_LISTING'
   | 'DEACTIVATE_LISTING'
+  | 'MINT_AND_REGISTER_IP'
+  | 'CREATE_COLLECTION'
+  | 'LIST_LICENSE_TOKEN'
+  | 'PURCHASE_LICENSE_LISTING'
+  | 'MINT_LICENSE_WITH_FEE'
+  | 'CREATE_DERIVATIVE_WITH_LICENSE'
 
 /**
  * iPay payment request parameters

@@ -31,10 +31,20 @@ contract DeployIPayReceiver is Script {
     address public constant IP_ASSET_REGISTRY = 0x77319B4031e6eF1250907aa00018B8B1c67a244b;
 
     // Story Protocol Dispute Module
-    address public constant DISPUTE_MODULE = 0x3F03e6aD8B8B82017cAb15f7d9e4d52b7aA25e63;
+    address public constant DISPUTE_MODULE = 0x9b7A9c70AFF961C799110954fc06F3093aeb94C5;
 
     // Story Protocol License Token (ERC721)
-    address public constant LICENSE_TOKEN = 0xfE3838BFb30b34170F00030b52efa71999C4ec3B;
+    address public constant LICENSE_TOKEN = 0xFe3838BFb30B34170F00030B52eA4893d8aAC6bC;
+
+    // Story Protocol Registration Workflows (SPG) - Aeneid Testnet
+    address public constant REGISTRATION_WORKFLOWS = 0xbe39E1C756e921BD25DF86e7AAa31106d1eb0424;
+
+    // Story Protocol Derivative Workflows - Aeneid Testnet
+    address public constant DERIVATIVE_WORKFLOWS = 0x9e2d496f72C547C2C535B167e06ED8729B374a4f;
+
+    // Story Protocol License Attachment Workflows - Aeneid Testnet
+    // NOTE: mintAndRegisterIpAndAttachPILTerms is in this contract, NOT RegistrationWorkflows
+    address public constant LICENSE_ATTACHMENT_WORKFLOWS = 0xcC2E862bCee5B6036Db0de6E06Ae87e524a79fd8;
 
     // Initial exchange rate: 1 USDC = 10 WIP (10e18)
     uint256 public constant INITIAL_RATE = 10e18;
@@ -58,6 +68,9 @@ contract DeployIPayReceiver is Script {
         console2.log("  IP Asset Registry:", IP_ASSET_REGISTRY);
         console2.log("  Dispute Module:", DISPUTE_MODULE);
         console2.log("  License Token:", LICENSE_TOKEN);
+        console2.log("  Registration Workflows:", REGISTRATION_WORKFLOWS);
+        console2.log("  Derivative Workflows:", DERIVATIVE_WORKFLOWS);
+        console2.log("  License Attachment Workflows:", LICENSE_ATTACHMENT_WORKFLOWS);
         console2.log("  Initial Rate:", INITIAL_RATE);
         console2.log("");
 
@@ -73,6 +86,9 @@ contract DeployIPayReceiver is Script {
             IP_ASSET_REGISTRY,
             DISPUTE_MODULE,
             LICENSE_TOKEN,
+            REGISTRATION_WORKFLOWS,
+            LICENSE_ATTACHMENT_WORKFLOWS,  // FIXED: This must come before DERIVATIVE_WORKFLOWS
+            DERIVATIVE_WORKFLOWS,
             INITIAL_RATE
         );
 

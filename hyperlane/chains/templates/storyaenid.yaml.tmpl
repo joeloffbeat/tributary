@@ -1,0 +1,36 @@
+# =============================================================================
+# Story Aenid Testnet - Chain Metadata for Hyperlane
+# =============================================================================
+# Documentation: https://docs.story.foundation/
+# Faucet: https://faucet.story.foundation/
+
+# Chain identification
+chainId: 1315
+domainId: 1315
+name: storyaenid
+displayName: Story Aenid Testnet
+protocol: ethereum
+isTestnet: true
+
+# RPC endpoints (from env var RPC_STORY_AENID)
+rpcUrls:
+  - http: ${RPC_STORY_AENID}
+
+# Native token configuration
+nativeToken:
+  name: IP
+  symbol: IP
+  decimals: 18
+
+# Block configuration
+blocks:
+  confirmations: 1
+  estimateBlockTime: 3
+  reorgPeriod: 0
+
+# Block explorer configuration
+blockExplorers:
+  - name: Story Aenid Explorer
+    url: https://aeneid.storyscan.xyz
+    apiUrl: https://aeneid.storyscan.xyz/api
+    family: blockscout

@@ -1,6 +1,41 @@
 # iPay Subgraph Schema for Story Aeneid
 # Indexes IPayReceiver contract events
 
+type Creator @entity {
+  id: ID! # address
+  totalListings: BigInt!
+  totalRevenue: BigInt!
+  totalUses: BigInt!
+  listings: [Listing!]! @derivedFrom(field: "creator")
+}
+
+type Listing @entity {
+  id: ID!
+  storyIPId: Bytes!
+  creator: Creator!
+  pricePerUse: BigInt! # Maps from priceUSDC in contract
+  metadataUri: String!
+  assetIpfsHash: String!
+  totalUses: BigInt!
+  totalRevenue: BigInt!
+  active: Boolean!
+  createdAt: BigInt!
+  title: String!
+  category: String!
+  sourceChain: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type Usage @entity {
+  id: ID!
+  listing: Listing!
+  user: Bytes!
+  amount: BigInt!
+  timestamp: BigInt!
+  txHash: Bytes!
+}
+
 type Payment @entity {
   id: ID!
   messageId: Bytes!
@@ -80,33 +115,6 @@ type PaymentFailure @entity {
   transactionHash: Bytes!
 }
 
-type Listing @entity {
-  id: ID!
-  listingId: BigInt!
-  storyIPId: Bytes!
-  creator: Bytes!
-  priceUSDC: BigInt!
-  sourceChain: BigInt!
-  title: String!
-  category: String!
-  isActive: Boolean!
-  useCount: BigInt!
-  createdAt: BigInt!
-  updatedAt: BigInt!
-  blockNumber: BigInt!
-  transactionHash: Bytes!
-}
-
-type ListingUsage @entity {
-  id: ID!
-  listingId: BigInt!
-  user: Bytes!
-  paymentAmount: BigInt!
-  timestamp: BigInt!
-  blockNumber: BigInt!
-  transactionHash: Bytes!
-}
-
 type TrustedDomain @entity {
   id: ID!
   domain: BigInt!
@@ -137,6 +145,19 @@ type ExchangeRateUpdate @entity {
   transactionHash: Bytes!
 }
 
+type LicenseListing @entity {
+  id: ID!
+  licenseTokenId: BigInt!
+  seller: Bytes!
+  price: BigInt!
+  active: Boolean!
+  createdAt: BigInt!
+  purchasedBy: Bytes
+  purchasedAt: BigInt
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
 type ProtocolStats @entity {
   id: ID!
   totalPayments: BigInt!
@@ -146,6 +167,7 @@ type ProtocolStats @entity {
   totalDisputesRaised: BigInt!
   totalListingsCreated: BigInt!
   totalListingUsages: BigInt!
+  totalLicenseListings: BigInt!
   totalWIPDeposited: BigInt!
   totalWIPWithdrawn: BigInt!
 }

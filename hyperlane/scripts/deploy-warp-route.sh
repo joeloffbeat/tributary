@@ -32,6 +32,60 @@ if [ -z "$HYP_KEY" ]; then
     exit 1
 fi
 
+# Function to convert chain name to env var name
+chain_to_env_var() {
+    local chain_name=$1
+    local env_var=""
+
+    case "$chain_name" in
+        sepolia)
+            env_var="RPC_SEPOLIA"
+            ;;
+        storyaenid)
+            env_var="RPC_STORY_AENID"
+            ;;
+        polygonamoy)
+            env_var="RPC_POLYGON_AMOY"
+            ;;
+        fuji)
+            env_var="RPC_AVALANCHE_FUJI"
+            ;;
+        *)
+            # Convert to uppercase and add RPC_ prefix
+            env_var="RPC_$(echo "$chain_name" | tr '[:lower:]-' '[:upper:]_')"
+            ;;
+    esac
+
+    echo "$env_var"
+}
+
+# Function to get RPC URL for a chain (MUST be set in environment)
+get_rpc_url() {
+    local chain_name=$1
+    local env_var=$(chain_to_env_var "$chain_name")
+    local env_value="${!env_var}"
+
+    if [ -z "$env_value" ]; then
+        echo ""
+        return
+    fi
+
+    echo "$env_value"
+}
+
+# Function to update registry metadata with env var RPC URL
+update_registry_rpc() {
+    local chain_name=$1
+    local rpc_url=$2
+    local metadata_file="$ROOT_DIR/registry-clone/chains/$chain_name/metadata.yaml"
+
+    if [ -f "$metadata_file" ]; then
+        sed -i.bak "s|http: https://.*|http: $rpc_url|" "$metadata_file"
+        rm -f "${metadata_file}.bak"
+        echo -e "  ${GREEN}✓${NC} Updated $chain_name RPC in registry"
+    fi
+}
+
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}Hyperlane Warp Route Deployment${NC}"
 echo -e "${BLUE}========================================${NC}"
@@ -51,6 +105,41 @@ if [ ! -f "$WARP_CONFIG" ]; then
 fi
 
 echo -e "${YELLOW}Using warp route config: $WARP_CONFIG${NC}"
+echo ""
+
+# Extract chains from warp config and validate RPC env vars
+echo -e "${YELLOW}Validating RPC environment variables...${NC}"
+WARP_CHAINS=$(grep -E "^[a-zA-Z0-9_-]+:$" "$WARP_CONFIG" | tr -d ':' | tr -d ' ')
+MISSING_RPCS=()
+
+for chain in $WARP_CHAINS; do
+    env_var=$(chain_to_env_var "$chain")
+    rpc_url=$(get_rpc_url "$chain")
+
+    if [ -z "$rpc_url" ]; then
+        MISSING_RPCS+=("$env_var (for $chain)")
+    else
+        echo -e "  ${GREEN}✓${NC} $env_var is set"
+        # Update the registry-clone with the env var RPC URL
+        update_registry_rpc "$chain" "$rpc_url"
+    fi
+done
+
+if [ ${#MISSING_RPCS[@]} -gt 0 ]; then
+    echo ""
+    echo -e "${RED}Error: Missing required RPC environment variables:${NC}"
+    for missing in "${MISSING_RPCS[@]}"; do
+        echo -e "  ${RED}✗${NC} $missing"
+    done
+    echo ""
+    echo -e "Please add these to your .env file:"
+    for missing in "${MISSING_RPCS[@]}"; do
+        var_name=$(echo "$missing" | cut -d' ' -f1)
+        echo -e "  ${BLUE}$var_name=https://your-rpc-url${NC}"
+    done
+    exit 1
+fi
+
 echo ""
 
 # Deploy warp route

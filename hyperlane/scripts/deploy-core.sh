@@ -49,19 +49,70 @@ if [ -z "$HYP_KEY" ]; then
     exit 1
 fi
 
+# Function to convert chain name to env var name
+chain_to_env_var() {
+    local chain_name=$1
+    local env_var=""
+
+    case "$chain_name" in
+        sepolia)
+            env_var="RPC_SEPOLIA"
+            ;;
+        storyaenid)
+            env_var="RPC_STORY_AENID"
+            ;;
+        polygonamoy)
+            env_var="RPC_POLYGON_AMOY"
+            ;;
+        fuji)
+            env_var="RPC_AVALANCHE_FUJI"
+            ;;
+        *)
+            # Convert to uppercase and add RPC_ prefix
+            env_var="RPC_$(echo "$chain_name" | tr '[:lower:]-' '[:upper:]_')"
+            ;;
+    esac
+
+    echo "$env_var"
+}
+
+# Get the internal chain name from the YAML file
+INTERNAL_CHAIN_NAME=$(grep "^name:" "$CHAIN_CONFIG" | awk '{print $2}' | tr -d '"')
+if [ -z "$INTERNAL_CHAIN_NAME" ]; then
+    INTERNAL_CHAIN_NAME="$CHAIN_NAME"
+fi
+
+# Validate RPC environment variable is set
+RPC_ENV_VAR=$(chain_to_env_var "$INTERNAL_CHAIN_NAME")
+RPC_URL="${!RPC_ENV_VAR}"
+
+if [ -z "$RPC_URL" ]; then
+    echo -e "${RED}Error: $RPC_ENV_VAR environment variable is not set${NC}"
+    echo -e "Please add to your .env file: ${BLUE}$RPC_ENV_VAR=https://your-rpc-url${NC}"
+    exit 1
+fi
+
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}Hyperlane Core Deployment${NC}"
 echo -e "${BLUE}========================================${NC}"
 echo -e "Chain: ${GREEN}$CHAIN_NAME${NC}"
 echo -e "Config: ${GREEN}$CHAIN_CONFIG${NC}"
+echo -e "RPC: ${GREEN}$RPC_ENV_VAR${NC}"
 echo ""
 
-# Step 1: Copy chain metadata to Hyperlane registry location
+# Step 1: Copy chain metadata to Hyperlane registry location and update RPC URL
 echo -e "${YELLOW}Step 1: Setting up chain metadata...${NC}"
 HYPERLANE_DIR="$HOME/.hyperlane"
 mkdir -p "$HYPERLANE_DIR/chains/$CHAIN_NAME"
 cp "$CHAIN_CONFIG" "$HYPERLANE_DIR/chains/$CHAIN_NAME/metadata.yaml"
+
+# Update the metadata with the env var RPC URL
+METADATA_FILE="$HYPERLANE_DIR/chains/$CHAIN_NAME/metadata.yaml"
+sed -i.bak "s|http: https://.*|http: $RPC_URL|" "$METADATA_FILE"
+rm -f "${METADATA_FILE}.bak"
+
 echo -e "${GREEN}✓ Chain metadata copied to $HYPERLANE_DIR/chains/$CHAIN_NAME/${NC}"
+echo -e "${GREEN}✓ RPC URL set from $RPC_ENV_VAR${NC}"
 
 # Step 2: Check if core-config exists, if not initialize
 CORE_CONFIG="$ROOT_DIR/configs/core-config.yaml"

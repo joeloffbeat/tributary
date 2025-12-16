@@ -22,7 +22,7 @@ interface IWIP {
 /// @notice Wraps IP to WIP and deposits liquidity, sets trusted domains
 contract SetupIPayReceiver is Script {
     // Story Aeneid addresses
-    address public constant IPAY_RECEIVER = 0xe4c7f7d38C2F6a3f7ac61821C70BB7D18CdCECFE;
+    address public constant IPAY_RECEIVER = 0x84cfED6aD4B772eB5293409639cFEb0364d0c347;
     address public constant WIP_TOKEN = 0x1514000000000000000000000000000000000000;
 
     // Domain IDs
@@ -30,8 +30,8 @@ contract SetupIPayReceiver is Script {
     uint32 public constant DOMAIN_SEPOLIA = 11155111;
     uint32 public constant DOMAIN_AMOY = 80002;
 
-    // Amount to wrap and deposit (0.5 IP = 0.5 * 1e18)
-    uint256 public constant WRAP_AMOUNT = 0.5 ether;
+    // Amount to wrap and deposit (0.1 IP = 0.1 * 1e18)
+    uint256 public constant WRAP_AMOUNT = 0.1 ether;
 
     function run() public {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");

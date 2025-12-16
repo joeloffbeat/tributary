@@ -16,22 +16,31 @@ const ENGINE_URL = process.env.THIRDWEB_ENGINE_URL || DEFAULT_ENGINE_URL
 interface CreateListingRequest {
   sourceChainId?: number
   ipId: Address
-  licenseTermsId: bigint | string
-  price: bigint | string
-  seller: Address
+  creator: Address
+  title: string
+  description: string
+  category: string
+  priceUSDC: bigint | string
+  assetIpfsHash: string
+  metadataUri: string
 }
 
 /**
  * Dispatch Hyperlane message to create a listing on Story Protocol
+ * Payload format: (address ipId, address creator, string title, string description, string category, uint256 priceUSDC, string assetIpfsHash, string metadataUri)
  */
 async function dispatchCreateListing(params: {
   sourceChainId: number
   ipId: Address
-  licenseTermsId: bigint
-  price: bigint
-  seller: Address
+  creator: Address
+  title: string
+  description: string
+  category: string
+  priceUSDC: bigint
+  assetIpfsHash: string
+  metadataUri: string
 }): Promise<{ success: boolean; queueId?: string; error?: string }> {
-  const { sourceChainId, ipId, licenseTermsId, price, seller } = params
+  const { sourceChainId, ipId, creator, title, description, category, priceUSDC, assetIpfsHash, metadataUri } = params
 
   // Get chain config for source chain
   const chainConfig = getIPayChainConfig(sourceChainId)
@@ -39,15 +48,20 @@ async function dispatchCreateListing(params: {
     return { success: false, error: `Unsupported source chain: ${sourceChainId}` }
   }
 
-  // Encode the payload: (ipId, licenseTermsId, price, seller)
+  // Encode the payload matching contract's _handleCreateListing:
+  // (address ipId, address creator, string title, string description, string category, uint256 priceUSDC, string assetIpfsHash, string metadataUri)
   const payload = encodeAbiParameters(
     [
       { type: 'address', name: 'ipId' },
-      { type: 'uint256', name: 'licenseTermsId' },
-      { type: 'uint256', name: 'price' },
-      { type: 'address', name: 'seller' },
+      { type: 'address', name: 'creator' },
+      { type: 'string', name: 'title' },
+      { type: 'string', name: 'description' },
+      { type: 'string', name: 'category' },
+      { type: 'uint256', name: 'priceUSDC' },
+      { type: 'string', name: 'assetIpfsHash' },
+      { type: 'string', name: 'metadataUri' },
     ],
-    [ipId, licenseTermsId, price, seller]
+    [ipId, creator, title, description, category, priceUSDC, assetIpfsHash, metadataUri]
   )
 
   // Prepend operation type (1 byte for OP_CREATE_LISTING)
@@ -118,22 +132,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate required fields
-    if (!body.ipId || !body.seller) {
+    if (!body.ipId || !body.creator || !body.title) {
       return Response.json(
-        { error: 'Missing required fields: ipId, seller' },
+        { error: 'Missing required fields: ipId, creator, title' },
         { status: 400 }
       )
     }
 
     // Parse bigint values
-    const licenseTermsId = typeof body.licenseTermsId === 'string'
-      ? BigInt(body.licenseTermsId)
-      : BigInt(body.licenseTermsId || 1)
-    const price = typeof body.price === 'string'
-      ? BigInt(body.price)
-      : BigInt(body.price || 0)
+    const priceUSDC = typeof body.priceUSDC === 'string'
+      ? BigInt(body.priceUSDC)
+      : BigInt(body.priceUSDC || 0)
 
-    if (price <= 0n) {
+    if (priceUSDC <= 0n) {
       return Response.json(
         { error: 'Price must be greater than 0' },
         { status: 400 }
@@ -147,9 +158,13 @@ export async function POST(request: NextRequest) {
     const result = await dispatchCreateListing({
       sourceChainId,
       ipId: body.ipId,
-      licenseTermsId,
-      price,
-      seller: body.seller,
+      creator: body.creator,
+      title: body.title,
+      description: body.description || '',
+      category: body.category || 'art',
+      priceUSDC,
+      assetIpfsHash: body.assetIpfsHash || '',
+      metadataUri: body.metadataUri || '',
     })
 
     if (!result.success) {
@@ -166,9 +181,10 @@ export async function POST(request: NextRequest) {
       sourceChainId,
       listing: {
         ipId: body.ipId,
-        licenseTermsId: licenseTermsId.toString(),
-        price: price.toString(),
-        seller: body.seller,
+        creator: body.creator,
+        title: body.title,
+        priceUSDC: priceUSDC.toString(),
+        category: body.category || 'art',
       },
       message: 'Listing creation initiated. The listing will appear on Story Protocol once the cross-chain message is delivered.',
       timestamp: new Date().toISOString(),

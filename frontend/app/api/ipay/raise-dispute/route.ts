@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { encodeAbiParameters, keccak256, toHex, concat, pad, type Address } from 'viem'
-
-// Hyperlane contract addresses
-const AVALANCHE_FUJI_MAILBOX = '0x60c3ca08D3df3F5fA583c535D9E44F3629F52452' as Address
-const IPAY_RECEIVER_STORY = '0xA5fa941d3c000ec425Fa7aDcAA0a9f5Bdb807f0F' as Address
-const STORY_DOMAIN_ID = 1315
+import {
+  IPAY_RECEIVER_ADDRESS,
+  STORY_DOMAIN,
+  OP_RAISE_DISPUTE,
+  getIPayChainConfig,
+  DEFAULT_SOURCE_CHAIN_ID,
+} from '@/constants/ipay'
+import { SELF_HOSTED_DEPLOYMENTS } from '@/constants/hyperlane/self-hosted'
 
 // Thirdweb Engine URL
 const ENGINE_URL = process.env.THIRDWEB_ENGINE_URL || 'https://engine.thirdweb.com'
 
-// Operation type for dispute filing
-const OP_RAISE_DISPUTE = 5
-
-// Dispute tags from Story Protocol
-export const DISPUTE_TAGS = {
+// Dispute tags from Story Protocol (internal use only - not exported from route)
+const DISPUTE_TAGS = {
   IMPROPER_REGISTRATION: keccak256(toHex('IMPROPER_REGISTRATION')),
   IMPROPER_USAGE: keccak256(toHex('IMPROPER_USAGE')),
   IMPROPER_PAYMENT: keccak256(toHex('IMPROPER_PAYMENT')),
@@ -53,11 +53,18 @@ async function dispatchRaiseDisputeMessage(params: {
   const message = concat([toHex(OP_RAISE_DISPUTE, { size: 1 }), payload])
 
   // Convert IPayReceiver address to bytes32
-  const recipientBytes32 = pad(IPAY_RECEIVER_STORY, { size: 32 })
+  const recipientBytes32 = pad(IPAY_RECEIVER_ADDRESS, { size: 32 })
+
+  // Get mailbox for source chain (default to Avalanche Fuji)
+  const sourceChainId = DEFAULT_SOURCE_CHAIN_ID
+  const deployment = SELF_HOSTED_DEPLOYMENTS[sourceChainId]
+  if (!deployment) {
+    return { success: false, error: `No Hyperlane deployment for chain: ${sourceChainId}` }
+  }
 
   try {
     const response = await fetch(
-      `${ENGINE_URL}/contract/43113/${AVALANCHE_FUJI_MAILBOX}/write`,
+      `${ENGINE_URL}/contract/${sourceChainId}/${deployment.mailbox}/write`,
       {
         method: 'POST',
         headers: {
@@ -68,7 +75,7 @@ async function dispatchRaiseDisputeMessage(params: {
         body: JSON.stringify({
           functionName: 'dispatch',
           args: [
-            STORY_DOMAIN_ID.toString(),
+            STORY_DOMAIN.toString(),
             recipientBytes32,
             message,
           ],

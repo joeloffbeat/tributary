@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import { Test, console } from "forge-std/Test.sol";
 import { IPayReceiver } from "../src/IPayReceiver.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { WorkflowStructs, ISPGNFT } from "../src/interfaces/IStoryProtocol.sol";
 
 /// @title IPayReceiver Tests
 /// @notice Comprehensive tests for the IPayReceiver contract
@@ -18,6 +19,9 @@ contract IPayReceiverTest is Test {
     MockIPAssetRegistry public ipAssetRegistry;
     MockDisputeModule public disputeModule;
     MockLicenseToken public licenseToken;
+    MockRegistrationWorkflows public registrationWorkflows;
+    MockDerivativeWorkflows public derivativeWorkflows;
+    MockLicenseAttachmentWorkflows public licenseAttachmentWorkflows;
 
     // ============ Addresses ============
     address public owner = makeAddr("owner");
@@ -43,6 +47,9 @@ contract IPayReceiverTest is Test {
         ipAssetRegistry = new MockIPAssetRegistry();
         disputeModule = new MockDisputeModule();
         licenseToken = new MockLicenseToken();
+        registrationWorkflows = new MockRegistrationWorkflows();
+        derivativeWorkflows = new MockDerivativeWorkflows();
+        licenseAttachmentWorkflows = new MockLicenseAttachmentWorkflows();
 
         // Deploy receiver
         vm.prank(owner);
@@ -56,6 +63,9 @@ contract IPayReceiverTest is Test {
             address(ipAssetRegistry),
             address(disputeModule),
             address(licenseToken),
+            address(registrationWorkflows),
+            address(derivativeWorkflows),
+            address(licenseAttachmentWorkflows),
             INITIAL_RATE
         );
 
@@ -97,6 +107,9 @@ contract IPayReceiverTest is Test {
             address(ipAssetRegistry),
             address(disputeModule),
             address(licenseToken),
+            address(registrationWorkflows),
+            address(derivativeWorkflows),
+            address(licenseAttachmentWorkflows),
             INITIAL_RATE
         );
     }
@@ -113,6 +126,9 @@ contract IPayReceiverTest is Test {
             address(ipAssetRegistry),
             address(disputeModule),
             address(licenseToken),
+            address(registrationWorkflows),
+            address(derivativeWorkflows),
+            address(licenseAttachmentWorkflows),
             0
         );
     }
@@ -343,7 +359,7 @@ contract IPayReceiverTest is Test {
         bytes memory message = abi.encodePacked(uint8(1), payload);
 
         vm.expectEmit(true, false, false, true);
-        emit IPayReceiver.PaymentFailed(messageId, 1, "Insufficient liquidity");
+        emit IPayReceiver.PaymentFailed(messageId, 1, "Low liquidity");
 
         vm.prank(address(mailbox));
         receiver.handle(AVALANCHE_DOMAIN, trustedSender, message);
@@ -539,5 +555,57 @@ contract MockLicenseToken {
 
     function tokenOfOwnerByIndex(address, uint256) external pure returns (uint256) {
         return 1;
+    }
+}
+
+contract MockRegistrationWorkflows {
+    address private constant MOCK_IP_ID = address(0x789);
+    uint256 private _nextTokenId = 1;
+
+    function mintAndRegisterIpAndAttachPILTerms(
+        address, // spgNftContract
+        address, // recipient
+        WorkflowStructs.IPMetadata calldata, // ipMetadata
+        WorkflowStructs.LicenseTermsData[] calldata, // licenseTermsData
+        bool // allowDuplicates
+    ) external returns (address ipId, uint256 tokenId, uint256[] memory licenseTermsIds) {
+        ipId = MOCK_IP_ID;
+        tokenId = _nextTokenId++;
+        licenseTermsIds = new uint256[](1);
+        licenseTermsIds[0] = 1;
+    }
+
+    function createCollection(ISPGNFT.InitParams calldata)
+        external
+        pure
+        returns (address spgNftContract)
+    {
+        return address(0xABC);
+    }
+}
+
+contract MockDerivativeWorkflows {
+    address private constant MOCK_IP_ID = address(0xDEF);
+    uint256 private _nextTokenId = 1;
+
+    function mintAndRegisterIpAndMakeDerivativeWithLicenseTokens(
+        address, uint256[] calldata, bytes calldata, uint32, WorkflowStructs.IPMetadata calldata, address, bool
+    ) external returns (address ipId, uint256 tokenId) {
+        ipId = MOCK_IP_ID;
+        tokenId = _nextTokenId++;
+    }
+}
+
+contract MockLicenseAttachmentWorkflows {
+    address private constant MOCK_IP_ID = address(0xFED);
+    uint256 private _nextTokenId = 1;
+
+    function mintAndRegisterIpAndAttachPILTerms(
+        address, address, WorkflowStructs.IPMetadata calldata, WorkflowStructs.LicenseTermsData[] calldata, bool
+    ) external returns (address ipId, uint256 tokenId, uint256[] memory licenseTermsIds) {
+        ipId = MOCK_IP_ID;
+        tokenId = _nextTokenId++;
+        licenseTermsIds = new uint256[](1);
+        licenseTermsIds[0] = 1;
     }
 }

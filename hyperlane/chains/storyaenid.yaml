@@ -12,7 +12,7 @@ displayName: Story Aenid Testnet
 protocol: ethereum
 isTestnet: true
 
-# RPC endpoints (add multiple for redundancy)
+# RPC endpoints (fallback - override via RPC_STORY_AENID env var)
 rpcUrls:
   - http: https://aeneid.storyrpc.io
 
@@ -28,17 +28,14 @@ blocks:
   estimateBlockTime: 3
   reorgPeriod: 0
 
+# Index configuration (for Alchemy free tier compatibility)
+index:
+  chunk: 9
+  from: 12200000
+
 # Block explorer configuration
 blockExplorers:
   - name: Story Aenid Explorer
     url: https://aeneid.storyscan.xyz
     apiUrl: https://aeneid.storyscan.xyz/api
     family: blockscout
-
-# Gas price configuration (optional)
-# gasCurrencyCoinGeckoId: story-ip
-
-# Technical parameters
-# transactionOverrides:
-#   maxFeePerGas: 50000000000
-#   maxPriorityFeePerGas: 5000000000

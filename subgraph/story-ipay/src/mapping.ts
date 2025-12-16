@@ -14,9 +14,14 @@ import {
   TrustedDomainUpdated,
   WIPDeposited,
   WIPWithdrawn,
-  ExchangeRateUpdated
+  ExchangeRateUpdated,
+  LicenseTokenListed,
+  LicenseListingPurchased
 } from "../generated/IPayReceiver/IPayReceiver"
 import {
+  Creator,
+  Listing,
+  Usage,
   Payment,
   LicenseMint,
   DerivativeCreation,
@@ -24,8 +29,7 @@ import {
   LicenseTransfer,
   Dispute,
   PaymentFailure,
-  Listing,
-  ListingUsage,
+  LicenseListing,
   TrustedDomain,
   LiquidityEvent,
   ExchangeRateUpdate,
@@ -43,10 +47,22 @@ function getOrCreateStats(): ProtocolStats {
     stats.totalDisputesRaised = BigInt.fromI32(0)
     stats.totalListingsCreated = BigInt.fromI32(0)
     stats.totalListingUsages = BigInt.fromI32(0)
+    stats.totalLicenseListings = BigInt.fromI32(0)
     stats.totalWIPDeposited = BigInt.fromI32(0)
     stats.totalWIPWithdrawn = BigInt.fromI32(0)
   }
   return stats
+}
+
+function getOrCreateCreator(address: string): Creator {
+  let creator = Creator.load(address)
+  if (creator == null) {
+    creator = new Creator(address)
+    creator.totalListings = BigInt.fromI32(0)
+    creator.totalRevenue = BigInt.fromI32(0)
+    creator.totalUses = BigInt.fromI32(0)
+  }
+  return creator
 }
 
 export function handlePaymentReceived(event: PaymentReceived): void {
@@ -171,19 +187,27 @@ export function handlePaymentFailed(event: PaymentFailed): void {
 
 export function handleListingCreated(event: ListingCreated): void {
   let id = event.params.listingId.toString()
-  let listing = new Listing(id)
 
-  listing.listingId = event.params.listingId
+  // Get or create creator
+  let creatorAddress = event.params.creator.toHexString()
+  let creator = getOrCreateCreator(creatorAddress)
+  creator.totalListings = creator.totalListings.plus(BigInt.fromI32(1))
+  creator.save()
+
+  // Create listing
+  let listing = new Listing(id)
   listing.storyIPId = event.params.storyIPId
-  listing.creator = event.params.creator
-  listing.priceUSDC = event.params.priceUSDC
-  listing.sourceChain = event.params.sourceChain
+  listing.creator = creatorAddress
+  listing.pricePerUse = event.params.priceUSDC // Map priceUSDC to pricePerUse
+  listing.metadataUri = "" // Not in event, would need contract call
+  listing.assetIpfsHash = "" // Not in event, would need contract call
+  listing.totalUses = BigInt.fromI32(0)
+  listing.totalRevenue = BigInt.fromI32(0)
+  listing.active = true
+  listing.createdAt = event.block.timestamp
   listing.title = event.params.title
   listing.category = event.params.category
-  listing.isActive = true
-  listing.useCount = BigInt.fromI32(0)
-  listing.createdAt = event.block.timestamp
-  listing.updatedAt = event.block.timestamp
+  listing.sourceChain = event.params.sourceChain
   listing.blockNumber = event.block.number
   listing.transactionHash = event.transaction.hash
   listing.save()
@@ -198,8 +222,7 @@ export function handleListingUpdated(event: ListingUpdated): void {
   let listing = Listing.load(id)
 
   if (listing != null) {
-    listing.priceUSDC = event.params.newPrice
-    listing.updatedAt = event.block.timestamp
+    listing.pricePerUse = event.params.newPrice
     listing.save()
   }
 }
@@ -209,30 +232,37 @@ export function handleListingDeactivated(event: ListingDeactivated): void {
   let listing = Listing.load(id)
 
   if (listing != null) {
-    listing.isActive = false
-    listing.updatedAt = event.block.timestamp
+    listing.active = false
     listing.save()
   }
 }
 
 export function handleListingUsed(event: ListingUsed): void {
+  // Create usage record
   let usageId = event.transaction.hash.toHexString() + "-" + event.logIndex.toString()
-  let usage = new ListingUsage(usageId)
-
-  usage.listingId = event.params.listingId
+  let usage = new Usage(usageId)
+  usage.listing = event.params.listingId.toString()
   usage.user = event.params.user
-  usage.paymentAmount = event.params.paymentAmount
+  usage.amount = event.params.paymentAmount
   usage.timestamp = event.block.timestamp
-  usage.blockNumber = event.block.number
-  usage.transactionHash = event.transaction.hash
+  usage.txHash = event.transaction.hash
   usage.save()
 
+  // Update listing stats
   let listingId = event.params.listingId.toString()
   let listing = Listing.load(listingId)
   if (listing != null) {
-    listing.useCount = listing.useCount.plus(BigInt.fromI32(1))
-    listing.updatedAt = event.block.timestamp
+    listing.totalUses = listing.totalUses.plus(BigInt.fromI32(1))
+    listing.totalRevenue = listing.totalRevenue.plus(event.params.paymentAmount)
     listing.save()
+
+    // Update creator stats
+    let creator = Creator.load(listing.creator)
+    if (creator != null) {
+      creator.totalUses = creator.totalUses.plus(BigInt.fromI32(1))
+      creator.totalRevenue = creator.totalRevenue.plus(event.params.paymentAmount)
+      creator.save()
+    }
   }
 
   let stats = getOrCreateStats()
@@ -299,4 +329,34 @@ export function handleExchangeRateUpdated(event: ExchangeRateUpdated): void {
   update.blockNumber = event.block.number
   update.transactionHash = event.transaction.hash
   update.save()
+}
+
+export function handleLicenseTokenListed(event: LicenseTokenListed): void {
+  let id = event.params.listingId.toString()
+  let listing = new LicenseListing(id)
+
+  listing.licenseTokenId = event.params.licenseTokenId
+  listing.seller = event.params.seller
+  listing.price = event.params.price
+  listing.active = true
+  listing.createdAt = event.block.timestamp
+  listing.blockNumber = event.block.number
+  listing.transactionHash = event.transaction.hash
+  listing.save()
+
+  let stats = getOrCreateStats()
+  stats.totalLicenseListings = stats.totalLicenseListings.plus(BigInt.fromI32(1))
+  stats.save()
+}
+
+export function handleLicenseListingPurchased(event: LicenseListingPurchased): void {
+  let id = event.params.listingId.toString()
+  let listing = LicenseListing.load(id)
+
+  if (listing != null) {
+    listing.active = false
+    listing.purchasedBy = event.params.buyer
+    listing.purchasedAt = event.block.timestamp
+    listing.save()
+  }
 }

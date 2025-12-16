@@ -48,6 +48,16 @@
         "internalType": "address"
       },
       {
+        "name": "_registrationWorkflows",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_derivativeWorkflows",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
         "name": "_initialRate",
         "type": "uint256",
         "internalType": "uint256"
@@ -57,39 +67,13 @@
   },
   {
     "type": "function",
-    "name": "DOMAIN_AMOY",
+    "name": "OP_CREATE_COLLECTION",
     "inputs": [],
     "outputs": [
       {
         "name": "",
-        "type": "uint32",
-        "internalType": "uint32"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "DOMAIN_AVALANCHE_FUJI",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint32",
-        "internalType": "uint32"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "DOMAIN_SEPOLIA",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint32",
-        "internalType": "uint32"
+        "type": "uint8",
+        "internalType": "uint8"
       }
     ],
     "stateMutability": "view"
@@ -97,6 +81,19 @@
   {
     "type": "function",
     "name": "OP_CREATE_DERIVATIVE",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "OP_CREATE_DERIVATIVE_WITH_LICENSE",
     "inputs": [],
     "outputs": [
       {
@@ -135,7 +132,59 @@
   },
   {
     "type": "function",
+    "name": "OP_LIST_LICENSE_TOKEN",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "OP_MINT_AND_REGISTER_IP",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "OP_MINT_LICENSE",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "OP_MINT_LICENSE_WITH_FEE",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "OP_PURCHASE_LICENSE_LISTING",
     "inputs": [],
     "outputs": [
       {
@@ -200,49 +249,6 @@
   },
   {
     "type": "function",
-    "name": "_executeDerivativeCreation",
-    "inputs": [
-      {
-        "name": "messageId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      },
-      {
-        "name": "parentIpId",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "licenseTermsId",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "wipAmount",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "chainId",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "nftContract",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "tokenId",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
     "name": "calculateWIPAmount",
     "inputs": [
       {
@@ -253,7 +259,7 @@
     ],
     "outputs": [
       {
-        "name": "wipAmount",
+        "name": "",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -286,6 +292,25 @@
   },
   {
     "type": "function",
+    "name": "creatorCollections",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "depositLicenseToEscrow",
     "inputs": [
       {
@@ -312,6 +337,19 @@
   },
   {
     "type": "function",
+    "name": "derivativeWorkflows",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "disputeModule",
     "inputs": [],
     "outputs": [
@@ -325,91 +363,19 @@
   },
   {
     "type": "function",
-    "name": "getActiveListings",
+    "name": "getCreatorCollection",
     "inputs": [
       {
-        "name": "offset",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "limit",
-        "type": "uint256",
-        "internalType": "uint256"
+        "name": "creator",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "outputs": [
       {
-        "name": "result",
-        "type": "tuple[]",
-        "internalType": "struct IPayReceiver.Listing[]",
-        "components": [
-          {
-            "name": "listingId",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "storyIPId",
-            "type": "address",
-            "internalType": "address"
-          },
-          {
-            "name": "creator",
-            "type": "address",
-            "internalType": "address"
-          },
-          {
-            "name": "title",
-            "type": "string",
-            "internalType": "string"
-          },
-          {
-            "name": "description",
-            "type": "string",
-            "internalType": "string"
-          },
-          {
-            "name": "category",
-            "type": "string",
-            "internalType": "string"
-          },
-          {
-            "name": "priceUSDC",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "assetIpfsHash",
-            "type": "string",
-            "internalType": "string"
-          },
-          {
-            "name": "metadataUri",
-            "type": "string",
-            "internalType": "string"
-          },
-          {
-            "name": "sourceChain",
-            "type": "uint32",
-            "internalType": "uint32"
-          },
-          {
-            "name": "isActive",
-            "type": "bool",
-            "internalType": "bool"
-          },
-          {
-            "name": "createdAt",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "totalUses",
-            "type": "uint256",
-            "internalType": "uint256"
-          }
-        ]
+        "name": "",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "stateMutability": "view"
@@ -434,6 +400,76 @@
         "name": "sender",
         "type": "bytes32",
         "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getLicenseListing",
+    "inputs": [
+      {
+        "name": "listingId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct IPayReceiver.LicenseTokenListing",
+        "components": [
+          {
+            "name": "listingId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "licenseTokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "seller",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "priceUSDC",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "isActive",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "createdAt",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getLicenseListingsBySeller",
+    "inputs": [
+      {
+        "name": "seller",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
       }
     ],
     "stateMutability": "view"
@@ -625,6 +661,13 @@
   },
   {
     "type": "function",
+    "name": "grantMinterRoleToWorkflows",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "handle",
     "inputs": [
       {
@@ -674,6 +717,74 @@
         "name": "",
         "type": "bool",
         "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "licenseListings",
+    "inputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "listingId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "licenseTokenId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "seller",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "priceUSDC",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "isActive",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "createdAt",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "licenseListingsBySeller",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
@@ -846,6 +957,19 @@
   },
   {
     "type": "function",
+    "name": "nextLicenseListingId",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "nextListingId",
     "inputs": [],
     "outputs": [
@@ -959,6 +1083,19 @@
   },
   {
     "type": "function",
+    "name": "registrationWorkflows",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "royaltyModule",
     "inputs": [],
     "outputs": [
@@ -978,6 +1115,19 @@
         "name": "newRate",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setSpgNftContract",
+    "inputs": [
+      {
+        "name": "_spgNftContract",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "outputs": [],
@@ -1028,6 +1178,19 @@
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "spgNftContract",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -1171,6 +1334,31 @@
   },
   {
     "type": "event",
+    "name": "CollectionCreated",
+    "inputs": [
+      {
+        "name": "messageId",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "creator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "collection",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "DerivativeCreated",
     "inputs": [
       {
@@ -1193,6 +1381,37 @@
       },
       {
         "name": "wipAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "DerivativeCreatedWithLicense",
+    "inputs": [
+      {
+        "name": "messageId",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "derivativeIpId",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "creator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "tokenId",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -1258,6 +1477,43 @@
   },
   {
     "type": "event",
+    "name": "IPMintedAndRegistered",
+    "inputs": [
+      {
+        "name": "messageId",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "ipId",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "creator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "licenseTermsIds",
+        "type": "uint256[]",
+        "indexed": false,
+        "internalType": "uint256[]"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "IPRegistered",
     "inputs": [
       {
@@ -1283,6 +1539,31 @@
         "type": "address",
         "indexed": false,
         "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "LicenseListingPurchased",
+    "inputs": [
+      {
+        "name": "listingId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "buyer",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "paymentAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       }
     ],
     "anonymous": false
@@ -1317,6 +1598,74 @@
       },
       {
         "name": "wipAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "LicenseMintedWithFee",
+    "inputs": [
+      {
+        "name": "messageId",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "ipId",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "recipient",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "licenseTokenId",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "mintingFee",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "LicenseTokenListed",
+    "inputs": [
+      {
+        "name": "listingId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "licenseTokenId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "seller",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "price",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -1557,6 +1906,25 @@
   },
   {
     "type": "event",
+    "name": "SpgNftContractUpdated",
+    "inputs": [
+      {
+        "name": "oldContract",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "newContract",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "TrustedDomainUpdated",
     "inputs": [
       {
@@ -1669,17 +2037,17 @@
   },
   {
     "type": "error",
+    "name": "CollectionAlreadyExists",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "ContractPaused",
     "inputs": []
   },
   {
     "type": "error",
     "name": "InsufficientLiquidity",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "InvalidAddress",
     "inputs": []
   },
   {
@@ -1695,6 +2063,21 @@
   {
     "type": "error",
     "name": "InvalidRate",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "LicenseListingNotActive",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "LicenseListingNotFound",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "LicenseNotInEscrow",
     "inputs": []
   },
   {
@@ -1719,6 +2102,11 @@
   },
   {
     "type": "error",
+    "name": "OperationFailed",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "PaymentAlreadyProcessed",
     "inputs": []
   },
@@ -1737,6 +2125,11 @@
         "internalType": "address"
       }
     ]
+  },
+  {
+    "type": "error",
+    "name": "SpgNftContractNotSet",
+    "inputs": []
   },
   {
     "type": "error",

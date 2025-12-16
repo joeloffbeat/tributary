@@ -33,6 +33,7 @@ const ENGINE_URL = process.env.THIRDWEB_ENGINE_URL || DEFAULT_ENGINE_URL
 /**
  * Dispatch Hyperlane message to IPayReceiver on Story Protocol
  * Uses Thirdweb Engine to send transaction from server wallet
+ * Payload format: (bytes32 messageId, address ipId, uint256 licenseTermsId, uint256 usdcAmount, address recipient, uint256 listingId)
  */
 async function dispatchHyperlaneMessage(params: {
   sourceChainId: number
@@ -41,8 +42,9 @@ async function dispatchHyperlaneMessage(params: {
   licenseTermsId: bigint
   usdcAmount: bigint
   recipient: Address
+  listingId: bigint
 }): Promise<{ success: boolean; queueId?: string; error?: string }> {
-  const { sourceChainId, messageId, ipId, licenseTermsId, usdcAmount, recipient } = params
+  const { sourceChainId, messageId, ipId, licenseTermsId, usdcAmount, recipient, listingId } = params
 
   // Get chain config for source chain
   const chainConfig = getIPayChainConfig(sourceChainId)
@@ -50,7 +52,8 @@ async function dispatchHyperlaneMessage(params: {
     return { success: false, error: `Unsupported source chain: ${sourceChainId}` }
   }
 
-  // Encode the payload: (messageId, ipId, licenseTermsId, usdcAmount, recipient)
+  // Encode the payload matching contract's _handleMintLicense:
+  // (bytes32 messageId, address ipId, uint256 licenseTermsId, uint256 usdcAmount, address recipient, uint256 listingId)
   const payload = encodeAbiParameters(
     [
       { type: 'bytes32', name: 'messageId' },
@@ -58,8 +61,9 @@ async function dispatchHyperlaneMessage(params: {
       { type: 'uint256', name: 'licenseTermsId' },
       { type: 'uint256', name: 'usdcAmount' },
       { type: 'address', name: 'recipient' },
+      { type: 'uint256', name: 'listingId' },
     ],
-    [messageId, ipId, licenseTermsId, usdcAmount, recipient]
+    [messageId, ipId, licenseTermsId, usdcAmount, recipient, listingId]
   )
 
   // Prepend operation type (1 byte for OP_MINT_LICENSE)
@@ -167,7 +171,7 @@ export async function GET(
     name: chainConfig.displayName,
     nativeCurrency: chainConfig.nativeCurrency,
     rpc: chainConfig.rpcUrl,
-    testnet: chainConfig.isTestnet,
+    testnet: chainConfig.isTestnet ? true : undefined,
   })
 
   // Resource URL for this specific listing payment
@@ -220,6 +224,7 @@ export async function GET(
         licenseTermsId: DEFAULT_LICENSE_TERMS_ID,
         usdcAmount: listing.pricePerUse,
         recipient: recipientParam as Address,
+        listingId: BigInt(listingId),
       })
 
       if (crossChainResult.success) {

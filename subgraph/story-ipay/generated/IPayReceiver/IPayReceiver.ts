@@ -10,6 +10,32 @@ import {
   BigInt,
 } from "@graphprotocol/graph-ts";
 
+export class CollectionCreated extends ethereum.Event {
+  get params(): CollectionCreated__Params {
+    return new CollectionCreated__Params(this);
+  }
+}
+
+export class CollectionCreated__Params {
+  _event: CollectionCreated;
+
+  constructor(event: CollectionCreated) {
+    this._event = event;
+  }
+
+  get messageId(): Bytes {
+    return this._event.parameters[0].value.toBytes();
+  }
+
+  get creator(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get collection(): Address {
+    return this._event.parameters[2].value.toAddress();
+  }
+}
+
 export class DerivativeCreated extends ethereum.Event {
   get params(): DerivativeCreated__Params {
     return new DerivativeCreated__Params(this);
@@ -36,6 +62,36 @@ export class DerivativeCreated__Params {
   }
 
   get wipAmount(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+}
+
+export class DerivativeCreatedWithLicense extends ethereum.Event {
+  get params(): DerivativeCreatedWithLicense__Params {
+    return new DerivativeCreatedWithLicense__Params(this);
+  }
+}
+
+export class DerivativeCreatedWithLicense__Params {
+  _event: DerivativeCreatedWithLicense;
+
+  constructor(event: DerivativeCreatedWithLicense) {
+    this._event = event;
+  }
+
+  get messageId(): Bytes {
+    return this._event.parameters[0].value.toBytes();
+  }
+
+  get derivativeIpId(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get creator(): Address {
+    return this._event.parameters[2].value.toAddress();
+  }
+
+  get tokenId(): BigInt {
     return this._event.parameters[3].value.toBigInt();
   }
 }
@@ -96,6 +152,40 @@ export class ExchangeRateUpdated__Params {
   }
 }
 
+export class IPMintedAndRegistered extends ethereum.Event {
+  get params(): IPMintedAndRegistered__Params {
+    return new IPMintedAndRegistered__Params(this);
+  }
+}
+
+export class IPMintedAndRegistered__Params {
+  _event: IPMintedAndRegistered;
+
+  constructor(event: IPMintedAndRegistered) {
+    this._event = event;
+  }
+
+  get messageId(): Bytes {
+    return this._event.parameters[0].value.toBytes();
+  }
+
+  get ipId(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get creator(): Address {
+    return this._event.parameters[2].value.toAddress();
+  }
+
+  get tokenId(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+
+  get licenseTermsIds(): Array<BigInt> {
+    return this._event.parameters[4].value.toBigIntArray();
+  }
+}
+
 export class IPRegistered extends ethereum.Event {
   get params(): IPRegistered__Params {
     return new IPRegistered__Params(this);
@@ -123,6 +213,32 @@ export class IPRegistered__Params {
 
   get ipId(): Address {
     return this._event.parameters[3].value.toAddress();
+  }
+}
+
+export class LicenseListingPurchased extends ethereum.Event {
+  get params(): LicenseListingPurchased__Params {
+    return new LicenseListingPurchased__Params(this);
+  }
+}
+
+export class LicenseListingPurchased__Params {
+  _event: LicenseListingPurchased;
+
+  constructor(event: LicenseListingPurchased) {
+    this._event = event;
+  }
+
+  get listingId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get buyer(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get paymentAmount(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
   }
 }
 
@@ -157,6 +273,70 @@ export class LicenseMinted__Params {
 
   get wipAmount(): BigInt {
     return this._event.parameters[4].value.toBigInt();
+  }
+}
+
+export class LicenseMintedWithFee extends ethereum.Event {
+  get params(): LicenseMintedWithFee__Params {
+    return new LicenseMintedWithFee__Params(this);
+  }
+}
+
+export class LicenseMintedWithFee__Params {
+  _event: LicenseMintedWithFee;
+
+  constructor(event: LicenseMintedWithFee) {
+    this._event = event;
+  }
+
+  get messageId(): Bytes {
+    return this._event.parameters[0].value.toBytes();
+  }
+
+  get ipId(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get recipient(): Address {
+    return this._event.parameters[2].value.toAddress();
+  }
+
+  get licenseTokenId(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+
+  get mintingFee(): BigInt {
+    return this._event.parameters[4].value.toBigInt();
+  }
+}
+
+export class LicenseTokenListed extends ethereum.Event {
+  get params(): LicenseTokenListed__Params {
+    return new LicenseTokenListed__Params(this);
+  }
+}
+
+export class LicenseTokenListed__Params {
+  _event: LicenseTokenListed;
+
+  constructor(event: LicenseTokenListed) {
+    this._event = event;
+  }
+
+  get listingId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get licenseTokenId(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get seller(): Address {
+    return this._event.parameters[2].value.toAddress();
+  }
+
+  get price(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
   }
 }
 
@@ -398,6 +578,28 @@ export class PaymentReceived__Params {
   }
 }
 
+export class SpgNftContractUpdated extends ethereum.Event {
+  get params(): SpgNftContractUpdated__Params {
+    return new SpgNftContractUpdated__Params(this);
+  }
+}
+
+export class SpgNftContractUpdated__Params {
+  _event: SpgNftContractUpdated;
+
+  constructor(event: SpgNftContractUpdated) {
+    this._event = event;
+  }
+
+  get oldContract(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newContract(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
 export class TrustedDomainUpdated extends ethereum.Event {
   get params(): TrustedDomainUpdated__Params {
     return new TrustedDomainUpdated__Params(this);
@@ -541,60 +743,6 @@ export class IPayReceiver__checkLiquidityResult {
   }
 }
 
-export class IPayReceiver__getActiveListingsResultResultStruct extends ethereum.Tuple {
-  get listingId(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get storyIPId(): Address {
-    return this[1].toAddress();
-  }
-
-  get creator(): Address {
-    return this[2].toAddress();
-  }
-
-  get title(): string {
-    return this[3].toString();
-  }
-
-  get description(): string {
-    return this[4].toString();
-  }
-
-  get category(): string {
-    return this[5].toString();
-  }
-
-  get priceUSDC(): BigInt {
-    return this[6].toBigInt();
-  }
-
-  get assetIpfsHash(): string {
-    return this[7].toString();
-  }
-
-  get metadataUri(): string {
-    return this[8].toString();
-  }
-
-  get sourceChain(): BigInt {
-    return this[9].toBigInt();
-  }
-
-  get isActive(): boolean {
-    return this[10].toBoolean();
-  }
-
-  get createdAt(): BigInt {
-    return this[11].toBigInt();
-  }
-
-  get totalUses(): BigInt {
-    return this[12].toBigInt();
-  }
-}
-
 export class IPayReceiver__getDomainConfigResult {
   value0: boolean;
   value1: Bytes;
@@ -617,6 +765,32 @@ export class IPayReceiver__getDomainConfigResult {
 
   getSender(): Bytes {
     return this.value1;
+  }
+}
+
+export class IPayReceiver__getLicenseListingResultValue0Struct extends ethereum.Tuple {
+  get listingId(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get licenseTokenId(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get seller(): Address {
+    return this[2].toAddress();
+  }
+
+  get priceUSDC(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get isActive(): boolean {
+    return this[4].toBoolean();
+  }
+
+  get createdAt(): BigInt {
+    return this[5].toBigInt();
   }
 }
 
@@ -705,6 +879,66 @@ export class IPayReceiver__getPaymentResultValue0Struct extends ethereum.Tuple {
 
   get timestamp(): BigInt {
     return this[7].toBigInt();
+  }
+}
+
+export class IPayReceiver__licenseListingsResult {
+  value0: BigInt;
+  value1: BigInt;
+  value2: Address;
+  value3: BigInt;
+  value4: boolean;
+  value5: BigInt;
+
+  constructor(
+    value0: BigInt,
+    value1: BigInt,
+    value2: Address,
+    value3: BigInt,
+    value4: boolean,
+    value5: BigInt,
+  ) {
+    this.value0 = value0;
+    this.value1 = value1;
+    this.value2 = value2;
+    this.value3 = value3;
+    this.value4 = value4;
+    this.value5 = value5;
+  }
+
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
+    map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
+    map.set("value2", ethereum.Value.fromAddress(this.value2));
+    map.set("value3", ethereum.Value.fromUnsignedBigInt(this.value3));
+    map.set("value4", ethereum.Value.fromBoolean(this.value4));
+    map.set("value5", ethereum.Value.fromUnsignedBigInt(this.value5));
+    return map;
+  }
+
+  getListingId(): BigInt {
+    return this.value0;
+  }
+
+  getLicenseTokenId(): BigInt {
+    return this.value1;
+  }
+
+  getSeller(): Address {
+    return this.value2;
+  }
+
+  getPriceUSDC(): BigInt {
+    return this.value3;
+  }
+
+  getIsActive(): boolean {
+    return this.value4;
+  }
+
+  getCreatedAt(): BigInt {
+    return this.value5;
   }
 }
 
@@ -933,61 +1167,27 @@ export class IPayReceiver extends ethereum.SmartContract {
     return new IPayReceiver("IPayReceiver", address);
   }
 
-  DOMAIN_AMOY(): BigInt {
-    let result = super.call("DOMAIN_AMOY", "DOMAIN_AMOY():(uint32)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try_DOMAIN_AMOY(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("DOMAIN_AMOY", "DOMAIN_AMOY():(uint32)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  DOMAIN_AVALANCHE_FUJI(): BigInt {
+  OP_CREATE_COLLECTION(): i32 {
     let result = super.call(
-      "DOMAIN_AVALANCHE_FUJI",
-      "DOMAIN_AVALANCHE_FUJI():(uint32)",
+      "OP_CREATE_COLLECTION",
+      "OP_CREATE_COLLECTION():(uint8)",
       [],
     );
 
-    return result[0].toBigInt();
+    return result[0].toI32();
   }
 
-  try_DOMAIN_AVALANCHE_FUJI(): ethereum.CallResult<BigInt> {
+  try_OP_CREATE_COLLECTION(): ethereum.CallResult<i32> {
     let result = super.tryCall(
-      "DOMAIN_AVALANCHE_FUJI",
-      "DOMAIN_AVALANCHE_FUJI():(uint32)",
+      "OP_CREATE_COLLECTION",
+      "OP_CREATE_COLLECTION():(uint8)",
       [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  DOMAIN_SEPOLIA(): BigInt {
-    let result = super.call("DOMAIN_SEPOLIA", "DOMAIN_SEPOLIA():(uint32)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try_DOMAIN_SEPOLIA(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "DOMAIN_SEPOLIA",
-      "DOMAIN_SEPOLIA():(uint32)",
-      [],
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
+    return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
   OP_CREATE_DERIVATIVE(): i32 {
@@ -1004,6 +1204,29 @@ export class IPayReceiver extends ethereum.SmartContract {
     let result = super.tryCall(
       "OP_CREATE_DERIVATIVE",
       "OP_CREATE_DERIVATIVE():(uint8)",
+      [],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
+  }
+
+  OP_CREATE_DERIVATIVE_WITH_LICENSE(): i32 {
+    let result = super.call(
+      "OP_CREATE_DERIVATIVE_WITH_LICENSE",
+      "OP_CREATE_DERIVATIVE_WITH_LICENSE():(uint8)",
+      [],
+    );
+
+    return result[0].toI32();
+  }
+
+  try_OP_CREATE_DERIVATIVE_WITH_LICENSE(): ethereum.CallResult<i32> {
+    let result = super.tryCall(
+      "OP_CREATE_DERIVATIVE_WITH_LICENSE",
+      "OP_CREATE_DERIVATIVE_WITH_LICENSE():(uint8)",
       [],
     );
     if (result.reverted) {
@@ -1059,6 +1282,52 @@ export class IPayReceiver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
+  OP_LIST_LICENSE_TOKEN(): i32 {
+    let result = super.call(
+      "OP_LIST_LICENSE_TOKEN",
+      "OP_LIST_LICENSE_TOKEN():(uint8)",
+      [],
+    );
+
+    return result[0].toI32();
+  }
+
+  try_OP_LIST_LICENSE_TOKEN(): ethereum.CallResult<i32> {
+    let result = super.tryCall(
+      "OP_LIST_LICENSE_TOKEN",
+      "OP_LIST_LICENSE_TOKEN():(uint8)",
+      [],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
+  }
+
+  OP_MINT_AND_REGISTER_IP(): i32 {
+    let result = super.call(
+      "OP_MINT_AND_REGISTER_IP",
+      "OP_MINT_AND_REGISTER_IP():(uint8)",
+      [],
+    );
+
+    return result[0].toI32();
+  }
+
+  try_OP_MINT_AND_REGISTER_IP(): ethereum.CallResult<i32> {
+    let result = super.tryCall(
+      "OP_MINT_AND_REGISTER_IP",
+      "OP_MINT_AND_REGISTER_IP():(uint8)",
+      [],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
+  }
+
   OP_MINT_LICENSE(): i32 {
     let result = super.call("OP_MINT_LICENSE", "OP_MINT_LICENSE():(uint8)", []);
 
@@ -1069,6 +1338,52 @@ export class IPayReceiver extends ethereum.SmartContract {
     let result = super.tryCall(
       "OP_MINT_LICENSE",
       "OP_MINT_LICENSE():(uint8)",
+      [],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
+  }
+
+  OP_MINT_LICENSE_WITH_FEE(): i32 {
+    let result = super.call(
+      "OP_MINT_LICENSE_WITH_FEE",
+      "OP_MINT_LICENSE_WITH_FEE():(uint8)",
+      [],
+    );
+
+    return result[0].toI32();
+  }
+
+  try_OP_MINT_LICENSE_WITH_FEE(): ethereum.CallResult<i32> {
+    let result = super.tryCall(
+      "OP_MINT_LICENSE_WITH_FEE",
+      "OP_MINT_LICENSE_WITH_FEE():(uint8)",
+      [],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
+  }
+
+  OP_PURCHASE_LICENSE_LISTING(): i32 {
+    let result = super.call(
+      "OP_PURCHASE_LICENSE_LISTING",
+      "OP_PURCHASE_LICENSE_LISTING():(uint8)",
+      [],
+    );
+
+    return result[0].toI32();
+  }
+
+  try_OP_PURCHASE_LICENSE_LISTING(): ethereum.CallResult<i32> {
+    let result = super.tryCall(
+      "OP_PURCHASE_LICENSE_LISTING",
+      "OP_PURCHASE_LICENSE_LISTING():(uint8)",
       [],
     );
     if (result.reverted) {
@@ -1222,6 +1537,52 @@ export class IPayReceiver extends ethereum.SmartContract {
     );
   }
 
+  creatorCollections(param0: Address): Address {
+    let result = super.call(
+      "creatorCollections",
+      "creatorCollections(address):(address)",
+      [ethereum.Value.fromAddress(param0)],
+    );
+
+    return result[0].toAddress();
+  }
+
+  try_creatorCollections(param0: Address): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "creatorCollections",
+      "creatorCollections(address):(address)",
+      [ethereum.Value.fromAddress(param0)],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  derivativeWorkflows(): Address {
+    let result = super.call(
+      "derivativeWorkflows",
+      "derivativeWorkflows():(address)",
+      [],
+    );
+
+    return result[0].toAddress();
+  }
+
+  try_derivativeWorkflows(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "derivativeWorkflows",
+      "derivativeWorkflows():(address)",
+      [],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   disputeModule(): Address {
     let result = super.call("disputeModule", "disputeModule():(address)", []);
 
@@ -1241,43 +1602,27 @@ export class IPayReceiver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  getActiveListings(
-    offset: BigInt,
-    limit: BigInt,
-  ): Array<IPayReceiver__getActiveListingsResultResultStruct> {
+  getCreatorCollection(creator: Address): Address {
     let result = super.call(
-      "getActiveListings",
-      "getActiveListings(uint256,uint256):((uint256,address,address,string,string,string,uint256,string,string,uint32,bool,uint256,uint256)[])",
-      [
-        ethereum.Value.fromUnsignedBigInt(offset),
-        ethereum.Value.fromUnsignedBigInt(limit),
-      ],
+      "getCreatorCollection",
+      "getCreatorCollection(address):(address)",
+      [ethereum.Value.fromAddress(creator)],
     );
 
-    return result[0].toTupleArray<IPayReceiver__getActiveListingsResultResultStruct>();
+    return result[0].toAddress();
   }
 
-  try_getActiveListings(
-    offset: BigInt,
-    limit: BigInt,
-  ): ethereum.CallResult<
-    Array<IPayReceiver__getActiveListingsResultResultStruct>
-  > {
+  try_getCreatorCollection(creator: Address): ethereum.CallResult<Address> {
     let result = super.tryCall(
-      "getActiveListings",
-      "getActiveListings(uint256,uint256):((uint256,address,address,string,string,string,uint256,string,string,uint32,bool,uint256,uint256)[])",
-      [
-        ethereum.Value.fromUnsignedBigInt(offset),
-        ethereum.Value.fromUnsignedBigInt(limit),
-      ],
+      "getCreatorCollection",
+      "getCreatorCollection(address):(address)",
+      [ethereum.Value.fromAddress(creator)],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(
-      value[0].toTupleArray<IPayReceiver__getActiveListingsResultResultStruct>(),
-    );
+    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   getDomainConfig(domain: BigInt): IPayReceiver__getDomainConfigResult {
@@ -1311,6 +1656,64 @@ export class IPayReceiver extends ethereum.SmartContract {
         value[1].toBytes(),
       ),
     );
+  }
+
+  getLicenseListing(
+    listingId: BigInt,
+  ): IPayReceiver__getLicenseListingResultValue0Struct {
+    let result = super.call(
+      "getLicenseListing",
+      "getLicenseListing(uint256):((uint256,uint256,address,uint256,bool,uint256))",
+      [ethereum.Value.fromUnsignedBigInt(listingId)],
+    );
+
+    return changetype<IPayReceiver__getLicenseListingResultValue0Struct>(
+      result[0].toTuple(),
+    );
+  }
+
+  try_getLicenseListing(
+    listingId: BigInt,
+  ): ethereum.CallResult<IPayReceiver__getLicenseListingResultValue0Struct> {
+    let result = super.tryCall(
+      "getLicenseListing",
+      "getLicenseListing(uint256):((uint256,uint256,address,uint256,bool,uint256))",
+      [ethereum.Value.fromUnsignedBigInt(listingId)],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      changetype<IPayReceiver__getLicenseListingResultValue0Struct>(
+        value[0].toTuple(),
+      ),
+    );
+  }
+
+  getLicenseListingsBySeller(seller: Address): Array<BigInt> {
+    let result = super.call(
+      "getLicenseListingsBySeller",
+      "getLicenseListingsBySeller(address):(uint256[])",
+      [ethereum.Value.fromAddress(seller)],
+    );
+
+    return result[0].toBigIntArray();
+  }
+
+  try_getLicenseListingsBySeller(
+    seller: Address,
+  ): ethereum.CallResult<Array<BigInt>> {
+    let result = super.tryCall(
+      "getLicenseListingsBySeller",
+      "getLicenseListingsBySeller(address):(uint256[])",
+      [ethereum.Value.fromAddress(seller)],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
   }
 
   getListing(listingId: BigInt): IPayReceiver__getListingResultValue0Struct {
@@ -1467,6 +1870,79 @@ export class IPayReceiver extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  licenseListings(param0: BigInt): IPayReceiver__licenseListingsResult {
+    let result = super.call(
+      "licenseListings",
+      "licenseListings(uint256):(uint256,uint256,address,uint256,bool,uint256)",
+      [ethereum.Value.fromUnsignedBigInt(param0)],
+    );
+
+    return new IPayReceiver__licenseListingsResult(
+      result[0].toBigInt(),
+      result[1].toBigInt(),
+      result[2].toAddress(),
+      result[3].toBigInt(),
+      result[4].toBoolean(),
+      result[5].toBigInt(),
+    );
+  }
+
+  try_licenseListings(
+    param0: BigInt,
+  ): ethereum.CallResult<IPayReceiver__licenseListingsResult> {
+    let result = super.tryCall(
+      "licenseListings",
+      "licenseListings(uint256):(uint256,uint256,address,uint256,bool,uint256)",
+      [ethereum.Value.fromUnsignedBigInt(param0)],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      new IPayReceiver__licenseListingsResult(
+        value[0].toBigInt(),
+        value[1].toBigInt(),
+        value[2].toAddress(),
+        value[3].toBigInt(),
+        value[4].toBoolean(),
+        value[5].toBigInt(),
+      ),
+    );
+  }
+
+  licenseListingsBySeller(param0: Address, param1: BigInt): BigInt {
+    let result = super.call(
+      "licenseListingsBySeller",
+      "licenseListingsBySeller(address,uint256):(uint256)",
+      [
+        ethereum.Value.fromAddress(param0),
+        ethereum.Value.fromUnsignedBigInt(param1),
+      ],
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_licenseListingsBySeller(
+    param0: Address,
+    param1: BigInt,
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "licenseListingsBySeller",
+      "licenseListingsBySeller(address,uint256):(uint256)",
+      [
+        ethereum.Value.fromAddress(param0),
+        ethereum.Value.fromUnsignedBigInt(param1),
+      ],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   licenseToken(): Address {
@@ -1641,6 +2117,29 @@ export class IPayReceiver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
+  nextLicenseListingId(): BigInt {
+    let result = super.call(
+      "nextLicenseListingId",
+      "nextLicenseListingId():(uint256)",
+      [],
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_nextLicenseListingId(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "nextLicenseListingId",
+      "nextLicenseListingId():(uint256)",
+      [],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   nextListingId(): BigInt {
     let result = super.call("nextListingId", "nextListingId():(uint256)", []);
 
@@ -1750,6 +2249,29 @@ export class IPayReceiver extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
+  registrationWorkflows(): Address {
+    let result = super.call(
+      "registrationWorkflows",
+      "registrationWorkflows():(address)",
+      [],
+    );
+
+    return result[0].toAddress();
+  }
+
+  try_registrationWorkflows(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "registrationWorkflows",
+      "registrationWorkflows():(address)",
+      [],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   royaltyModule(): Address {
     let result = super.call("royaltyModule", "royaltyModule():(address)", []);
 
@@ -1760,6 +2282,25 @@ export class IPayReceiver extends ethereum.SmartContract {
     let result = super.tryCall(
       "royaltyModule",
       "royaltyModule():(address)",
+      [],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  spgNftContract(): Address {
+    let result = super.call("spgNftContract", "spgNftContract():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_spgNftContract(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "spgNftContract",
+      "spgNftContract():(address)",
       [],
     );
     if (result.reverted) {
@@ -1920,8 +2461,16 @@ export class ConstructorCall__Inputs {
     return this._call.inputValues[8].value.toAddress();
   }
 
+  get _registrationWorkflows(): Address {
+    return this._call.inputValues[9].value.toAddress();
+  }
+
+  get _derivativeWorkflows(): Address {
+    return this._call.inputValues[10].value.toAddress();
+  }
+
   get _initialRate(): BigInt {
-    return this._call.inputValues[9].value.toBigInt();
+    return this._call.inputValues[11].value.toBigInt();
   }
 }
 
@@ -1929,60 +2478,6 @@ export class ConstructorCall__Outputs {
   _call: ConstructorCall;
 
   constructor(call: ConstructorCall) {
-    this._call = call;
-  }
-}
-
-export class _executeDerivativeCreationCall extends ethereum.Call {
-  get inputs(): _executeDerivativeCreationCall__Inputs {
-    return new _executeDerivativeCreationCall__Inputs(this);
-  }
-
-  get outputs(): _executeDerivativeCreationCall__Outputs {
-    return new _executeDerivativeCreationCall__Outputs(this);
-  }
-}
-
-export class _executeDerivativeCreationCall__Inputs {
-  _call: _executeDerivativeCreationCall;
-
-  constructor(call: _executeDerivativeCreationCall) {
-    this._call = call;
-  }
-
-  get messageId(): Bytes {
-    return this._call.inputValues[0].value.toBytes();
-  }
-
-  get parentIpId(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-
-  get licenseTermsId(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
-  }
-
-  get wipAmount(): BigInt {
-    return this._call.inputValues[3].value.toBigInt();
-  }
-
-  get chainId(): BigInt {
-    return this._call.inputValues[4].value.toBigInt();
-  }
-
-  get nftContract(): Address {
-    return this._call.inputValues[5].value.toAddress();
-  }
-
-  get tokenId(): BigInt {
-    return this._call.inputValues[6].value.toBigInt();
-  }
-}
-
-export class _executeDerivativeCreationCall__Outputs {
-  _call: _executeDerivativeCreationCall;
-
-  constructor(call: _executeDerivativeCreationCall) {
     this._call = call;
   }
 }
@@ -2043,6 +2538,32 @@ export class DepositWIPCall__Outputs {
   _call: DepositWIPCall;
 
   constructor(call: DepositWIPCall) {
+    this._call = call;
+  }
+}
+
+export class GrantMinterRoleToWorkflowsCall extends ethereum.Call {
+  get inputs(): GrantMinterRoleToWorkflowsCall__Inputs {
+    return new GrantMinterRoleToWorkflowsCall__Inputs(this);
+  }
+
+  get outputs(): GrantMinterRoleToWorkflowsCall__Outputs {
+    return new GrantMinterRoleToWorkflowsCall__Outputs(this);
+  }
+}
+
+export class GrantMinterRoleToWorkflowsCall__Inputs {
+  _call: GrantMinterRoleToWorkflowsCall;
+
+  constructor(call: GrantMinterRoleToWorkflowsCall) {
+    this._call = call;
+  }
+}
+
+export class GrantMinterRoleToWorkflowsCall__Outputs {
+  _call: GrantMinterRoleToWorkflowsCall;
+
+  constructor(call: GrantMinterRoleToWorkflowsCall) {
     this._call = call;
   }
 }
@@ -2137,6 +2658,36 @@ export class SetExchangeRateCall__Outputs {
   _call: SetExchangeRateCall;
 
   constructor(call: SetExchangeRateCall) {
+    this._call = call;
+  }
+}
+
+export class SetSpgNftContractCall extends ethereum.Call {
+  get inputs(): SetSpgNftContractCall__Inputs {
+    return new SetSpgNftContractCall__Inputs(this);
+  }
+
+  get outputs(): SetSpgNftContractCall__Outputs {
+    return new SetSpgNftContractCall__Outputs(this);
+  }
+}
+
+export class SetSpgNftContractCall__Inputs {
+  _call: SetSpgNftContractCall;
+
+  constructor(call: SetSpgNftContractCall) {
+    this._call = call;
+  }
+
+  get _spgNftContract(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class SetSpgNftContractCall__Outputs {
+  _call: SetSpgNftContractCall;
+
+  constructor(call: SetSpgNftContractCall) {
     this._call = call;
   }
 }

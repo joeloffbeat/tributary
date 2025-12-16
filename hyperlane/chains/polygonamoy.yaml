@@ -12,10 +12,9 @@ displayName: Polygon Amoy Testnet
 protocol: ethereum
 isTestnet: true
 
-# RPC endpoints (add multiple for redundancy)
+# RPC endpoints (fallback - override via RPC_POLYGON_AMOY env var)
 rpcUrls:
   - http: https://rpc-amoy.polygon.technology
-  - http: https://polygon-amoy.public.blastapi.io
 
 # Native token configuration
 nativeToken:
@@ -28,6 +27,11 @@ blocks:
   confirmations: 1
   estimateBlockTime: 2
   reorgPeriod: 1
+
+# Index configuration (for Alchemy free tier compatibility)
+index:
+  chunk: 9
+  from: 30000000
 
 # Block explorer configuration
 blockExplorers:

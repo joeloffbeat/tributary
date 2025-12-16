@@ -79,7 +79,7 @@ export function useWormholeQuote({
         protocol,
       }
 
-      const quoteResult = await wormholeService.getQuote(params)
+      const quoteResult = await wormholeService.getTransferQuote(params)
       setQuote(quoteResult)
       setError(null)
     } catch (e) {

@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import { Test, console } from "forge-std/Test.sol";
 import { IPayReceiver } from "../src/IPayReceiver.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { WorkflowStructs, ISPGNFT } from "../src/interfaces/IStoryProtocol.sol";
 
 /// @title IPayReceiver Multi-Chain Tests
 /// @notice Comprehensive tests for multi-chain support and listing functionality
@@ -18,6 +19,9 @@ contract IPayReceiverMultiChainTest is Test {
     MockIPAssetRegistry public ipAssetRegistry;
     MockDisputeModule public disputeModule;
     MockLicenseToken public licenseToken;
+    MockRegistrationWorkflows public registrationWorkflows;
+    MockDerivativeWorkflows public derivativeWorkflows;
+    MockLicenseAttachmentWorkflows public licenseAttachmentWorkflows;
 
     // ============ Addresses ============
     address public owner = makeAddr("owner");
@@ -51,6 +55,9 @@ contract IPayReceiverMultiChainTest is Test {
         ipAssetRegistry = new MockIPAssetRegistry();
         disputeModule = new MockDisputeModule();
         licenseToken = new MockLicenseToken();
+        registrationWorkflows = new MockRegistrationWorkflows();
+        derivativeWorkflows = new MockDerivativeWorkflows();
+        licenseAttachmentWorkflows = new MockLicenseAttachmentWorkflows();
 
         vm.prank(owner);
         receiver = new IPayReceiver(
@@ -63,6 +70,9 @@ contract IPayReceiverMultiChainTest is Test {
             address(ipAssetRegistry),
             address(disputeModule),
             address(licenseToken),
+            address(registrationWorkflows),
+            address(derivativeWorkflows),
+            address(licenseAttachmentWorkflows),
             INITIAL_RATE
         );
 
@@ -438,64 +448,8 @@ contract IPayReceiverMultiChainTest is Test {
         assertEq(listing.totalUses, 5);
     }
 
-    // ============ Pagination Tests ============
-
-    function test_GetActiveListings_Pagination() public {
-        // Create 10 listings
-        for (uint256 i = 0; i < 10; i++) {
-            _createListingFromDomain(DOMAIN_FUJI, trustedSenderFuji);
-        }
-
-        // Get first page (offset 0, limit 3)
-        IPayReceiver.Listing[] memory page1 = receiver.getActiveListings(0, 3);
-        assertEq(page1.length, 3);
-        assertEq(page1[0].listingId, 1);
-        assertEq(page1[2].listingId, 3);
-
-        // Get second page (offset 3, limit 3)
-        IPayReceiver.Listing[] memory page2 = receiver.getActiveListings(3, 3);
-        assertEq(page2.length, 3);
-        assertEq(page2[0].listingId, 4);
-
-        // Get last partial page (offset 8, limit 5)
-        IPayReceiver.Listing[] memory lastPage = receiver.getActiveListings(8, 5);
-        assertEq(lastPage.length, 2);
-        assertEq(lastPage[0].listingId, 9);
-        assertEq(lastPage[1].listingId, 10);
-    }
-
-    function test_GetActiveListings_SkipsInactive() public {
-        // Create 5 listings
-        for (uint256 i = 0; i < 5; i++) {
-            _createListingFromDomain(DOMAIN_FUJI, trustedSenderFuji);
-        }
-
-        // Deactivate listings 2 and 4
-        vm.prank(address(mailbox));
-        receiver.handle(DOMAIN_FUJI, trustedSenderFuji, abi.encodePacked(uint8(8), abi.encode(uint256(2))));
-        vm.prank(address(mailbox));
-        receiver.handle(DOMAIN_FUJI, trustedSenderFuji, abi.encodePacked(uint8(8), abi.encode(uint256(4))));
-
-        IPayReceiver.Listing[] memory active = receiver.getActiveListings(0, 10);
-        assertEq(active.length, 3);
-        assertEq(active[0].listingId, 1);
-        assertEq(active[1].listingId, 3);
-        assertEq(active[2].listingId, 5);
-    }
-
-    function test_GetActiveListings_EmptyWhenOffsetTooHigh() public {
-        _createListingFromDomain(DOMAIN_FUJI, trustedSenderFuji);
-
-        IPayReceiver.Listing[] memory result = receiver.getActiveListings(100, 10);
-        assertEq(result.length, 0);
-    }
-
-    function test_GetActiveListings_EmptyWhenNoListings() public {
-        IPayReceiver.Listing[] memory result = receiver.getActiveListings(0, 10);
-        assertEq(result.length, 0);
-    }
-
     // ============ Edge Cases ============
+    // Note: getActiveListings was removed to reduce contract size - use subgraph instead
 
     function test_ListingIdStartsAtOne() public {
         assertEq(receiver.nextListingId(), 1);
@@ -538,11 +492,7 @@ contract IPayReceiverMultiChainTest is Test {
         receiver.handle(DOMAIN_FUJI, trustedSenderFuji, message);
     }
 
-    function test_DomainConstants_AreCorrect() public view {
-        assertEq(receiver.DOMAIN_AVALANCHE_FUJI(), 43113);
-        assertEq(receiver.DOMAIN_SEPOLIA(), 11155111);
-        assertEq(receiver.DOMAIN_AMOY(), 80002);
-    }
+    // Note: Domain constants were removed to reduce contract size - defined in frontend
 
     function test_OperationConstants_AreCorrect() public view {
         assertEq(receiver.OP_MINT_LICENSE(), 1);
@@ -726,5 +676,57 @@ contract MockLicenseToken {
     function transferFrom(address from, address to, uint256 tokenId) external {
         require(_owners[tokenId] == from, "Not owner");
         _owners[tokenId] = to;
+    }
+}
+
+contract MockRegistrationWorkflows {
+    address private constant MOCK_IP_ID = address(0x789);
+    uint256 private _nextTokenId = 1;
+
+    function mintAndRegisterIpAndAttachPILTerms(
+        address, // spgNftContract
+        address, // recipient
+        WorkflowStructs.IPMetadata calldata, // ipMetadata
+        WorkflowStructs.LicenseTermsData[] calldata, // licenseTermsData
+        bool // allowDuplicates
+    ) external returns (address ipId, uint256 tokenId, uint256[] memory licenseTermsIds) {
+        ipId = MOCK_IP_ID;
+        tokenId = _nextTokenId++;
+        licenseTermsIds = new uint256[](1);
+        licenseTermsIds[0] = 1;
+    }
+
+    function createCollection(ISPGNFT.InitParams calldata)
+        external
+        pure
+        returns (address spgNftContract)
+    {
+        return address(0xABC);
+    }
+}
+
+contract MockDerivativeWorkflows {
+    address private constant MOCK_IP_ID = address(0xDEF);
+    uint256 private _nextTokenId = 1;
+
+    function mintAndRegisterIpAndMakeDerivativeWithLicenseTokens(
+        address, uint256[] calldata, bytes calldata, uint32, WorkflowStructs.IPMetadata calldata, address, bool
+    ) external returns (address ipId, uint256 tokenId) {
+        ipId = MOCK_IP_ID;
+        tokenId = _nextTokenId++;
+    }
+}
+
+contract MockLicenseAttachmentWorkflows {
+    address private constant MOCK_IP_ID = address(0xFED);
+    uint256 private _nextTokenId = 1;
+
+    function mintAndRegisterIpAndAttachPILTerms(
+        address, address, WorkflowStructs.IPMetadata calldata, WorkflowStructs.LicenseTermsData[] calldata, bool
+    ) external returns (address ipId, uint256 tokenId, uint256[] memory licenseTermsIds) {
+        ipId = MOCK_IP_ID;
+        tokenId = _nextTokenId++;
+        licenseTermsIds = new uint256[](1);
+        licenseTermsIds[0] = 1;
     }
 }

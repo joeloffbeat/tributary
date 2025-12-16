@@ -43,30 +43,47 @@ if ! command -v cast &> /dev/null; then
     exit 1
 fi
 
-# Function to get RPC URL for a chain
+# Function to convert chain name to env var name
+chain_to_env_var() {
+    local chain_name=$1
+    local env_var=""
+
+    case "$chain_name" in
+        sepolia)
+            env_var="RPC_SEPOLIA"
+            ;;
+        storyaenid)
+            env_var="RPC_STORY_AENID"
+            ;;
+        polygonamoy)
+            env_var="RPC_POLYGON_AMOY"
+            ;;
+        fuji|avalanche-fuji)
+            env_var="RPC_AVALANCHE_FUJI"
+            ;;
+        *)
+            # Convert to uppercase and add RPC_ prefix
+            env_var="RPC_$(echo "$chain_name" | tr '[:lower:]-' '[:upper:]_')"
+            ;;
+    esac
+
+    echo "$env_var"
+}
+
+# Function to get RPC URL for a chain (MUST be set in environment)
 get_rpc_url() {
     local chain_name=$1
+    local env_var=$(chain_to_env_var "$chain_name")
+    local env_value="${!env_var}"
 
-    # Try to find chain config by internal name or filename
-    local chain_config=""
-    for config in "$ROOT_DIR/chains/"*.yaml; do
-        internal_name=$(grep "^name:" "$config" 2>/dev/null | awk '{print $2}' | tr -d '"')
-        if [ "$internal_name" == "$chain_name" ]; then
-            chain_config="$config"
-            break
-        fi
-    done
-
-    if [ -z "$chain_config" ] && [ -f "$ROOT_DIR/chains/${chain_name}.yaml" ]; then
-        chain_config="$ROOT_DIR/chains/${chain_name}.yaml"
-    fi
-
-    if [ -z "$chain_config" ]; then
+    if [ -z "$env_value" ]; then
+        echo -e "${RED}Error: $env_var environment variable is not set for chain '$chain_name'${NC}" >&2
+        echo -e "Please add to your .env file: ${BLUE}$env_var=https://your-rpc-url${NC}" >&2
         echo ""
         return
     fi
 
-    grep -A1 "rpcUrls:" "$chain_config" | grep "http:" | head -1 | sed 's/.*http: //' | tr -d ' '
+    echo "$env_value"
 }
 
 # Function to get domain ID for a chain

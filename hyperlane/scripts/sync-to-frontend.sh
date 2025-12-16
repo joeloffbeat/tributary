@@ -32,6 +32,59 @@ if [ "$1" == "--apply" ]; then
     APPLY_MODE=true
 fi
 
+# Load environment variables
+if [ -f "$ROOT_DIR/.env" ]; then
+    export $(grep -v '^#' "$ROOT_DIR/.env" | xargs)
+fi
+
+# Function to convert chain name to env var name
+chain_to_env_var() {
+    local chain_name=$1
+    local env_var=""
+
+    case "$chain_name" in
+        sepolia)
+            env_var="RPC_SEPOLIA"
+            ;;
+        storyaenid)
+            env_var="RPC_STORY_AENID"
+            ;;
+        polygonamoy)
+            env_var="RPC_POLYGON_AMOY"
+            ;;
+        fuji|avalanche-fuji)
+            env_var="RPC_AVALANCHE_FUJI"
+            ;;
+        *)
+            # Convert to uppercase and add RPC_ prefix
+            env_var="RPC_$(echo "$chain_name" | tr '[:lower:]-' '[:upper:]_')"
+            ;;
+    esac
+
+    echo "$env_var"
+}
+
+# Function to get RPC URL for a chain
+# Priority: 1) Environment variable, 2) YAML config file
+get_rpc_url() {
+    local chain_name=$1
+    local chain_config=$2
+
+    # First, check for environment variable
+    local env_var=$(chain_to_env_var "$chain_name")
+    local env_value="${!env_var}"
+
+    if [ -n "$env_value" ]; then
+        echo "$env_value"
+        return
+    fi
+
+    # Fall back to YAML config
+    if [ -n "$chain_config" ] && [ -f "$chain_config" ]; then
+        grep -A1 "^rpcUrls:" "$chain_config" | tail -1 | grep "http:" | sed 's/.*http: //' | tr -d ' '
+    fi
+}
+
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}Hyperlane Frontend Sync${NC}"
 echo -e "${BLUE}========================================${NC}"
@@ -82,7 +135,7 @@ for deployment_dir in "$ROOT_DIR/deployments"/*/; do
         chain_id=$(grep "^chainId:" "$chain_config" | awk '{print $2}')
         domain_id=$(grep "^domainId:" "$chain_config" | awk '{print $2}')
         display_name=$(grep "^displayName:" "$chain_config" | cut -d':' -f2- | xargs)
-        rpc_url=$(grep -A1 "^rpcUrls:" "$chain_config" | tail -1 | grep "http:" | sed 's/.*http: //' | tr -d ' ')
+        rpc_url=$(get_rpc_url "$chain_name" "$chain_config")
         explorer_url=$(grep -A4 "^blockExplorers:" "$chain_config" | grep "url:" | head -1 | awk '{print $2}')
         native_name=$(grep -A3 "^nativeToken:" "$chain_config" | grep "name:" | head -1 | awk '{print $2}')
         native_symbol=$(grep -A3 "^nativeToken:" "$chain_config" | grep "symbol:" | head -1 | awk '{print $2}')
@@ -234,7 +287,7 @@ for chain_config in "$ROOT_DIR/chains/"*.yaml; do
         chain_id=$(grep "^chainId:" "$chain_config" | awk '{print $2}')
         domain_id=$(grep "^domainId:" "$chain_config" | awk '{print $2}')
         display_name=$(grep "^displayName:" "$chain_config" | cut -d':' -f2- | xargs)
-        rpc_url=$(grep -A1 "^rpcUrls:" "$chain_config" | tail -1 | grep "http:" | sed 's/.*http: //' | tr -d ' ')
+        rpc_url=$(get_rpc_url "$chain_name" "$chain_config")
         explorer_url=$(grep -A4 "^blockExplorers:" "$chain_config" | grep "url:" | head -1 | awk '{print $2}')
         native_name=$(grep -A3 "^nativeToken:" "$chain_config" | grep "name:" | head -1 | awk '{print $2}')
         native_symbol=$(grep -A3 "^nativeToken:" "$chain_config" | grep "symbol:" | head -1 | awk '{print $2}')

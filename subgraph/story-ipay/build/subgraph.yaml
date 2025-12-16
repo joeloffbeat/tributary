@@ -6,9 +6,9 @@ dataSources:
     name: IPayReceiver
     network: story-aeneid
     source:
-      address: "0xA5Cf9339908C3970c2e9Ac4aC0105367f53B80cB"
+      address: "0x70C55848161C4ee78A726ABE715ccD5F4C69B9fa"
       abi: IPayReceiver
-      startBlock: 12168199
+      startBlock: 12241560
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -23,6 +23,7 @@ dataSources:
         - PaymentFailure
         - Listing
         - ListingUsage
+        - LicenseListing
         - TrustedDomain
         - LiquidityEvent
         - ExchangeRateUpdate
@@ -62,4 +63,8 @@ dataSources:
           handler: handleWIPWithdrawn
         - event: ExchangeRateUpdated(uint256,uint256)
           handler: handleExchangeRateUpdated
+        - event: LicenseTokenListed(indexed uint256,indexed uint256,indexed address,uint256)
+          handler: handleLicenseTokenListed
+        - event: LicenseListingPurchased(indexed uint256,indexed address,uint256)
+          handler: handleLicenseListingPurchased
       file: IPayReceiver/IPayReceiver.wasm

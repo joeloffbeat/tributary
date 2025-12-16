@@ -33,7 +33,7 @@ export const DEFAULT_SOURCE_CHAIN_ID = 43113
 // =============================================================================
 
 /** IPayReceiver contract address on Story Aeneid */
-export const IPAY_RECEIVER_ADDRESS = '0xA5fa941d3c000ec425Fa7aDcAA0a9f5Bdb807f0F' as Address
+export const IPAY_RECEIVER_ADDRESS = '0x84cfED6aD4B772eB5293409639cFEb0364d0c347' as Address
 
 // =============================================================================
 // Token Configuration
