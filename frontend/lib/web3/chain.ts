@@ -1,17 +1,16 @@
 /**
- * Chain Hooks - Thirdweb Implementation
+ * Chain Hooks - Wagmi/Privy Implementation
  *
- * Provides chain-related functionality using Thirdweb hooks.
+ * Provides chain-related functionality using wagmi hooks.
  */
 
 'use client'
 
-import { useCallback, useState, useMemo } from 'react'
-import { useActiveWallet, useSwitchActiveWalletChain } from 'thirdweb/react'
-import { defineChain } from 'thirdweb'
+import { useCallback, useState } from 'react'
+import { useChainId as useWagmiChainId, useSwitchChain as useWagmiSwitchChain, useChains as useWagmiChains } from 'wagmi'
 import type { UseSwitchChainReturn, UseChainsReturn } from './types'
 import type { Chain } from 'viem'
-import { getSupportedViemChains, getChainById } from '@/lib/config/chains'
+import { getSupportedViemChains } from '@/lib/config/chains'
 
 /**
  * Hook to get the current chain ID
@@ -27,17 +26,7 @@ import { getSupportedViemChains, getChainById } from '@/lib/config/chains'
  * ```
  */
 export function useChainId(): number | undefined {
-  const wallet = useActiveWallet()
-
-  return useMemo(() => {
-    if (!wallet) return undefined
-    try {
-      const chain = wallet.getChain()
-      return chain?.id
-    } catch {
-      return undefined
-    }
-  }, [wallet])
+  return useWagmiChainId()
 }
 
 /**
@@ -57,48 +46,24 @@ export function useChainId(): number | undefined {
  * ```
  */
 export function useSwitchChain(): UseSwitchChainReturn {
-  const switchActiveWalletChain = useSwitchActiveWalletChain()
-  const [isPending, setIsPending] = useState(false)
+  const { switchChainAsync, isPending: wagmiIsPending } = useWagmiSwitchChain()
   const [error, setError] = useState<Error | null>(null)
 
   const switchChain = useCallback(
     async (chainId: number) => {
-      setIsPending(true)
       setError(null)
       try {
-        // Get chain config to use custom RPC if available (for chains not supported by Thirdweb proxy)
-        const chainConfig = getChainById(chainId)
-
-        // Define chain with custom RPC URL if we have one (bypasses Thirdweb's proxy)
-        const thirdwebChain = chainConfig?.rpcUrl
-          ? defineChain({
-              id: chainId,
-              rpc: chainConfig.rpcUrl,
-              name: chainConfig.name,
-              nativeCurrency: chainConfig.chain.nativeCurrency,
-              blockExplorers: chainConfig.chain.blockExplorers ? [
-                {
-                  name: chainConfig.chain.blockExplorers.default.name,
-                  url: chainConfig.chain.blockExplorers.default.url,
-                }
-              ] : undefined,
-              testnet: chainConfig.isTestnet || undefined,
-            })
-          : defineChain(chainId)
-
-        await switchActiveWalletChain(thirdwebChain)
+        await switchChainAsync({ chainId })
       } catch (err) {
         const error = err instanceof Error ? err : new Error('Failed to switch chain')
         setError(error)
         throw error
-      } finally {
-        setIsPending(false)
       }
     },
-    [switchActiveWalletChain]
+    [switchChainAsync]
   )
 
-  return { switchChain, isPending, error }
+  return { switchChain, isPending: wagmiIsPending, error }
 }
 
 /**
@@ -124,7 +89,10 @@ export function useSwitchChain(): UseSwitchChainReturn {
  * ```
  */
 export function useChains(): UseChainsReturn {
-  // Get configured chains from app config
-  const chains = getSupportedViemChains() as readonly Chain[]
+  const wagmiChains = useWagmiChains()
+  // Use wagmi chains if available, otherwise fall back to configured chains
+  const chains = wagmiChains.length > 0
+    ? (wagmiChains as readonly Chain[])
+    : (getSupportedViemChains() as readonly Chain[])
   return { chains }
 }

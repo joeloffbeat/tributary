@@ -112,10 +112,8 @@ export function ConfigurationProvider({ children }: ConfigurationProviderProps) 
       const clientStatus = getClientEnvStatus()
       setClientEnvStatus(clientStatus)
 
-      // Show dialog if not configured and not using defaults
-      if (!validation.valid && !configToUse.isDefaults) {
-        setShowDialog(true)
-      }
+      // Never show dialog - we use Privy for auth
+      // The old WalletConnect/Reown config is no longer needed
 
       // Load server-side validation in background (non-blocking)
       refreshServerValidation(configToUse).finally(() => {

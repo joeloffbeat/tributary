@@ -1,21 +1,44 @@
-import { GraphQLClient } from 'graphql-request'
+// NOTE: Always update this URL when deploying new subgraph versions
+const DEFAULT_SUBGRAPH_URL = 'https://api.goldsky.com/api/public/project_cmemwacolly2301xs17yy3d6z/subgraphs/tributary-mantle/v1.0.1/gn'
 
-export const SUBGRAPH_URL = process.env.NEXT_PUBLIC_SUBGRAPH_URL || ''
-
-export const subgraphClient = new GraphQLClient(SUBGRAPH_URL)
+export function getSubgraphUrl(): string {
+  // Hardcoded URL takes precedence - env override is deprecated to avoid version mismatch
+  return DEFAULT_SUBGRAPH_URL
+}
 
 /**
- * Generic helper to query the subgraph
+ * Generic helper to query the subgraph using native fetch
+ * This avoids issues with graphql-request in Next.js server components
  */
 export async function querySubgraph<T>(
   query: string,
   variables?: Record<string, unknown>
 ): Promise<T> {
-  if (!SUBGRAPH_URL) {
-    throw new Error('NEXT_PUBLIC_SUBGRAPH_URL is not configured')
+  const url = getSubgraphUrl()
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query, variables }),
+    cache: 'no-store', // Disable Next.js fetch caching
+  })
+
+  if (!response.ok) {
+    throw new Error(`Subgraph query failed: ${response.status} ${response.statusText}`)
   }
-  return subgraphClient.request<T>(query, variables)
+
+  const json = await response.json()
+
+  if (json.errors) {
+    throw new Error(`GraphQL errors: ${JSON.stringify(json.errors)}`)
+  }
+
+  return json.data as T
 }
+
+// Legacy exports for compatibility
+export const SUBGRAPH_URL = DEFAULT_SUBGRAPH_URL
+export const subgraphClient = { request: <T>(q: string, v?: Record<string, unknown>) => querySubgraph<T>(q, v) }
 
 // ============ GraphQL Queries ============
 
@@ -136,7 +159,7 @@ export const QUERIES = {
   // Get candles for charting - 1 minute
   CANDLES_1M: `
     query GetCandles1m($poolId: String!, $from: BigInt!, $first: Int!) {
-      candle1ms(
+      candle1Ms(
         where: { pool: $poolId, timestamp_gte: $from }
         orderBy: timestamp
         orderDirection: asc
@@ -156,7 +179,7 @@ export const QUERIES = {
   // Get candles - 5 minutes
   CANDLES_5M: `
     query GetCandles5m($poolId: String!, $from: BigInt!, $first: Int!) {
-      candle5ms(
+      candle5Ms(
         where: { pool: $poolId, timestamp_gte: $from }
         orderBy: timestamp
         orderDirection: asc
@@ -176,7 +199,7 @@ export const QUERIES = {
   // Get candles - 1 hour
   CANDLES_1H: `
     query GetCandles1h($poolId: String!, $from: BigInt!, $first: Int!) {
-      candle1hs(
+      candle1Hs(
         where: { pool: $poolId, timestamp_gte: $from }
         orderBy: timestamp
         orderDirection: asc
@@ -196,7 +219,7 @@ export const QUERIES = {
   // Get candles - 1 day
   CANDLES_1D: `
     query GetCandles1d($poolId: String!, $from: BigInt!, $first: Int!) {
-      candle1ds(
+      candle1Ds(
         where: { pool: $poolId, timestamp_gte: $from }
         orderBy: timestamp
         orderDirection: asc

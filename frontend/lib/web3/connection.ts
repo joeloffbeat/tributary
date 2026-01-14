@@ -1,22 +1,19 @@
 /**
- * Connection Hooks - Thirdweb Implementation
+ * Connection Hooks - Privy Implementation
  *
- * Provides connect/disconnect functionality using Thirdweb.
+ * Provides connect/disconnect functionality using Privy.
  */
 
 'use client'
 
 import { useCallback, useState } from 'react'
-import { useActiveWallet, useConnect as useThirdwebConnect, useDisconnect as useThirdwebDisconnect } from 'thirdweb/react'
-import { createWallet } from 'thirdweb/wallets'
-import { getThirdwebClient } from './thirdweb-client'
+import { usePrivy } from '@privy-io/react-auth'
 import type { UseConnectReturn, UseDisconnectReturn } from './types'
 
 /**
  * Hook to connect a wallet
  *
- * Opens the Thirdweb connect modal for wallet connection.
- * Note: For full modal functionality, use the ConnectButton component instead.
+ * Opens the Privy connect modal for wallet connection.
  *
  * @returns Object with connect function, pending state, and error
  *
@@ -34,31 +31,25 @@ import type { UseConnectReturn, UseDisconnectReturn } from './types'
  * ```
  */
 export function useConnect(): UseConnectReturn {
-  const { connect: thirdwebConnect } = useThirdwebConnect()
+  const { login, ready } = usePrivy()
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<Error | null>(null)
 
   const connect = useCallback(() => {
+    if (!ready) return
+
     setIsPending(true)
     setError(null)
 
     try {
-      const client = getThirdwebClient()
-
-      // Connect with MetaMask as default
-      // For full wallet options, use ConnectButton component
-      thirdwebConnect(async () => {
-        const wallet = createWallet('io.metamask')
-        await wallet.connect({ client })
-        return wallet
-      })
+      login()
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to connect')
       setError(error)
     } finally {
       setIsPending(false)
     }
-  }, [thirdwebConnect])
+  }, [login, ready])
 
   return { connect, isPending, error }
 }
@@ -82,20 +73,19 @@ export function useConnect(): UseConnectReturn {
  * ```
  */
 export function useDisconnect(): UseDisconnectReturn {
-  const { disconnect: thirdwebDisconnect } = useThirdwebDisconnect()
-  const wallet = useActiveWallet()
+  const { logout, authenticated } = usePrivy()
   const [isPending, setIsPending] = useState(false)
 
   const disconnect = useCallback(() => {
-    if (!wallet) return
+    if (!authenticated) return
 
     setIsPending(true)
     try {
-      thirdwebDisconnect(wallet)
+      logout()
     } finally {
       setIsPending(false)
     }
-  }, [thirdwebDisconnect, wallet])
+  }, [logout, authenticated])
 
   return { disconnect, isPending }
 }

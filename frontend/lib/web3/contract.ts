@@ -1,22 +1,22 @@
 /**
- * Contract Hooks - Thirdweb Implementation
+ * Contract Hooks - Wagmi/Privy Implementation
  *
- * Provides contract read/write functionality using Thirdweb SDK.
+ * Provides contract read/write functionality using wagmi hooks.
  */
 
 'use client'
 
 import { useCallback, useState } from 'react'
-import { useActiveAccount, useActiveWallet, useReadContract as useThirdwebReadContract } from 'thirdweb/react'
-import { getContract, prepareContractCall, sendTransaction } from 'thirdweb'
-import { defineChain } from 'thirdweb'
-import { getThirdwebClient } from './thirdweb-client'
+import {
+  useReadContract as useWagmiReadContract,
+  useWriteContract as useWagmiWriteContract,
+} from 'wagmi'
 import type {
   UseReadContractParams,
   UseReadContractReturn,
   UseWriteContractReturn,
 } from './types'
-import type { Address } from 'viem'
+import type { Address, Abi } from 'viem'
 
 /**
  * Hook to read from a contract
@@ -40,20 +40,6 @@ export function useReadContract<T = unknown>(
   params: UseReadContractParams
 ): UseReadContractReturn<T> {
   const { address, abi, functionName, args, chainId, watch = false } = params
-  const wallet = useActiveWallet()
-
-  // Determine chain ID
-  const effectiveChainId = chainId || wallet?.getChain()?.id
-
-  // Create contract instance
-  const contract = effectiveChainId
-    ? getContract({
-        client: getThirdwebClient(),
-        chain: defineChain(effectiveChainId),
-        address,
-        abi: abi as any,
-      })
-    : undefined
 
   const {
     data,
@@ -61,10 +47,15 @@ export function useReadContract<T = unknown>(
     isFetching,
     error,
     refetch,
-  } = useThirdwebReadContract({
-    contract: contract!,
-    method: functionName,
-    params: args || [],
+  } = useWagmiReadContract({
+    address: address as Address,
+    abi: abi as Abi,
+    functionName,
+    args: args as readonly unknown[],
+    chainId,
+    query: {
+      refetchInterval: watch ? 10000 : false,
+    },
   })
 
   return {
@@ -98,9 +89,7 @@ export function useReadContract<T = unknown>(
  * ```
  */
 export function useWriteContract(): UseWriteContractReturn {
-  const account = useActiveAccount()
-  const wallet = useActiveWallet()
-  const [isPending, setIsPending] = useState(false)
+  const { writeContractAsync, isPending: wagmiIsPending } = useWagmiWriteContract()
   const [error, setError] = useState<Error | null>(null)
 
   const writeContract = useCallback(
@@ -111,54 +100,26 @@ export function useWriteContract(): UseWriteContractReturn {
       args?: readonly unknown[]
       value?: bigint
     }): Promise<`0x${string}`> => {
-      if (!account || !wallet) {
-        throw new Error('Wallet not connected')
-      }
-
-      setIsPending(true)
       setError(null)
 
       try {
-        const chain = wallet.getChain()
-        if (!chain) {
-          throw new Error('No chain selected')
-        }
-
-        const client = getThirdwebClient()
-
-        // Create contract instance
-        const contract = getContract({
-          client,
-          chain,
+        const hash = await writeContractAsync({
           address: params.address,
-          abi: params.abi as any,
-        })
-
-        // Prepare the contract call
-        const transaction = prepareContractCall({
-          contract,
-          method: params.functionName,
-          params: params.args || [],
+          abi: params.abi as Abi,
+          functionName: params.functionName,
+          args: params.args,
           value: params.value,
         })
 
-        // Send the transaction
-        const result = await sendTransaction({
-          transaction,
-          account,
-        })
-
-        return result.transactionHash as `0x${string}`
+        return hash
       } catch (err) {
         const error = err instanceof Error ? err : new Error('Contract write failed')
         setError(error)
         throw error
-      } finally {
-        setIsPending(false)
       }
     },
-    [account, wallet]
+    [writeContractAsync]
   )
 
-  return { writeContract, isPending, error }
+  return { writeContract, isPending: wagmiIsPending, error }
 }

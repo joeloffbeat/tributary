@@ -1,26 +1,15 @@
 /**
- * Connect Button - Thirdweb Implementation
+ * Connect Button - Privy Implementation
  *
- * Uses useConnectModal hook for connection and a custom dropdown for the
- * connected state to completely avoid thirdweb's nested button hydration error.
+ * Uses Privy's usePrivy and useLogin hooks for wallet connection
+ * with a custom dropdown for the connected state.
  */
 
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
-import {
-  useActiveAccount,
-  useActiveWallet,
-  useDisconnect,
-  useWalletBalance,
-  useConnectModal,
-  useAutoConnect,
-} from 'thirdweb/react'
-import { createWallet, inAppWallet } from 'thirdweb/wallets'
-import { thirdwebClient, isThirdwebConfigured } from '@/lib/web3/thirdweb-client'
-import { getSupportedChainList, getChainById } from '@/lib/config/chains'
-import { defineChain } from 'thirdweb'
-import { useTheme } from 'next-themes'
+import { useState } from 'react'
+import { usePrivy, useWallets } from '@privy-io/react-auth'
+import { useBalance } from 'wagmi'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,84 +20,54 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Copy, ExternalLink, LogOut, Check, ArrowLeftRight } from 'lucide-react'
 import { BridgeUsdcDialog } from './bridge-usdc'
+import { getChainById } from '@/lib/config/chains'
 
 interface ConnectButtonProps {
   className?: string
 }
 
-// Define supported wallets
-const wallets = [
-  inAppWallet({
-    auth: {
-      options: ['google', 'discord', 'apple', 'email', 'phone'],
-    },
-  }),
-  createWallet('io.metamask'),
-  createWallet('com.coinbase.wallet'),
-  createWallet('io.rabby'),
-  createWallet('app.phantom'),
-  createWallet('com.trustwallet.app'),
-  createWallet('me.rainbow'),
-]
-
 /**
  * Custom Wallet Details Dropdown Component
- *
- * Renders a custom dropdown when wallet is connected to avoid thirdweb's
- * nested button hydration error in their internal modal.
  */
-function WalletDetailsDropdown({ className }: { className?: string }) {
-  const account = useActiveAccount()
-  const wallet = useActiveWallet()
-  const { disconnect } = useDisconnect()
+function WalletDetailsDropdown({
+  className,
+  address,
+  onLogout,
+}: {
+  className?: string
+  address: `0x${string}`
+  onLogout: () => void
+}) {
   const [copied, setCopied] = useState(false)
   const [bridgeDialogOpen, setBridgeDialogOpen] = useState(false)
+  const { wallets } = useWallets()
 
   // Get the current chain from the wallet
-  const walletChain = wallet?.getChain()
-  const chainId = walletChain?.id
+  const activeWallet = wallets.find((w) => w.address === address)
+  const chainId = activeWallet?.chainId ? parseInt(activeWallet.chainId.split(':')[1] || '1') : 1
 
-  // Get full chain config for correct native currency
-  const chainConfig = chainId ? getChainById(chainId) : undefined
-  const chain = chainConfig ? defineChain({
-    id: chainConfig.chain.id,
-    rpc: chainConfig.rpcUrl,
-    name: chainConfig.name,
-    nativeCurrency: chainConfig.chain.nativeCurrency,
-    blockExplorers: chainConfig.chain.blockExplorers ? [
-      {
-        name: chainConfig.chain.blockExplorers.default.name,
-        url: chainConfig.chain.blockExplorers.default.url,
-      }
-    ] : undefined,
-    testnet: chainConfig.isTestnet || undefined,
-  }) : walletChain
-
-  const { data: balance } = useWalletBalance({
-    client: thirdwebClient!,
-    chain: chain,
-    address: account?.address,
+  // Get balance
+  const { data: balance } = useBalance({
+    address,
+    chainId,
   })
 
-  if (!account || !wallet) return null
+  // Get chain config
+  const chainConfig = getChainById(chainId)
 
-  const truncatedAddress = `${account.address.slice(0, 6)}...${account.address.slice(-4)}`
+  const truncatedAddress = `${address.slice(0, 6)}...${address.slice(-4)}`
   const formattedBalance = balance
-    ? `${Number(balance.displayValue).toFixed(4)} ${balance.symbol}`
+    ? `${Number(balance.formatted).toFixed(4)} ${balance.symbol}`
     : '...'
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(account.address)
+    await navigator.clipboard.writeText(address)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const handleDisconnect = () => {
-    disconnect(wallet)
-  }
-
-  const explorerUrl = chain?.blockExplorers?.[0]?.url
-    ? `${chain.blockExplorers[0].url}/address/${account.address}`
+  const explorerUrl = chainConfig?.chain.blockExplorers?.default?.url
+    ? `${chainConfig.chain.blockExplorers.default.url}/address/${address}`
     : null
 
   return (
@@ -118,63 +77,60 @@ function WalletDetailsDropdown({ className }: { className?: string }) {
           <div
             role="button"
             tabIndex={0}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors cursor-pointer ${className || ''}`}
+            className={`inline-flex items-center gap-2 btn-secondary text-sm py-2 px-4 cursor-pointer ${className || ''}`}
           >
-            <span className="text-sm text-zinc-400">{formattedBalance}</span>
-            <span className="text-sm font-medium text-white">{truncatedAddress}</span>
+            <span className="text-muted-foreground">{formattedBalance}</span>
+            <span className="text-primary">{truncatedAddress}</span>
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-64">
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium">Connected Wallet</p>
-              <p className="text-xs text-muted-foreground font-mono">{truncatedAddress}</p>
+              <p className="font-body text-xs">CONNECTED WALLET</p>
+              <p className="font-stat text-xs text-muted-foreground">{truncatedAddress}</p>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
 
-          {/* Bridge USDC Button - Always shown for quick access */}
+          {/* Bridge USDC Button */}
           <DropdownMenuItem
             onClick={() => setBridgeDialogOpen(true)}
-            className="cursor-pointer"
+            className="cursor-pointer font-body text-xs"
           >
             <ArrowLeftRight className="mr-2 h-4 w-4" />
-            Bridge USDC
+            BRIDGE USDC
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleCopy} className="cursor-pointer">
+          <DropdownMenuItem onClick={handleCopy} className="cursor-pointer font-body text-xs">
             {copied ? (
               <Check className="mr-2 h-4 w-4 text-green-500" />
             ) : (
               <Copy className="mr-2 h-4 w-4" />
             )}
-            {copied ? 'Copied!' : 'Copy Address'}
+            {copied ? 'COPIED!' : 'COPY ADDRESS'}
           </DropdownMenuItem>
           {explorerUrl && (
-            <DropdownMenuItem asChild className="cursor-pointer">
+            <DropdownMenuItem asChild className="cursor-pointer font-body text-xs">
               <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="mr-2 h-4 w-4" />
-                View on Explorer
+                VIEW ON EXPLORER
               </a>
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onClick={handleDisconnect}
-            className="cursor-pointer text-red-500 focus:text-red-500"
+            onClick={onLogout}
+            className="cursor-pointer font-body text-xs text-red-500 focus:text-red-500"
           >
             <LogOut className="mr-2 h-4 w-4" />
-            Disconnect
+            DISCONNECT
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
       {/* Bridge USDC Dialog */}
-      <BridgeUsdcDialog
-        open={bridgeDialogOpen}
-        onOpenChange={setBridgeDialogOpen}
-      />
+      <BridgeUsdcDialog open={bridgeDialogOpen} onOpenChange={setBridgeDialogOpen} />
     </>
   )
 }
@@ -182,104 +138,44 @@ function WalletDetailsDropdown({ className }: { className?: string }) {
 /**
  * Connect Button Component
  *
- * Uses useConnectModal hook for connection and custom dropdown for connected state.
- * This approach completely avoids thirdweb's internal button components that
- * cause nested button hydration errors.
- *
- * @example
- * ```tsx
- * import { ConnectButton } from '@/components/web3/connect-button'
- *
- * function Header() {
- *   return (
- *     <header>
- *       <ConnectButton />
- *     </header>
- *   )
- * }
- * ```
+ * Uses Privy for authentication and wallet connection.
  */
 export function ConnectButton({ className }: ConnectButtonProps) {
-  const { resolvedTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  const account = useActiveAccount()
-  const { connect } = useConnectModal()
+  const { ready, authenticated, user, login, logout } = usePrivy()
 
-  // Ensure we're mounted to avoid hydration mismatch with theme
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  // Get the user's wallet address
+  const walletAddress = user?.wallet?.address as `0x${string}` | undefined
 
-  // Get supported chains - memoized to avoid recreation
-  const chains = useMemo(() => {
-    const chainConfigs = getSupportedChainList()
-    return chainConfigs.map((config) =>
-      defineChain({
-        id: config.chain.id,
-        rpc: config.rpcUrl,
-        name: config.name,
-        nativeCurrency: config.chain.nativeCurrency,
-        blockExplorers: config.chain.blockExplorers
-          ? [
-              {
-                name: config.chain.blockExplorers.default.name,
-                url: config.chain.blockExplorers.default.url,
-              },
-            ]
-          : undefined,
-        testnet: config.isTestnet || undefined,
-      })
-    )
-  }, [])
-
-  // Auto-connect on mount if previously connected
-  useAutoConnect({
-    client: thirdwebClient as NonNullable<typeof thirdwebClient>,
-    wallets,
-  })
-
-  // Don't render if Thirdweb is not configured
-  if (!isThirdwebConfigured() || !thirdwebClient) {
+  // Don't render until Privy is ready
+  if (!ready) {
     return (
       <button
-        className={className}
+        className={`btn-primary text-sm py-2 px-4 opacity-50 cursor-not-allowed ${className || ''}`}
         disabled
-        title="Wallet connection not configured"
       >
-        Connect Wallet
+        LOADING...
       </button>
     )
   }
 
-  // Use dark theme as default until mounted, then use resolved theme
-  const thirdwebTheme = mounted ? (resolvedTheme === 'light' ? 'light' : 'dark') : 'dark'
-
-  // Handle connect button click - opens thirdweb modal
-  const handleConnect = async () => {
-    if (!thirdwebClient) return
-    await connect({
-      client: thirdwebClient,
-      wallets,
-      chains,
-      theme: thirdwebTheme,
-      size: 'wide',
-      title: 'Connect Wallet',
-      showThirdwebBranding: false,
-    })
+  // If authenticated and has wallet, show dropdown
+  if (authenticated && walletAddress) {
+    return (
+      <WalletDetailsDropdown
+        className={className}
+        address={walletAddress}
+        onLogout={logout}
+      />
+    )
   }
 
-  // If connected, show custom dropdown (no thirdweb components)
-  if (account) {
-    return <WalletDetailsDropdown className={className} />
-  }
-
-  // If not connected, show connect button
+  // If not authenticated, show connect button
   return (
     <button
-      onClick={handleConnect}
-      className={`inline-flex items-center justify-center px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors text-sm font-medium text-white ${className || ''}`}
+      onClick={login}
+      className={`btn-primary text-sm py-2 px-4 ${className || ''}`}
     >
-      Connect Wallet
+      CONNECT WALLET
     </button>
   )
 }

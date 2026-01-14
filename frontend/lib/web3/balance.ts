@@ -1,16 +1,13 @@
 /**
- * Balance Hook - Thirdweb Implementation
+ * Balance Hook - Wagmi/Privy Implementation
  *
- * Provides balance fetching using Thirdweb hooks.
+ * Provides balance fetching using wagmi hooks.
  */
 
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { useActiveAccount, useActiveWallet, useWalletBalance } from 'thirdweb/react'
-import { defineChain } from 'thirdweb'
-import { getThirdwebClient } from './thirdweb-client'
-import { getChainById } from '@/lib/config/chains'
+import { useCallback } from 'react'
+import { useBalance as useWagmiBalance, useAccount } from 'wagmi'
 import type { UseBalanceParams, UseBalanceReturn } from './types'
 
 /**
@@ -36,82 +33,36 @@ import type { UseBalanceParams, UseBalanceReturn } from './types'
  * ```
  */
 export function useBalance(params: UseBalanceParams = {}): UseBalanceReturn {
-  const { address, token, chainId, watch = false } = params
+  const { address: paramAddress, token, chainId, watch = false } = params
 
-  const account = useActiveAccount()
-  const wallet = useActiveWallet()
-  const [refetchTrigger, setRefetchTrigger] = useState(0)
+  const { address: connectedAddress } = useAccount()
 
   // Determine the address to use
-  const targetAddress = address || account?.address
+  const targetAddress = paramAddress || connectedAddress
 
-  // Get chain ID from wallet if not provided
-  const effectiveChainId = chainId || wallet?.getChain()?.id
-
-  // Create thirdweb chain with full config including native currency
-  const thirdwebChain = useMemo(() => {
-    if (!effectiveChainId) return undefined
-
-    const chainConfig = getChainById(effectiveChainId)
-    if (chainConfig) {
-      // Use full chain config to get correct native currency (e.g., IP for Story)
-      return defineChain({
-        id: chainConfig.chain.id,
-        rpc: chainConfig.rpcUrl,
-        name: chainConfig.name,
-        nativeCurrency: chainConfig.chain.nativeCurrency,
-        blockExplorers: chainConfig.chain.blockExplorers ? [
-          {
-            name: chainConfig.chain.blockExplorers.default.name,
-            url: chainConfig.chain.blockExplorers.default.url,
-          }
-        ] : undefined,
-        testnet: chainConfig.isTestnet || undefined,
-      })
-    }
-    // Fallback for chains not in our config
-    return defineChain(effectiveChainId)
-  }, [effectiveChainId])
-
-  // Use Thirdweb's balance hook for native balance
   const {
     data: balanceData,
     isLoading,
     isFetching,
     error,
-    refetch: thirdwebRefetch,
-  } = useWalletBalance({
-    client: getThirdwebClient(),
-    chain: thirdwebChain,
+    refetch: wagmiRefetch,
+  } = useWagmiBalance({
     address: targetAddress as `0x${string}`,
-    tokenAddress: token,
+    chainId,
+    token: token as `0x${string}` | undefined,
+    query: {
+      enabled: !!targetAddress,
+      refetchInterval: watch ? 10000 : false,
+    },
   })
 
-  // Setup watch interval
-  useEffect(() => {
-    if (!watch) return
-
-    const interval = setInterval(() => {
-      setRefetchTrigger((prev) => prev + 1)
-    }, 10000)
-
-    return () => clearInterval(interval)
-  }, [watch])
-
-  // Refetch when trigger changes
-  useEffect(() => {
-    if (refetchTrigger > 0) {
-      thirdwebRefetch()
-    }
-  }, [refetchTrigger, thirdwebRefetch])
-
   const refetch = useCallback(() => {
-    thirdwebRefetch()
-  }, [thirdwebRefetch])
+    wagmiRefetch()
+  }, [wagmiRefetch])
 
   return {
     balance: balanceData?.value,
-    formatted: balanceData?.displayValue,
+    formatted: balanceData?.formatted,
     symbol: balanceData?.symbol,
     decimals: balanceData?.decimals,
     isLoading,

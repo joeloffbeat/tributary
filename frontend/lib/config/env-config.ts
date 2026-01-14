@@ -98,10 +98,8 @@ export const DEFAULT_CONFIG: EnvConfig = {
 // Required & Optional Environment Variables
 // =============================================================================
 
-export const REQUIRED_CLIENT_ENV_VARS = [
-  'NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID',
-  'NEXT_PUBLIC_APP_MODE', // testnet | mainnet | both
-] as const
+// No required vars since we use Privy for auth
+export const REQUIRED_CLIENT_ENV_VARS = [] as const
 
 export const OPTIONAL_CLIENT_ENV_VARS = [
   'NEXT_PUBLIC_SUPPORTED_CHAINS', // Optional filter for chains
@@ -216,42 +214,8 @@ export interface ValidationResult {
 }
 
 export function validateConfig(config: EnvConfig): ValidationResult {
-  if (config.isDefaults) {
-    return { valid: true, missing: [], recommended: [] }
-  }
-
-  const missing: string[] = []
-  const recommended: string[] = []
-
-  // Check required environment variables
-  if (!config.walletConnectProjectId) {
-    missing.push('NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID')
-  }
-
-  // NEXT_PUBLIC_APP_MODE is validated in chains.ts (throws if missing/invalid)
-
-  // Check recommended variables
-  if (!config.alchemyApiKey) {
-    recommended.push('NEXT_PUBLIC_ALCHEMY_API_KEY')
-  }
-
-  if (!config.appDescription) {
-    recommended.push('NEXT_PUBLIC_APP_DESCRIPTION')
-  }
-
-  if (config.smartAccount.enabled && !config.smartAccount.paymasterUrl) {
-    missing.push('NEXT_PUBLIC_PAYMASTER_URL')
-  }
-
-  if (config.smartAccount.enabled && !config.smartAccount.bundlerUrl) {
-    recommended.push('NEXT_PUBLIC_BUNDLER_URL')
-  }
-
-  return {
-    valid: missing.length === 0,
-    missing,
-    recommended,
-  }
+  // Always return valid - we use Privy for auth, no WalletConnect needed
+  return { valid: true, missing: [], recommended: [] }
 }
 
 // =============================================================================

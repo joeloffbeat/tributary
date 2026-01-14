@@ -1,13 +1,13 @@
 /**
- * Signature Hooks - Thirdweb Implementation
+ * Signature Hooks - Wagmi/Privy Implementation
  *
- * Provides message signing functionality using Thirdweb SDK.
+ * Provides message signing functionality using wagmi hooks.
  */
 
 'use client'
 
 import { useCallback, useState } from 'react'
-import { useActiveAccount } from 'thirdweb/react'
+import { useSignMessage as useWagmiSignMessage, useSignTypedData as useWagmiSignTypedData } from 'wagmi'
 import type { UseSignMessageReturn, UseSignTypedDataReturn } from './types'
 
 /**
@@ -28,34 +28,26 @@ import type { UseSignMessageReturn, UseSignTypedDataReturn } from './types'
  * ```
  */
 export function useSignMessage(): UseSignMessageReturn {
-  const account = useActiveAccount()
-  const [isPending, setIsPending] = useState(false)
+  const { signMessageAsync, isPending: wagmiIsPending } = useWagmiSignMessage()
   const [error, setError] = useState<Error | null>(null)
 
   const signMessage = useCallback(
     async (message: string): Promise<`0x${string}`> => {
-      if (!account) {
-        throw new Error('Wallet not connected')
-      }
-
-      setIsPending(true)
       setError(null)
 
       try {
-        const signature = await account.signMessage({ message })
-        return signature as `0x${string}`
+        const signature = await signMessageAsync({ message })
+        return signature
       } catch (err) {
         const error = err instanceof Error ? err : new Error('Failed to sign message')
         setError(error)
         throw error
-      } finally {
-        setIsPending(false)
       }
     },
-    [account]
+    [signMessageAsync]
   )
 
-  return { signMessage, isPending, error }
+  return { signMessage, isPending: wagmiIsPending, error }
 }
 
 /**
@@ -80,33 +72,25 @@ export function useSignMessage(): UseSignMessageReturn {
  * ```
  */
 export function useSignTypedData(): UseSignTypedDataReturn {
-  const account = useActiveAccount()
-  const [isPending, setIsPending] = useState(false)
+  const { signTypedDataAsync, isPending: wagmiIsPending } = useWagmiSignTypedData()
   const [error, setError] = useState<Error | null>(null)
 
   const signTypedData = useCallback(
     async (typedData: unknown): Promise<`0x${string}`> => {
-      if (!account) {
-        throw new Error('Wallet not connected')
-      }
-
-      setIsPending(true)
       setError(null)
 
       try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const signature = await account.signTypedData(typedData as any)
-        return signature as `0x${string}`
+        const signature = await signTypedDataAsync(typedData as any)
+        return signature
       } catch (err) {
         const error = err instanceof Error ? err : new Error('Failed to sign typed data')
         setError(error)
         throw error
-      } finally {
-        setIsPending(false)
       }
     },
-    [account]
+    [signTypedDataAsync]
   )
 
-  return { signTypedData, isPending, error }
+  return { signTypedData, isPending: wagmiIsPending, error }
 }

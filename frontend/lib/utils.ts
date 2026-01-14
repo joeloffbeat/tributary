@@ -72,3 +72,10 @@ export function formatNumber(value: number | string): string {
 
   return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
+
+/**
+ * Shorten an address for display (alias for formatAddress)
+ */
+export function shortenAddress(address: string, startChars = 6, endChars = 4): string {
+  return formatAddress(address, startChars, endChars)
+}

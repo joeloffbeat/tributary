@@ -1,9 +1,7 @@
 /**
- * Web3 Interface - Thirdweb Implementation
+ * Web3 Interface - Privy/Wagmi Implementation
  *
  * This is the STABLE API that all protocols use.
- * Thirdweb-specific features are also exported for protocols
- * that require direct Thirdweb access (like x402).
  *
  * Usage in protocols:
  * ```typescript
@@ -13,17 +11,7 @@
  *   const { address, isConnected } = useAccount()
  *   const walletClient = useWalletClient()
  *   const publicClient = usePublicClient()
- *   // ... works with Thirdweb auth provider
- * }
- * ```
- *
- * For Thirdweb-specific features (x402, etc.):
- * ```typescript
- * import { useThirdwebWallet, thirdwebClient } from '@/lib/web3'
- *
- * function X402Component() {
- *   const wallet = useThirdwebWallet()
- *   // Use with wrapFetchWithPayment
+ *   // ... works with Privy auth provider
  * }
  * ```
  */
@@ -79,18 +67,6 @@ export { useSignMessage, useSignTypedData } from './signature'
 // =============================================================================
 
 export { ConnectButton } from '@/components/web3/connect-button'
-
-// =============================================================================
-// Thirdweb-Specific Exports (for x402 and other Thirdweb features)
-// =============================================================================
-
-export {
-  thirdwebClient,
-  getThirdwebClient,
-  isThirdwebConfigured,
-  useThirdwebWallet,
-  useThirdwebAccount,
-} from './thirdweb-client'
 
 // =============================================================================
 // Types
@@ -154,7 +130,7 @@ export type {
 } from 'viem'
 
 // =============================================================================
-// Utilities (from Thirdweb config)
+// Utilities (from config)
 // =============================================================================
 
 export { supportedChains, getSupportedChainIds } from './config'

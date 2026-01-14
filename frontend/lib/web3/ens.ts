@@ -1,8 +1,7 @@
 /**
- * ENS Hooks - Thirdweb Implementation
+ * ENS Hooks - Viem Implementation
  *
- * Provides ENS name and avatar resolution.
- * Uses viem directly since Thirdweb doesn't have built-in ENS support.
+ * Provides ENS name and avatar resolution using viem directly.
  */
 
 'use client'
