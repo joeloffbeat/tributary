@@ -1,112 +1,207 @@
 'use client'
 
-import { useState, useCallback } from 'react'
-import { Store, ShoppingBag, Package, Wallet, Plus } from 'lucide-react'
-import { useAccount, ConnectButton } from '@/lib/web3'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
-import { MarketplaceTab } from '@/components/ipay/marketplace-tab'
-import { MyAssetsTab } from '@/components/protocols/story'
-import { RegisterIPADialog } from '@/components/ipay/register-ipa'
-import { toast } from 'sonner'
+import Link from 'next/link'
+import { formatUnits } from 'viem'
+import { useProtocolStats } from '@/hooks/use-protocol-stats'
+import { useFeaturedVaults, FeaturedVault } from '@/hooks/use-featured-vaults'
+import { formatNumber, formatAddress } from '@/lib/utils'
 
-type TabValue = 'marketplace' | 'my-listings' | 'my-purchases' | 'my-assets'
-
-export default function Home() {
-  const { address, isConnected } = useAccount()
-  const [activeTab, setActiveTab] = useState<TabValue>('marketplace')
-  const [registerDialogOpen, setRegisterDialogOpen] = useState(false)
-
-  const handleRegistrationSuccess = useCallback(() => {
-    toast.success('IP registration submitted!', {
-      description: 'Your cross-chain registration request has been sent.',
-    })
-  }, [])
-
-  if (!isConnected) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center py-20">
-          <Store className="h-16 w-16 mx-auto mb-6 text-muted-foreground" />
-          <h1 className="text-3xl font-bold mb-4">IPay Marketplace</h1>
-          <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-            Pay-per-use IP licensing on-chain. Connect your wallet to browse and license intellectual property.
-          </p>
-          <ConnectButton />
-        </div>
-      </div>
-    )
-  }
+export default function HomePage() {
+  const { data: stats } = useProtocolStats()
+  const { data: featured } = useFeaturedVaults(6)
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-start justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">IPay Marketplace</h1>
-          <p className="text-muted-foreground">
-            Pay-per-use IP licensing powered by Story Protocol
-          </p>
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="container mx-auto px-6 py-24 text-center">
+        <h1 className="font-title text-7xl md:text-8xl text-primary mb-6">
+          Tributary
+        </h1>
+        <p className="font-body text-muted-foreground max-w-xl mx-auto mb-12">
+          TOKENIZE YOUR INTELLECTUAL PROPERTY.
+          <br />
+          SHARE YOUR SUCCESS WITH THE WORLD.
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link href="/marketplace" className="btn-primary">
+            EXPLORE MARKETPLACE
+          </Link>
+          <Link href="/create" className="btn-secondary">
+            CREATE YOUR VAULT
+          </Link>
         </div>
-        <Button onClick={() => setRegisterDialogOpen(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Register IPA
-        </Button>
+      </section>
+
+      {/* Divider */}
+      <div className="container mx-auto px-6">
+        <div className="border-t border-muted" />
       </div>
 
-      <RegisterIPADialog
-        open={registerDialogOpen}
-        onOpenChange={setRegisterDialogOpen}
-        onSuccess={handleRegistrationSuccess}
-      />
+      {/* Stats Section */}
+      <section className="container mx-auto px-6 py-20">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <StatCard
+            label="TOTAL VALUE LOCKED"
+            value={`$${formatNumber(stats?.totalValueLocked || 0)}`}
+          />
+          <StatCard
+            label="ACTIVE VAULTS"
+            value={stats?.totalVaults || '0'}
+          />
+          <StatCard
+            label="DIVIDENDS DISTRIBUTED"
+            value={`$${formatNumber(stats?.totalDistributed || 0)}`}
+          />
+          <StatCard
+            label="TOTAL TRADING VOLUME"
+            value={`$${formatNumber(stats?.totalVolume || 0)}`}
+          />
+        </div>
+      </section>
 
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabValue)}>
-        <TabsList className="grid w-full grid-cols-4 mb-8">
-          <TabsTrigger value="marketplace" className="flex items-center gap-2">
-            <Store className="h-4 w-4" />
-            Marketplace
-          </TabsTrigger>
-          <TabsTrigger value="my-listings" className="flex items-center gap-2">
-            <Package className="h-4 w-4" />
-            My Listings
-          </TabsTrigger>
-          <TabsTrigger value="my-purchases" className="flex items-center gap-2">
-            <ShoppingBag className="h-4 w-4" />
-            My Purchases
-          </TabsTrigger>
-          <TabsTrigger value="my-assets" className="flex items-center gap-2">
-            <Wallet className="h-4 w-4" />
-            My Assets
-          </TabsTrigger>
-        </TabsList>
+      {/* Divider */}
+      <div className="container mx-auto px-6">
+        <div className="border-t border-muted" />
+      </div>
 
-        <TabsContent value="marketplace">
-          <MarketplaceTab address={address} />
-        </TabsContent>
-
-        <TabsContent value="my-listings">
-          <div className="text-center py-12 rounded-lg border bg-card">
-            <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h4 className="text-lg font-medium mb-2">My Listings</h4>
-            <p className="text-sm text-muted-foreground">
-              Your listed IP assets will appear here
+      {/* Featured Vaults */}
+      <section className="container mx-auto px-6 py-20">
+        <div className="flex items-end justify-between mb-12">
+          <div>
+            <h2 className="font-title text-5xl text-foreground mb-2">
+              Featured
+            </h2>
+            <p className="font-body text-muted-foreground">
+              DISCOVER TOP PERFORMING IP VAULTS
             </p>
           </div>
-        </TabsContent>
+          <Link
+            href="/marketplace"
+            className="font-body text-primary hover:text-secondary transition-colors"
+          >
+            VIEW ALL →
+          </Link>
+        </div>
 
-        <TabsContent value="my-purchases">
-          <div className="text-center py-12 rounded-lg border bg-card">
-            <ShoppingBag className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h4 className="text-lg font-medium mb-2">My Purchases</h4>
-            <p className="text-sm text-muted-foreground">
-              Your purchased IP licenses will appear here
-            </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {featured?.map((vault) => (
+            <FeaturedVaultCard key={vault.id} vault={vault} />
+          ))}
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="bg-card py-20">
+        <div className="container mx-auto px-6">
+          <h2 className="font-title text-5xl text-center mb-16">
+            How It Works
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <StepCard
+              number="01"
+              title="Create"
+              description="REGISTER YOUR IP ON STORY PROTOCOL AND CREATE A ROYALTY VAULT"
+            />
+            <StepCard
+              number="02"
+              title="Tokenize"
+              description="SET YOUR DIVIDEND RATE AND LET INVESTORS BUY SHARES OF YOUR IP"
+            />
+            <StepCard
+              number="03"
+              title="Distribute"
+              description="AS YOUR IP EARNS, DIVIDENDS ARE AUTOMATICALLY DISTRIBUTED TO HOLDERS"
+            />
           </div>
-        </TabsContent>
+        </div>
+      </section>
 
-        <TabsContent value="my-assets">
-          <MyAssetsTab address={address} />
-        </TabsContent>
-      </Tabs>
+      {/* CTA Section */}
+      <section className="container mx-auto px-6 py-24 text-center">
+        <h2 className="font-title text-5xl mb-6">
+          Ready to Begin?
+        </h2>
+        <p className="font-body text-muted-foreground mb-8">
+          JOIN THE FUTURE OF IP MONETIZATION
+        </p>
+        <Link href="/create" className="btn-primary">
+          CREATE YOUR VAULT
+        </Link>
+      </section>
     </div>
+  )
+}
+
+function StatCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="text-center">
+      <p className="font-stat text-4xl text-primary mb-2">{value}</p>
+      <p className="font-body text-xs text-muted-foreground">{label}</p>
+    </div>
+  )
+}
+
+function StepCard({
+  number,
+  title,
+  description,
+}: {
+  number: string
+  title: string
+  description: string
+}) {
+  return (
+    <div className="text-center">
+      <p className="font-stat text-6xl text-muted mb-4">{number}</p>
+      <h3 className="font-title text-3xl text-primary mb-3">{title}</h3>
+      <p className="font-body text-sm text-muted-foreground">{description}</p>
+    </div>
+  )
+}
+
+function FeaturedVaultCard({ vault }: { vault: FeaturedVault }) {
+  const totalDeposited = parseFloat(formatUnits(BigInt(vault.totalDeposited || '0'), 6))
+  const dividendRate = parseInt(vault.dividendBps) / 100
+
+  return (
+    <Link href={`/vault/${vault.id}`}>
+      <div className="card-premium p-6 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+            <span className="font-title text-2xl text-primary">
+              {vault.token.symbol.charAt(0)}
+            </span>
+          </div>
+          <div>
+            <h3 className="font-stat text-lg text-foreground group-hover:text-primary transition-colors">
+              {vault.token.name}
+            </h3>
+            <p className="font-body text-xs text-muted-foreground">
+              {vault.token.symbol}
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <span className="font-body text-xs text-muted-foreground">TVL</span>
+            <span className="font-stat text-foreground">
+              ${formatNumber(totalDeposited)}
+            </span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="font-body text-xs text-muted-foreground">DIVIDEND</span>
+            <span className="font-stat text-primary">{dividendRate}%</span>
+          </div>
+          <div className="pt-3 border-t border-muted">
+            <p className="font-body text-xs text-muted-foreground">
+              BY {formatAddress(vault.creator)}
+            </p>
+          </div>
+        </div>
+      </div>
+    </Link>
   )
 }

@@ -40,3 +40,14 @@ npm-debug.log*
 .playwright-mcp
 broadcast/
 cache
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+**/package-lock.json
+**/yarn.lock
+**/pnpm-lock.yaml
+
+# Hyperlane generated configs
+hyperlane/warpRouteConfigs.yaml

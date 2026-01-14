@@ -16,19 +16,18 @@ export interface Contract extends ContractConfig {
 export type ContractRegistry = Record<string, ContractConfig>
 
 // Dynamic imports for contract configs and ABIs by chain
+// Add Tributary contracts here as they are deployed
 const contractImports: Record<number, () => Promise<{ default: ContractRegistry }>> = {
-  43113: () => import('./43113/contracts'),
-  1315: () => import('./1315/contracts'),
+  // Mantle Sepolia - Tributary contracts
+  // 5003: () => import('./5003/contracts'),
 }
 
 const abiImports: Record<number, Record<string, () => Promise<{ default: Abi }>>> = {
-  43113: {
-    IPayRegistry: () => import('./43113/abis/IPayRegistry.json').then(m => ({ default: m.default as Abi })),
-  },
-  // Story Aeneid (1315)
-  1315: {
-    IPayReceiver: () => import('./1315/abis/IPayReceiver.json').then(m => ({ default: m.default as Abi })),
-  },
+  // Mantle Sepolia - Tributary ABIs
+  // 5003: {
+  //   RoyaltyVaultFactory: () => import('./5003/abis/RoyaltyVaultFactory.json').then(m => ({ default: m.default as Abi })),
+  //   RoyaltyMarketplace: () => import('./5003/abis/RoyaltyMarketplace.json').then(m => ({ default: m.default as Abi })),
+  // },
 }
 
 // Cache for loaded contracts
@@ -114,8 +113,8 @@ export function isChainContractsSupported(chainId: number): boolean {
   return chainId in contractImports
 }
 
-// Legacy exports for backward compatibility
-export const AVALANCHE_FUJI_CHAIN_ID = 43113
-export const STORY_AENEID_CHAIN_ID = 1315
-export const IPAY_REGISTRY_ADDRESS = '0x883172EDFF24FE83FDE776f7A9Aaa59CCe5ABA2B' as const
-export const IPAY_RECEIVER_ADDRESS = '0xA5Cf9339908C3970c2e9Ac4aC0105367f53B80cB' as const
+// Tributary contract addresses (Mantle Sepolia)
+export const MANTLE_SEPOLIA_CHAIN_ID = 5003
+export const TRIBUTARY_FACTORY_ADDRESS = '0xDDb711e1594A8d6a35473CDDaD611043c8711Ceb' as const
+export const TRIBUTARY_MARKETPLACE_ADDRESS = '0x2Dfc3375e79DC0fc9851F451D8cc7F94B2C5854c' as const
+export const TRIBUTARY_TREASURY_ADDRESS = '0x32FE11d9900D63350016374BE98ff37c3Af75847' as const

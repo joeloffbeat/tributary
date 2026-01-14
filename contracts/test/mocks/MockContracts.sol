@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { WorkflowStructs, ISPGNFT } from "../../src/interfaces/IStoryProtocol.sol";
 
-/// @title Mock Contracts for IPayReceiver Testing
+/// @title Mock Contracts for Testing
 /// @notice Shared mock implementations for all test files
 
 contract MockMailbox {}

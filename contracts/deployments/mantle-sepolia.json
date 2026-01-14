@@ -1,0 +1,14 @@
+{
+  "chainId": 5003,
+  "chainName": "Mantle Sepolia",
+  "contracts": {
+    "MockUSDT": "0x5a8Ba59Fcc42Cb80f4c655C60F8a2684543FB3A2",
+    "RoyaltyVaultFactory": "0x1D00e9fEC4748e07E178FaF1778c4B95E74CDA30",
+    "RoyaltyMarketplace": "0x8e25b6a75907F8DDf28e15558759802d7922A898",
+    "TributaryAMM": "0xee4c62bb881cF0364333D5754Ef0551a39BA4426"
+  },
+  "treasury": "0x32FE11d9900D63350016374BE98ff37c3Af75847",
+  "deployer": "0x32FE11d9900D63350016374BE98ff37c3Af75847",
+  "deployedAt": "2025-01-20T12:00:00Z",
+  "explorer": "https://sepolia.mantlescan.xyz"
+}

@@ -1,8 +1,8 @@
 // =============================================================================
 // Hyperlane Self-Hosted Deployments
 // =============================================================================
-// Custom Hyperlane deployments across 4 testnets:
-// Story Aenid, Avalanche Fuji, Sepolia, Polygon Amoy
+// Custom Hyperlane deployments across 5 testnets:
+// Story Aenid, Avalanche Fuji, Sepolia, Polygon Amoy, Mantle Sepolia
 // =============================================================================
 
 import type { Address } from 'viem'
@@ -109,6 +109,30 @@ export const SELF_HOSTED_DEPLOYMENTS: Record<number, HyperlaneDeployment> = {
     nativeCurrency: {
       name: 'POL',
       symbol: 'POL',
+      decimals: 18,
+    },
+  },
+
+  // Mantle Sepolia Testnet (chainId: 5003)
+  5003: {
+    chainId: 5003,
+    chainName: 'mantlesepolia',
+    displayName: 'Mantle Sepolia',
+    domainId: 5003,
+    mailbox: '0xE495652b291B836334465680156Ce50a100aF52f',
+    proxyAdmin: '0x5Ed8C335Be04c3119E688547F0E794094A838646',
+    validatorAnnounce: '0x69fe3D8E052053f723Faefe6AC6D9206dE82be23',
+    testRecipient: '0x534063528354713A0aB42CDFDBbF175A53f972d7',
+    staticMerkleRootMultisigIsmFactory: '0x4c4F437A1131038D208EE39433e3925E47491379',
+    staticMessageIdMultisigIsmFactory: '0xfc6A3812D6cff0ccb9803D4A0e9d5B236dD3d82F',
+    staticAggregationIsmFactory: '0xA6b782069e1d01CA61358D3c5bDB3c2E1376B92c',
+    domainRoutingIsmFactory: '0xa0b5Ba04351Cb13940717E9897c5124f0A3BeDF4',
+    staticAggregationHookFactory: '0x5c454A7d83D59C14081114D76c147fD9bf09522f',
+    explorerUrl: 'https://sepolia.mantlescan.xyz',
+    isTestnet: true,
+    nativeCurrency: {
+      name: 'Mantle',
+      symbol: 'MNT',
       decimals: 18,
     },
   },

@@ -1,23 +1,31 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { Loader2, FileText, Shield, FolderOpen, Send, Gavel, RefreshCw, AlertCircle, ExternalLink, Wallet } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Loader2, FileText, Shield, FolderOpen, Send, Gavel, RefreshCw, AlertCircle, Wallet } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 
-import { STORY_EXPLORER, STORY_API_PROXY } from '@/constants/protocols/story'
-import type { IPAsset, UserCollection, OwnedLicenseToken, DisputeData, TransactionData, MyAssetsTabProps } from '@/lib/types/story'
+import { STORY_API_PROXY } from '@/constants/protocols/story'
+import type { UserCollection, OwnedLicenseToken, DisputeData, TransactionData, MyAssetsTabProps } from '@/lib/types/story'
+import type { StoryIPAsset } from '@/lib/services/story-api-service'
+import { getIPAssetDisplayName, getIPAssetImageUrl } from '@/lib/services/story-api-service'
 import { CopyButton, IpLink, TxLink } from '../shared'
-import { formatTimestamp, getAssetDisplayName, getAssetImageUrl } from '@/lib/services/story-service'
+import { formatTimestamp } from '@/lib/services/story-service'
+import { IPAssetExpandedDialog } from '../components/ip-asset-expanded-dialog'
+import type { Address } from 'viem'
 
 type SubTab = 'assets' | 'licenses' | 'collections' | 'transactions' | 'disputes'
 
+const LAYOUT_ID = 'my-assets-tab'
+
 export function MyAssetsTab({ address }: MyAssetsTabProps) {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('assets')
+  const [selectedAsset, setSelectedAsset] = useState<StoryIPAsset | null>(null)
 
   // Assets state
-  const [assets, setAssets] = useState<IPAsset[]>([])
+  const [assets, setAssets] = useState<StoryIPAsset[]>([])
   const [assetsLoading, setAssetsLoading] = useState(false)
   const [assetsError, setAssetsError] = useState<string | null>(null)
 
@@ -57,7 +65,13 @@ export function MyAssetsTab({ address }: MyAssetsTabProps) {
           pagination: { limit: 100, offset: 0 },
         }),
       })
-      if (!response.ok) throw new Error('Failed to fetch assets')
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('[MyAssetsTab] Error:', response.status, errorText)
+        throw new Error(`Failed to fetch assets: ${response.status}`)
+      }
+
       const data = await response.json()
       setAssets(data.data || [])
     } catch (error: any) {
@@ -279,21 +293,34 @@ export function MyAssetsTab({ address }: MyAssetsTabProps) {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {assets.map((asset) => {
-                const imageUrl = getAssetImageUrl(asset)
-                const name = getAssetDisplayName(asset)
+                const imageUrl = getIPAssetImageUrl(asset)
+                const name = getIPAssetDisplayName(asset)
                 return (
-                  <div key={asset.ipId} className="rounded-lg border bg-card overflow-hidden">
-                    {imageUrl ? (
-                      <div className="aspect-square bg-muted">
+                  <motion.div
+                    key={asset.ipId}
+                    layoutId={`card-${asset.ipId}-${LAYOUT_ID}`}
+                    onClick={() => setSelectedAsset(asset)}
+                    className="rounded-lg border bg-card overflow-hidden cursor-pointer hover:shadow-lg hover:border-primary/50 transition-all"
+                  >
+                    <motion.div
+                      layoutId={`image-${asset.ipId}-${LAYOUT_ID}`}
+                      className="aspect-square bg-muted"
+                    >
+                      {imageUrl ? (
                         <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
-                      </div>
-                    ) : (
-                      <div className="aspect-square bg-muted flex items-center justify-center">
-                        <FileText className="h-12 w-12 text-muted-foreground" />
-                      </div>
-                    )}
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <FileText className="h-12 w-12 text-muted-foreground" />
+                        </div>
+                      )}
+                    </motion.div>
                     <div className="p-4">
-                      <h4 className="font-medium truncate mb-2">{name}</h4>
+                      <motion.h4
+                        layoutId={`title-${asset.ipId}-${LAYOUT_ID}`}
+                        className="font-medium truncate mb-2"
+                      >
+                        {name}
+                      </motion.h4>
                       <div className="space-y-1 text-xs">
                         <div className="flex items-center justify-between">
                           <span className="text-muted-foreground">IP ID:</span>
@@ -313,16 +340,8 @@ export function MyAssetsTab({ address }: MyAssetsTabProps) {
                           </div>
                         )}
                       </div>
-                      <div className="mt-3 pt-3 border-t">
-                        <a href={`${STORY_EXPLORER}/ipa/${asset.ipId}`} target="_blank" rel="noopener noreferrer">
-                          <Button variant="outline" size="sm" className="w-full">
-                            <ExternalLink className="h-3 w-3 mr-1" />
-                            View
-                          </Button>
-                        </a>
-                      </div>
                     </div>
-                  </div>
+                  </motion.div>
                 )
               })}
             </div>
@@ -516,6 +535,29 @@ export function MyAssetsTab({ address }: MyAssetsTabProps) {
           )}
         </div>
       )}
+
+      {/* Expanded IP Asset Dialog */}
+      <AnimatePresence>
+        {selectedAsset && (
+          <IPAssetExpandedDialog
+            asset={selectedAsset}
+            layoutId={LAYOUT_ID}
+            onClose={() => setSelectedAsset(null)}
+            onListForSale={(asset) => {
+              toast.info('Listing feature coming soon!')
+              setSelectedAsset(null)
+            }}
+            onCreateDerivative={(asset) => {
+              toast.info('Create derivative coming soon!')
+              setSelectedAsset(null)
+            }}
+            onRaiseDispute={(asset) => {
+              toast.info('Raise dispute coming soon!')
+              setSelectedAsset(null)
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

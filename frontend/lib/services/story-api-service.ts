@@ -1,12 +1,86 @@
-// Story Protocol Direct API Service
-// Fetches IP asset details, license terms, and license tokens from Story Protocol API
+// Story Protocol API Service (via Next.js proxy)
+// Fetches IP assets with licenses from Story Protocol API v4
 
-import { STORY_API_BASE } from '@/constants/protocols/story'
-import type { Address } from 'viem'
+import { STORY_API_PROXY } from '@/constants/protocols/story'
 
 // ============================================
-// Types
+// Types (Story API v4 response format)
 // ============================================
+
+export interface StoryLicenseTerms {
+  commercialAttribution: boolean
+  commercialRevCeiling: string
+  commercialRevShare: number
+  commercialUse: boolean
+  commercializerChecker: string
+  commercializerCheckerData: string
+  currency: string
+  defaultMintingFee: string
+  derivativeRevCeiling: string
+  derivativesAllowed: boolean
+  derivativesApproval: boolean
+  derivativesAttribution: boolean
+  derivativesReciprocal: boolean
+  expiration: string
+  royaltyPolicy: string
+  transferable: boolean
+  uri: string
+}
+
+export interface StoryLicensingConfig {
+  commercialRevShare: number
+  disabled: boolean
+  expectGroupRewardPool: string
+  expectMinimumGroupRewardShare: number
+  hookData: string
+  isSet: boolean
+  licensingHook: string
+  mintingFee: string
+}
+
+export interface StoryLicense {
+  createdAt: string
+  licenseTemplateId: string
+  licenseTermsId: string
+  licensingConfig: StoryLicensingConfig
+  templateMetadataUri: string
+  templateName: string
+  terms: StoryLicenseTerms
+  updatedAt: string
+}
+
+export interface StoryNftImage {
+  cachedUrl?: string
+  contentType?: string
+  originalUrl?: string
+  pngUrl?: string
+  size?: number
+  thumbnailUrl?: string
+}
+
+export interface StoryNftMetadata {
+  name?: string
+  description?: string
+  image?: StoryNftImage
+  tokenUri?: string
+  tokenId?: string
+  tokenType?: string
+  contract_address?: string
+  nft_id?: string
+  timeLastUpdated?: string
+  contract?: {
+    address?: string
+    chain?: string
+    name?: string
+    symbol?: string
+    tokenType?: string
+    totalSupply?: string
+  }
+  collection?: {
+    name?: string
+    slug?: string
+  }
+}
 
 export interface StoryIPAsset {
   ipId: string
@@ -15,85 +89,69 @@ export interface StoryIPAsset {
   tokenId: string
   ownerAddress: string
   name?: string
+  title?: string
+  description?: string
   uri?: string
   registrationDate?: string
-  metadata?: {
-    name?: string
-    description?: string
-    image?: string
-    hash?: string
+  createdAt?: string
+  lastUpdatedAt?: string
+  blockNumber?: number
+  txHash?: string
+  ancestorsCount?: number
+  descendantsCount?: number
+  parentsCount?: number
+  childrenCount?: number
+  isInGroup?: boolean
+  rootIPs?: string[]
+  ipaMetadataUri?: string
+  nftMetadata?: StoryNftMetadata
+  licenses?: StoryLicense[]
+  moderationStatus?: {
+    adult?: string
+    medical?: string
+    racy?: string
+    spoof?: string
+    violence?: string
   }
-  nftMetadata?: {
-    name?: string
-    description?: string
-    image?: {
-      cachedUrl?: string
-      thumbnailUrl?: string
-      originalUrl?: string
-    }
-    tokenUri?: string
-  }
+  infringementStatus?: Array<{
+    isInfringing?: boolean
+    providerName?: string
+    status?: string
+  }>
 }
 
-export interface StoryLicenseTerms {
-  id: string
-  licenseTermsId: string
-  licenseTemplate: string
-  transferable: boolean
-  commercialUse: boolean
-  commercialAttribution: boolean
-  commercialRevShare: number
-  derivativesAllowed: boolean
-  derivativesAttribution: boolean
-  derivativesApproval: boolean
-  derivativesReciprocal: boolean
-  defaultMintingFee: string
-  expiration: string
-  currency: string
-  uri?: string
-}
-
-export interface StoryLicenseToken {
-  tokenId: string
-  licensorIpId: string
-  licenseTermsId: string
-  ownerAddress: string
-  transferable: boolean
-  expiresAt?: string
-  mintedAt?: string
-  blockNumber?: string
-  blockTimestamp?: string
-}
-
-export interface StoryAPIResponse<T> {
-  data: T[]
+export interface StoryAPIResponse {
+  data: StoryIPAsset[]
   pagination?: {
+    hasMore: boolean
     limit: number
     offset: number
-    total?: number
+    total: number
   }
 }
 
 // ============================================
-// API Request Handler
+// API Request Handler (via Next.js proxy)
 // ============================================
 
 async function storyAPIFetch<T>(
   endpoint: string,
-  options?: RequestInit
+  body: Record<string, unknown>
 ): Promise<T> {
-  const url = `${STORY_API_BASE}${endpoint}`
-
-  const response = await fetch(url, {
-    ...options,
+  const response = await fetch(STORY_API_PROXY, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...options?.headers,
     },
+    body: JSON.stringify({
+      endpoint,
+      ...body,
+    }),
   })
 
   if (!response.ok) {
-    throw new Error(`Story API error: ${response.status} ${response.statusText}`)
+    const error = await response.json().catch(() => ({ error: response.statusText }))
+    throw new Error(error.error || `Story API error: ${response.status}`)
   }
 
   return response.json()
@@ -103,110 +161,61 @@ async function storyAPIFetch<T>(
 // IP Asset Functions
 // ============================================
 
-/**
- * Get full IP asset details by IP ID
- */
-export async function getIPAsset(ipId: string): Promise<StoryIPAsset | null> {
-  try {
-    const result = await storyAPIFetch<StoryAPIResponse<StoryIPAsset>>(
-      `/api/v1/assets?ipId=${ipId}`
-    )
-    return result.data?.[0] || null
-  } catch (error) {
-    console.error('Failed to fetch IP asset:', error)
-    return null
-  }
+export interface FetchIPAssetsOptions {
+  ownerAddress?: string
+  ipIds?: string[]
+  tokenContract?: string
+  limit?: number
+  offset?: number
+  orderBy?: 'blockNumber' | 'createdAt'
+  orderDirection?: 'asc' | 'desc'
 }
 
 /**
- * Get multiple IP assets by IP IDs
+ * Fetch IP assets with licenses from Story API v4
+ * This is the main function to get all IP asset data in one call
  */
-export async function getIPAssets(ipIds: string[]): Promise<StoryIPAsset[]> {
-  try {
-    const results = await Promise.all(ipIds.map(getIPAsset))
-    return results.filter((asset): asset is StoryIPAsset => asset !== null)
-  } catch (error) {
-    console.error('Failed to fetch IP assets:', error)
-    return []
-  }
-}
+export async function fetchIPAssets(options: FetchIPAssetsOptions = {}): Promise<StoryAPIResponse> {
+  const {
+    ownerAddress,
+    ipIds,
+    tokenContract,
+    limit = 50,
+    offset = 0,
+    orderBy = 'blockNumber',
+    orderDirection = 'desc',
+  } = options
 
-// ============================================
-// License Functions
-// ============================================
+  const where: Record<string, unknown> = {}
+  if (ownerAddress) where.ownerAddress = ownerAddress
+  if (ipIds && ipIds.length > 0) where.ipIds = ipIds
+  if (tokenContract) where.tokenContract = tokenContract
 
-/**
- * Get license terms attached to an IP asset
- */
-export async function getLicenseTerms(ipId: string): Promise<StoryLicenseTerms[]> {
-  try {
-    const result = await storyAPIFetch<StoryAPIResponse<StoryLicenseTerms>>(
-      `/api/v1/licenses/ip/${ipId}/terms`
-    )
-    return result.data || []
-  } catch (error) {
-    console.error('Failed to fetch license terms:', error)
-    return []
-  }
-}
+  const result = await storyAPIFetch<StoryAPIResponse>('/assets', {
+    includeLicenses: true,
+    orderBy,
+    orderDirection,
+    pagination: { limit, offset },
+    where: Object.keys(where).length > 0 ? where : undefined,
+  })
 
-/**
- * Get license tokens for an IP asset (minted licenses)
- */
-export async function getLicenseTokens(ipId: string): Promise<StoryLicenseToken[]> {
-  try {
-    const result = await storyAPIFetch<StoryAPIResponse<StoryLicenseToken>>(
-      `/api/v1/licenses/tokens?licensorIpId=${ipId}`
-    )
-    return result.data || []
-  } catch (error) {
-    console.error('Failed to fetch license tokens:', error)
-    return []
-  }
+  return result
 }
 
 /**
- * Get license tokens owned by an address
+ * Fetch IP assets owned by an address
  */
-export async function getOwnedLicenseTokens(
-  ownerAddress: string
-): Promise<StoryLicenseToken[]> {
-  try {
-    const result = await storyAPIFetch<StoryAPIResponse<StoryLicenseToken>>(
-      `/api/v1/licenses/tokens?ownerAddress=${ownerAddress}`
-    )
-    return result.data || []
-  } catch (error) {
-    console.error('Failed to fetch owned license tokens:', error)
-    return []
-  }
-}
-
-// ============================================
-// Enrichment Functions
-// ============================================
-
-export interface EnrichedIPAsset {
-  ipAsset: StoryIPAsset | null
-  licenseTerms: StoryLicenseTerms[]
-  licenseTokens: StoryLicenseToken[]
+export async function fetchIPAssetsByOwner(ownerAddress: string): Promise<StoryIPAsset[]> {
+  const result = await fetchIPAssets({ ownerAddress })
+  return result.data || []
 }
 
 /**
- * Get enriched IP asset data including license terms and tokens
+ * Fetch a single IP asset by ID (from cached data or API)
  */
-export async function getEnrichedIPAsset(ipId: string): Promise<EnrichedIPAsset> {
-  const [ipAsset, licenseTerms, licenseTokens] = await Promise.all([
-    getIPAsset(ipId),
-    getLicenseTerms(ipId),
-    getLicenseTokens(ipId),
-  ])
-
-  return {
-    ipAsset,
-    licenseTerms,
-    licenseTokens,
-  }
+export async function fetchIPAssetById(ipId: string): Promise<StoryIPAsset | null> {
+  const result = await fetchIPAssets({ ipIds: [ipId] })
+  return result.data?.[0] || null
 }
 
 // ============================================
@@ -220,8 +229,8 @@ export function getIPAssetDisplayName(asset: StoryIPAsset | null): string {
   if (!asset) return 'Unknown IP Asset'
   return (
     asset.nftMetadata?.name ||
-    asset.metadata?.name ||
     asset.name ||
+    asset.title ||
     `IP ${asset.ipId.slice(0, 6)}...${asset.ipId.slice(-4)}`
   )
 }
@@ -231,13 +240,9 @@ export function getIPAssetDisplayName(asset: StoryIPAsset | null): string {
  */
 export function getIPAssetImageUrl(asset: StoryIPAsset | null): string | null {
   if (!asset) return null
-  return (
-    asset.nftMetadata?.image?.cachedUrl ||
-    asset.nftMetadata?.image?.thumbnailUrl ||
-    asset.nftMetadata?.image?.originalUrl ||
-    asset.metadata?.image ||
-    null
-  )
+  const img = asset.nftMetadata?.image
+  if (!img) return null
+  return img.cachedUrl || img.thumbnailUrl || img.pngUrl || img.originalUrl || null
 }
 
 /**
@@ -264,6 +269,26 @@ export function formatMintingFeeFromTerms(terms: StoryLicenseTerms): string {
   }
   const fee = BigInt(terms.defaultMintingFee)
   const formatted = Number(fee) / 1e18
+  return `${formatted.toFixed(2)} WIP`
+}
+
+/**
+ * Get license type from a StoryLicense object
+ */
+export function getLicenseType(license: StoryLicense): string {
+  return getLicenseTypeFromTerms(license.terms)
+}
+
+/**
+ * Format minting fee from a StoryLicense object
+ */
+export function formatMintingFee(license: StoryLicense): string {
+  // Use licensing config minting fee if set, otherwise use terms default
+  const fee = license.licensingConfig?.mintingFee || license.terms.defaultMintingFee
+  if (!fee || fee === '0') {
+    return 'Free'
+  }
+  const formatted = Number(BigInt(fee)) / 1e18
   return `${formatted.toFixed(2)} WIP`
 }
 

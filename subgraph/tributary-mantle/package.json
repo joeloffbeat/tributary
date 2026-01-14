@@ -1,0 +1,15 @@
+{
+  "name": "tributary-mantle-subgraph",
+  "version": "1.0.0",
+  "description": "Tributary subgraph for Mantle - indexes revenue-sharing vault contracts for IP assets",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy:goldsky": "goldsky subgraph deploy tributary-mantle/1.0.0 --path .",
+    "deploy:goldsky:tag": "goldsky subgraph tag create tributary-mantle/1.0.0 --tag prod"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.68.0",
+    "@graphprotocol/graph-ts": "^0.32.0"
+  }
+}

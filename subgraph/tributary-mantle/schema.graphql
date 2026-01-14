@@ -1,0 +1,182 @@
+# Tributary Subgraph Schema for Mantle
+# Indexes revenue-sharing vault contracts for IP assets
+
+# ============ VAULT ENTITIES ============
+
+type Vault @entity {
+  id: ID!                        # vault address
+  token: Token!
+  creator: Bytes!
+  storyIPId: Bytes!
+  paymentToken: Bytes!
+  dividendBps: BigInt!           # Dividend rate
+  tradingFeeBps: BigInt!         # Trading fee
+  totalDeposited: BigDecimal!
+  totalDistributed: BigDecimal!
+  pendingDistribution: BigDecimal!
+  distributionCount: BigInt!
+  createdAt: BigInt!
+  isActive: Boolean!
+  distributions: [Distribution!]! @derivedFrom(field: "vault")
+  pool: Pool                     # Link to AMM pool
+}
+
+type Token @entity {
+  id: ID!                        # token address
+  vault: Vault!
+  name: String!
+  symbol: String!
+  totalSupply: BigDecimal!       # Always 10,000
+  holders: [TokenHolder!]! @derivedFrom(field: "token")
+  holderCount: BigInt!
+}
+
+type TokenHolder @entity {
+  id: ID!                        # token-holder
+  token: Token!
+  holder: Bytes!
+  balance: BigDecimal!
+  totalClaimed: BigDecimal!
+}
+
+type Distribution @entity {
+  id: ID!                        # vault-distributionId
+  vault: Vault!
+  snapshotId: BigInt!
+  amount: BigDecimal!
+  totalClaimed: BigDecimal!
+  timestamp: BigInt!
+  claims: [Claim!]! @derivedFrom(field: "distribution")
+}
+
+type Claim @entity {
+  id: ID!                        # distribution-holder
+  distribution: Distribution!
+  holder: Bytes!
+  amount: BigDecimal!
+  timestamp: BigInt!
+  txHash: Bytes!
+}
+
+# ============ MARKETPLACE ENTITIES ============
+
+type Listing @entity {
+  id: ID!                        # listingId
+  seller: Bytes!
+  token: Token!
+  vault: Vault
+  amount: BigDecimal!
+  pricePerToken: BigDecimal!
+  sold: BigDecimal!
+  isActive: Boolean!
+  isPrimarySale: Boolean!
+  createdAt: BigInt!
+  expiresAt: BigInt
+  trades: [Trade!]! @derivedFrom(field: "listing")
+}
+
+type Trade @entity {
+  id: ID!                        # txHash-logIndex
+  listing: Listing!
+  buyer: Bytes!
+  amount: BigDecimal!
+  totalPrice: BigDecimal!
+  fee: BigDecimal!
+  timestamp: BigInt!
+  txHash: Bytes!
+}
+
+# ============ AMM ENTITIES ============
+
+type Pool @entity {
+  id: ID!                        # poolId
+  token: Token!
+  quoteToken: Bytes!             # USDT address
+  vault: Vault!
+  reserveToken: BigDecimal!
+  reserveQuote: BigDecimal!
+  volumeToken: BigDecimal!       # Total volume in token
+  volumeQuote: BigDecimal!       # Total volume in USDT
+  txCount: BigInt!
+  feesCollected: BigDecimal!
+  createdAt: BigInt!
+  swaps: [Swap!]! @derivedFrom(field: "pool")
+  candles1m: [Candle1m!]! @derivedFrom(field: "pool")
+  candles5m: [Candle5m!]! @derivedFrom(field: "pool")
+  candles1h: [Candle1h!]! @derivedFrom(field: "pool")
+  candles1d: [Candle1d!]! @derivedFrom(field: "pool")
+}
+
+type Swap @entity {
+  id: ID!                        # txHash-logIndex
+  pool: Pool!
+  trader: Bytes!
+  isBuy: Boolean!                # true = bought tokens, false = sold tokens
+  amountIn: BigDecimal!
+  amountOut: BigDecimal!
+  fee: BigDecimal!
+  price: BigDecimal!             # Price in USDT per token
+  timestamp: BigInt!
+  txHash: Bytes!
+  blockNumber: BigInt!
+}
+
+# Separate candle entities for each interval (more efficient queries)
+type Candle1m @entity {
+  id: ID!                        # pool-timestamp
+  pool: Pool!
+  timestamp: BigInt!             # Candle start (rounded to minute)
+  open: BigDecimal!
+  high: BigDecimal!
+  low: BigDecimal!
+  close: BigDecimal!
+  volume: BigDecimal!
+  txCount: BigInt!
+}
+
+type Candle5m @entity {
+  id: ID!
+  pool: Pool!
+  timestamp: BigInt!
+  open: BigDecimal!
+  high: BigDecimal!
+  low: BigDecimal!
+  close: BigDecimal!
+  volume: BigDecimal!
+  txCount: BigInt!
+}
+
+type Candle1h @entity {
+  id: ID!
+  pool: Pool!
+  timestamp: BigInt!
+  open: BigDecimal!
+  high: BigDecimal!
+  low: BigDecimal!
+  close: BigDecimal!
+  volume: BigDecimal!
+  txCount: BigInt!
+}
+
+type Candle1d @entity {
+  id: ID!
+  pool: Pool!
+  timestamp: BigInt!
+  open: BigDecimal!
+  high: BigDecimal!
+  low: BigDecimal!
+  close: BigDecimal!
+  volume: BigDecimal!
+  txCount: BigInt!
+}
+
+# ============ PROTOCOL STATS ============
+
+type ProtocolStats @entity {
+  id: ID!                        # "protocol"
+  totalVaults: BigInt!
+  totalVolume: BigDecimal!
+  totalRoyaltiesDistributed: BigDecimal!
+  totalFeesCollected: BigDecimal!
+  totalHolders: BigInt!
+}

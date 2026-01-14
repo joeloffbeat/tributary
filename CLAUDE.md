@@ -1,6 +1,6 @@
-# EVM Starter Kit - Development Guide
+# Tributary - IP Royalty Tokenization Platform
 
-This is the development repo for `@cipherkuma/evm-kit` - a CLI tool for creating EVM dApps with swappable auth, protocols, and tooling.
+Tributary enables IP creators to tokenize royalty streams from their intellectual property on Story Protocol, allowing investors to participate in IP-backed revenue sharing vaults.
 
 ---
 
@@ -176,6 +176,7 @@ skill: "contracts-dev"
 | **Database Operations** | `supabase-operations` | Supabase tables, migrations, RLS policies, data operations |
 | **E2E Testing** | `playwright-testing` | Browser automation, test writing, parallel testing |
 | **Registry Publishing** | `registry-dev` | Adding protocols, auth providers, CLI components |
+| **Strategic Planning** | `strategy` | NO-CODE mode, breaking goals into executable prompts |
 
 ### Skill Loading Rules
 
@@ -199,6 +200,65 @@ User: "Query the subgraph for user positions"
 User: "Add a new column to the users table"
 → Load skill: "supabase-operations"
 ```
+
+---
+
+## Multi-Prompt System
+
+This project uses a multi-session prompt system for complex features.
+
+### How It Works
+
+1. **`/strategy <goal>`** - Enter planning mode, breaks goal into executable prompts
+2. **Prompts written to `prompts/`** - As `1.md`, `2.md`, `3.md`, etc.
+3. **Run prompts in fresh sessions** - "run prompt 1" or "run prompts 1-3"
+4. **Report completion** - "completed prompt 1"
+5. **Strategy session generates next batch** - Until goal is complete
+
+### Running Prompts
+
+When asked to run a prompt:
+
+1. **Read** `prompts/N.md` completely
+2. **Activate** the skill specified in the prompt (if any)
+3. **Execute** ALL requirements in the prompt
+4. **Verify** using the verification steps provided
+5. **Delete** the prompt file after successful completion
+6. **Report** what was accomplished
+7. **List** remaining prompts in `prompts/`
+
+### Examples
+
+```
+User: "run prompt 1"
+→ Read prompts/1.md, execute all requirements, delete when done
+
+User: "run prompts 1 and 2"
+→ Execute both (parallel if independent), delete when done
+
+User: "run prompts 1-3"
+→ Execute prompts 1, 2, and 3 sequentially or in parallel as specified
+```
+
+### After Completing Prompts
+
+Always report:
+1. What was accomplished
+2. Files created/modified
+3. Any issues encountered
+4. Remaining prompts in `prompts/`
+
+### Strategy Mode
+
+Use `/strategy` for complex features requiring planning:
+
+```
+/strategy Add cross-chain license purchasing with Hyperlane
+```
+
+This enters NO-CODE planning mode and generates executable prompts.
+
+---
 
 ## Repository Structure
 
@@ -490,6 +550,24 @@ await publicClient.waitForTransactionReceipt({ hash })
 | Hook | `use-{protocol}-{action}.ts` |
 | Constants | `constants/protocols/{protocol}/index.ts` |
 | Page | `app/crosschain/{protocol}/page.tsx` |
+
+---
+
+## Commands Reference
+
+| Command | Description |
+|---------|-------------|
+| `/strategy <goal>` | Enter planning mode, generate prompts for complex features |
+| `/debug` | Strategic debugging across contracts, frontend, and subgraphs |
+| `/deploy-all` | Full auto-deployment - contracts, subgraphs, frontend sync |
+| `/deploy-contracts` | Deploy contracts and sync to frontend (no subgraphs) |
+| `/deploy-subgraphs` | Deploy subgraphs and sync endpoints to frontend |
+| `/contract-implement` | Implement new contract or add features |
+| `/contract-fork-test` | Implement and test on forked network |
+| `/contract-real-test` | Deploy to testnet and test on real network |
+| `/add-protocol` | Add a protocol integration to the project |
+| `/remove-protocol` | Remove a protocol from the project |
+| `/unused-cleanup` | Find and remove unused dependencies |
 
 ---
 

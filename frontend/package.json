@@ -1,5 +1,5 @@
 {
-  "name": "evm-ui-test-project",
+  "name": "tributary",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,14 @@
     "dev:turbo": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:integration": "vitest run --config vitest.config.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:tributary": "playwright test --project=tributary-creator"
   },
   "dependencies": {
     "@across-protocol/app-sdk": "^0.4.4",
@@ -48,6 +55,8 @@
     "date-fns": "^4.1.0",
     "ethers": "^5.7.2",
     "framer-motion": "^12.23.26",
+    "graphql": "^16.12.0",
+    "graphql-request": "^7.4.0",
     "jsbi": "^4.3.2",
     "lightweight-charts": "^5.0.9",
     "lucide-react": "^0.542.0",
@@ -58,6 +67,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.63.0",
+    "recharts": "^3.6.0",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
@@ -68,15 +78,18 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.49.1",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^2.1.8",
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "^16.0.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "^2.1.8"
   }
 }

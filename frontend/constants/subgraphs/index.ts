@@ -24,17 +24,14 @@ export interface SubgraphConfig {
 
 // Import chain-specific configs
 import { freemintSubgraph } from './11155111/freemint'
-import { ipaySubgraph } from './1315/ipay'
 
 // Subgraph registry by chainId
 export const subgraphs: Record<number, Record<string, SubgraphConfig>> = {
   11155111: {
     freemint: freemintSubgraph,
   },
-  // Story Aeneid (Chain ID: 1315) - iPay subgraph
-  1315: {
-    ipay: ipaySubgraph,
-  },
+  // Tributary subgraphs can be added here
+  // 5003: { tributary: tributarySubgraph }
 }
 
 /**

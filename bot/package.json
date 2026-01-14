@@ -1,0 +1,25 @@
+{
+  "name": "tributary-bot",
+  "version": "1.0.0",
+  "description": "Trading bot for Tributary AMM to generate realistic volume and price movements",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "dev": "ts-node-dev --respawn src/index.ts",
+    "build": "tsc",
+    "lint": "eslint src/**/*.ts"
+  },
+  "dependencies": {
+    "viem": "^2.21.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "@types/node": "^22.9.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

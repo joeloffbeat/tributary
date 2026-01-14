@@ -126,7 +126,7 @@ export default function ContractsPage() {
                   No contracts are configured for {chainConfig?.name || 'this chain'}.
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Switch to Avalanche Fuji (43113) to interact with IPayRegistry.
+                  Switch to Mantle Sepolia (5003) to interact with Tributary contracts.
                 </p>
               </div>
             ) : (

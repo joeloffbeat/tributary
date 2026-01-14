@@ -29,7 +29,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Copy, ExternalLink, LogOut, Check } from 'lucide-react'
+import { Copy, ExternalLink, LogOut, Check, ArrowLeftRight } from 'lucide-react'
+import { BridgeUsdcDialog } from './bridge-usdc'
 
 interface ConnectButtonProps {
   className?: string
@@ -61,6 +62,7 @@ function WalletDetailsDropdown({ className }: { className?: string }) {
   const wallet = useActiveWallet()
   const { disconnect } = useDisconnect()
   const [copied, setCopied] = useState(false)
+  const [bridgeDialogOpen, setBridgeDialogOpen] = useState(false)
 
   // Get the current chain from the wallet
   const walletChain = wallet?.getChain()
@@ -110,51 +112,70 @@ function WalletDetailsDropdown({ className }: { className?: string }) {
     : null
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <div
-          role="button"
-          tabIndex={0}
-          className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors cursor-pointer ${className || ''}`}
-        >
-          <span className="text-sm text-zinc-400">{formattedBalance}</span>
-          <span className="text-sm font-medium text-white">{truncatedAddress}</span>
-        </div>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64">
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium">Connected Wallet</p>
-            <p className="text-xs text-muted-foreground font-mono">{truncatedAddress}</p>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <div
+            role="button"
+            tabIndex={0}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors cursor-pointer ${className || ''}`}
+          >
+            <span className="text-sm text-zinc-400">{formattedBalance}</span>
+            <span className="text-sm font-medium text-white">{truncatedAddress}</span>
           </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleCopy} className="cursor-pointer">
-          {copied ? (
-            <Check className="mr-2 h-4 w-4 text-green-500" />
-          ) : (
-            <Copy className="mr-2 h-4 w-4" />
-          )}
-          {copied ? 'Copied!' : 'Copy Address'}
-        </DropdownMenuItem>
-        {explorerUrl && (
-          <DropdownMenuItem asChild className="cursor-pointer">
-            <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="mr-2 h-4 w-4" />
-              View on Explorer
-            </a>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-64">
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium">Connected Wallet</p>
+              <p className="text-xs text-muted-foreground font-mono">{truncatedAddress}</p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+
+          {/* Bridge USDC Button - Always shown for quick access */}
+          <DropdownMenuItem
+            onClick={() => setBridgeDialogOpen(true)}
+            className="cursor-pointer"
+          >
+            <ArrowLeftRight className="mr-2 h-4 w-4" />
+            Bridge USDC
           </DropdownMenuItem>
-        )}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={handleDisconnect}
-          className="cursor-pointer text-red-500 focus:text-red-500"
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          Disconnect
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleCopy} className="cursor-pointer">
+            {copied ? (
+              <Check className="mr-2 h-4 w-4 text-green-500" />
+            ) : (
+              <Copy className="mr-2 h-4 w-4" />
+            )}
+            {copied ? 'Copied!' : 'Copy Address'}
+          </DropdownMenuItem>
+          {explorerUrl && (
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="mr-2 h-4 w-4" />
+                View on Explorer
+              </a>
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={handleDisconnect}
+            className="cursor-pointer text-red-500 focus:text-red-500"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Disconnect
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* Bridge USDC Dialog */}
+      <BridgeUsdcDialog
+        open={bridgeDialogOpen}
+        onOpenChange={setBridgeDialogOpen}
+      />
+    </>
   )
 }
 
