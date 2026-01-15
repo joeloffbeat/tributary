@@ -55,8 +55,8 @@ export default function TradePage({
       {/* Header */}
       <div className="flex items-end justify-between mb-6">
         <div>
-          <h1 className="font-title text-5xl">{pool.token.symbol}/USDT</h1>
-          <p className="font-body text-sm text-text-muted">{pool.token.name}</p>
+          <h1 className="font-title text-5xl">{pool.token.name}</h1>
+          <p className="font-body text-sm text-text-muted">{pool.token.symbol}/USDT</p>
         </div>
         <PoolStats pool={pool} />
       </div>

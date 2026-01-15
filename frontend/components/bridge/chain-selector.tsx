@@ -12,6 +12,7 @@ import {
 import { cn } from '@/lib/utils'
 import type { Chain } from '@/lib/types/bridge'
 import { EVM_NETWORKS } from '@/lib/config/evm-config'
+import { getChainLogoUrl } from '@/lib/web3/assets'
 
 // Convert EVM networks to chain objects
 const AVAILABLE_CHAINS: Chain[] = Object.values(EVM_NETWORKS).map(network => ({
@@ -23,19 +24,6 @@ const AVAILABLE_CHAINS: Chain[] = Object.values(EVM_NETWORKS).map(network => ({
   isTestnet: network.isTestnet,
   nativeCurrency: network.nativeCurrency,
 }))
-
-// Chain logos mapping
-const getChainLogo = (chainId: string | number): string => {
-  const logos: Record<string, string> = {
-    '1': '/chains/ethereum.png',
-    '11155111': '/chains/ethereum.png',
-    '137': '/chains/polygon.png',
-    '42161': '/chains/arbitrum.png',
-    '10': '/chains/optimism.png',
-    '8453': '/chains/base.png',
-  }
-  return logos[chainId.toString()] || '/chains/unknown.png'
-}
 
 interface ChainSelectorProps {
   selectedChain: Chain | null
@@ -86,15 +74,20 @@ export function ChainSelector({
             {selectedChain ? (
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
-                    {selectedChain.nativeCurrency.symbol.slice(0, 2)}
-                  </div>
+                  <img
+                    src={getChainLogoUrl(selectedChain.id)}
+                    alt={selectedChain.name}
+                    className="w-8 h-8 rounded-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none'
+                    }}
+                  />
                   {selectedChain.isTestnet && (
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full border border-background" />
                   )}
                 </div>
                 <div>
-                  <div className="font-medium">{selectedChain.name}</div>
+                  <div className="font-body text-sm tracking-wider">{selectedChain.name.toUpperCase()}</div>
                   <div className="text-xs text-muted-foreground">
                     {selectedChain.nativeCurrency.symbol}
                     {selectedChain.isTestnet && ' • Testnet'}
@@ -124,15 +117,20 @@ export function ChainSelector({
                   )}
                 >
                   <div className="relative">
-                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
-                      {chain.nativeCurrency.symbol.slice(0, 2)}
-                    </div>
+                    <img
+                      src={getChainLogoUrl(chain.id)}
+                      alt={chain.name}
+                      className="w-8 h-8 rounded-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none'
+                      }}
+                    />
                     {chain.isTestnet && (
                       <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full border border-background" />
                     )}
                   </div>
                   <div className="flex-1 text-left">
-                    <div className="font-medium">{chain.name}</div>
+                    <div className="font-body text-sm tracking-wider">{chain.name.toUpperCase()}</div>
                     <div className="text-xs text-muted-foreground">
                       {chain.nativeCurrency.symbol}
                       {chain.isTestnet && ' • Testnet'}
@@ -259,4 +257,4 @@ export function ChainSelectorPair({
 }
 
 // Export available chains for use in other components
-export { AVAILABLE_CHAINS, getChainLogo }
+export { AVAILABLE_CHAINS }

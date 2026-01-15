@@ -64,7 +64,7 @@ export function ChainSwitcher({
                 }}
               />
             )}
-            <span className="truncate">{selectedChain?.name || selectedChainMeta?.name || 'Select Chain'}</span>
+            <span className="truncate font-body text-sm tracking-wider">{(selectedChain?.name || selectedChainMeta?.name || 'Select Chain').toUpperCase()}</span>
             {selectedChain?.testnet && (
               <Badge variant="outline" className="text-xs">
                 Testnet

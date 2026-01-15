@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { useWalletClient, usePublicClient, useAccount } from '@/lib/web3'
 import { MARKETPLACE_ADDRESS, MOCK_USDT_ADDRESS, MARKETPLACE_ABI, ERC20_ABI } from '@/constants/tributary'
+import { getTransactionErrorMessage } from '@/lib/utils/transaction'
 import type { TradeParams } from '../types'
 
 export function useExecuteTrade() {
@@ -66,7 +67,7 @@ export function useExecuteTrade() {
         setApprovalProgress(100)
         setTxHash(hash)
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Trade failed'
+        const message = getTransactionErrorMessage(err)
         setError(message)
         throw err
       }

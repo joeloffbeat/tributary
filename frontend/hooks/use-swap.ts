@@ -3,6 +3,10 @@ import { useWalletClient, usePublicClient, useAccount } from '@/lib/web3'
 import { parseUnits, formatUnits } from 'viem'
 import { TRIBUTARY_CONTRACTS, AMM_ABI, MOCK_USDT_ABI, mantleSepolia } from '@/constants/tributary'
 
+// Token decimals - USDT has 6, royalty tokens have 18
+const USDT_DECIMALS = 6
+const TOKEN_DECIMALS = 18
+
 export interface SwapQuote {
   amountOut: string
   fee: string
@@ -21,8 +25,12 @@ export function useSwapQuote(poolId: string, isBuy: boolean, amount: string) {
       if (!contracts) return null
 
       try {
-        // Get quote from AMM contract
-        const amountIn = parseUnits(amount, 18)
+        // BUY: input USDT (6 decimals), output Token (18 decimals)
+        // SELL: input Token (18 decimals), output USDT (6 decimals)
+        const inputDecimals = isBuy ? USDT_DECIMALS : TOKEN_DECIMALS
+        const outputDecimals = isBuy ? TOKEN_DECIMALS : USDT_DECIMALS
+
+        const amountIn = parseUnits(amount, inputDecimals)
 
         const result = await publicClient.readContract({
           address: contracts.amm as `0x${string}`,
@@ -31,8 +39,8 @@ export function useSwapQuote(poolId: string, isBuy: boolean, amount: string) {
           args: [BigInt(poolId), amountIn],
         }) as [bigint, bigint]
 
-        const amountOut = formatUnits(result[0], 18)
-        const fee = formatUnits(result[1], 18)
+        const amountOut = formatUnits(result[0], outputDecimals)
+        const fee = formatUnits(result[1], USDT_DECIMALS) // Fee is always in USDT
 
         // Calculate price impact (simplified)
         const priceImpact = parseFloat(amount) > 1000 ? 2.5 : parseFloat(amount) > 100 ? 0.5 : 0.1
@@ -44,13 +52,7 @@ export function useSwapQuote(poolId: string, isBuy: boolean, amount: string) {
         }
       } catch (error) {
         console.error('Failed to get swap quote:', error)
-        // Return mock quote for demo
-        const mockOut = parseFloat(amount) * (isBuy ? 1 : 1.2)
-        return {
-          amountOut: mockOut.toFixed(4),
-          fee: (parseFloat(amount) * 0.01).toFixed(4),
-          priceImpact: 0.5,
-        }
+        return null
       }
     },
     enabled: !!poolId && !!amount && parseFloat(amount) > 0,
@@ -65,6 +67,12 @@ interface SwapParams {
   minOut: string
 }
 
+export interface SwapResult {
+  success: boolean
+  hash?: `0x${string}`
+  error?: string
+}
+
 export function useSwap() {
   const queryClient = useQueryClient()
   const { address } = useAccount()
@@ -72,18 +80,23 @@ export function useSwap() {
   const { publicClient } = usePublicClient()
 
   return useMutation({
-    mutationFn: async (params: SwapParams) => {
+    mutationFn: async (params: SwapParams): Promise<SwapResult> => {
       if (!walletClient || !publicClient || !address) {
         throw new Error('Wallet not connected')
       }
 
       const contracts = TRIBUTARY_CONTRACTS[5003]
       if (!contracts) {
-        throw new Error('Contracts not configured')
+        throw new Error('Contracts not configured for Mantle Sepolia')
       }
 
-      const amountIn = parseUnits(params.amount, 18)
-      const minAmountOut = parseUnits(params.minOut, 18)
+      // BUY: input USDT (6 decimals), output Token (18 decimals)
+      // SELL: input Token (18 decimals), output USDT (6 decimals)
+      const inputDecimals = params.isBuy ? USDT_DECIMALS : TOKEN_DECIMALS
+      const outputDecimals = params.isBuy ? TOKEN_DECIMALS : USDT_DECIMALS
+
+      const amountIn = parseUnits(params.amount, inputDecimals)
+      const minAmountOut = parseUnits(params.minOut, outputDecimals)
       const poolIdBigInt = BigInt(params.poolId)
 
       // If buying, need to approve USDT first
@@ -102,7 +115,34 @@ export function useSwap() {
             address: contracts.mockUsdt as `0x${string}`,
             abi: MOCK_USDT_ABI,
             functionName: 'approve',
-            args: [contracts.amm as `0x${string}`, amountIn * BigInt(2)],
+            args: [contracts.amm as `0x${string}`, amountIn * BigInt(10)],
+          })
+          await publicClient.waitForTransactionReceipt({ hash: approveHash })
+        }
+      } else {
+        // If selling, need to approve token first
+        const pool = await publicClient.readContract({
+          address: contracts.amm as `0x${string}`,
+          abi: AMM_ABI,
+          functionName: 'getPool',
+          args: [poolIdBigInt],
+        }) as { royaltyToken: `0x${string}` }
+
+        const allowance = await publicClient.readContract({
+          address: pool.royaltyToken,
+          abi: MOCK_USDT_ABI, // ERC20 ABI works
+          functionName: 'allowance',
+          args: [address, contracts.amm],
+        }) as bigint
+
+        if (allowance < amountIn) {
+          const approveHash = await walletClient.writeContract({
+            chain: mantleSepolia,
+            account: address,
+            address: pool.royaltyToken,
+            abi: MOCK_USDT_ABI,
+            functionName: 'approve',
+            args: [contracts.amm as `0x${string}`, amountIn * BigInt(10)],
           })
           await publicClient.waitForTransactionReceipt({ hash: approveHash })
         }
@@ -118,14 +158,16 @@ export function useSwap() {
         args: [poolIdBigInt, amountIn, minAmountOut],
       })
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash })
-      return receipt
+      await publicClient.waitForTransactionReceipt({ hash })
+
+      return { success: true, hash }
     },
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: ['pool'] })
       queryClient.invalidateQueries({ queryKey: ['swapQuote'] })
       queryClient.invalidateQueries({ queryKey: ['recentSwaps'] })
+      queryClient.invalidateQueries({ queryKey: ['candles'] })
       queryClient.invalidateQueries({ queryKey: ['userHoldings'] })
     },
   })

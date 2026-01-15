@@ -6,7 +6,6 @@ import {
   getChainById,
   getChainByName,
   isChainSupported,
-  APP_MODE,
   type ChainConfig,
 } from './chains'
 
@@ -18,7 +17,6 @@ export {
   getChainById,
   getChainByName,
   isChainSupported,
-  APP_MODE,
   type ChainConfig,
 }
 
@@ -256,8 +254,8 @@ export interface EvmBridgeConfig {
 }
 
 export const DEFAULT_EVM_CONFIG: EvmBridgeConfig = {
-  defaultSourceChain: APP_MODE === 'testnet' ? 'sepolia' : 'ethereum',
-  defaultDestinationChain: APP_MODE === 'testnet' ? 'amoy' : 'polygon',
+  defaultSourceChain: 'mantle-sepolia',
+  defaultDestinationChain: 'story-aeneid',
   defaultBridge: 'wormhole',
   slippageTolerance: 0.5,
   maxBridgeAmount: '1000000',
@@ -289,13 +287,11 @@ export function getDestinationNetworks(sourceChainId?: number): EvmNetwork[] {
   )
 }
 
-// Get enabled bridge providers
+// Get enabled bridge providers (testnet only)
 export function getEnabledBridges(): BridgeConfig[] {
-  const isTestnet = APP_MODE === 'testnet'
   return Object.values(BRIDGE_CONFIGS).filter((bridge) => {
     if (!bridge.enabled) return false
-    if (isTestnet && !bridge.testnetSupport) return false
-    if (!isTestnet && APP_MODE === 'mainnet' && !bridge.mainnetSupport) return false
+    if (!bridge.testnetSupport) return false
     return true
   })
 }

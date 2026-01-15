@@ -5,13 +5,10 @@ import {
   SUPPORTED_CHAINS,
   getSupportedChainList,
   getSupportedViemChains,
-  APP_MODE,
-  MAINNET_CHAIN_NAMES,
-  TESTNET_CHAIN_NAMES,
 } from './chains'
 
 // Re-export for backwards compatibility
-export { SUPPORTED_CHAINS, getSupportedChainList, getSupportedViemChains, APP_MODE }
+export { SUPPORTED_CHAINS, getSupportedChainList, getSupportedViemChains }
 
 // =============================================================================
 // Types
@@ -229,8 +226,6 @@ export function getClientEnvStatus(): { present: string[]; missing: string[]; va
 
   const envVars: Record<string, string | undefined> = {
     'NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID': process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
-    'NEXT_PUBLIC_APP_MODE': process.env.NEXT_PUBLIC_APP_MODE,
-    'NEXT_PUBLIC_SUPPORTED_CHAINS': process.env.NEXT_PUBLIC_SUPPORTED_CHAINS,
     'NEXT_PUBLIC_ALCHEMY_API_KEY': process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
     'NEXT_PUBLIC_APP_NAME': process.env.NEXT_PUBLIC_APP_NAME,
     'NEXT_PUBLIC_APP_URL': process.env.NEXT_PUBLIC_APP_URL,
@@ -288,14 +283,10 @@ export function getClientEnvStatus(): { present: string[]; missing: string[]; va
 
 export function getAvailableChainInfo(): {
   mode: string
-  mainnetChains: string[]
-  testnetChains: string[]
   activeChains: string[]
 } {
   return {
-    mode: APP_MODE,
-    mainnetChains: MAINNET_CHAIN_NAMES,
-    testnetChains: TESTNET_CHAIN_NAMES,
+    mode: 'testnet',
     activeChains: Object.keys(SUPPORTED_CHAINS),
   }
 }

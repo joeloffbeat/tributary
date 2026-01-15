@@ -17,10 +17,10 @@ export const config = {
   poolId: parseInt(process.env.POOL_ID || '1'),
 
   // Trading parameters
-  minTradeUSD: parseFloat(process.env.MIN_TRADE_USD || '50'),
-  maxTradeUSD: parseFloat(process.env.MAX_TRADE_USD || '500'),
-  minIntervalMs: parseInt(process.env.MIN_INTERVAL_MS || '15000'),
-  maxIntervalMs: parseInt(process.env.MAX_INTERVAL_MS || '90000'),
+  minTradeUSD: parseFloat(process.env.MIN_TRADE_USD || '10'),
+  maxTradeUSD: parseFloat(process.env.MAX_TRADE_USD || '50'),
+  minIntervalMs: parseInt(process.env.MIN_INTERVAL_MS || '3000'),
+  maxIntervalMs: parseInt(process.env.MAX_INTERVAL_MS || '8000'),
 
   // Price movement
   volatility: 0.015,           // 1.5% base volatility

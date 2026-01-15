@@ -14,9 +14,7 @@ import {
   Loader2,
   Shield,
   Info,
-  Link2Off
 } from 'lucide-react'
-import { hasChainConfigErrors, getChainConfigErrors, type ChainConfigError } from '@/lib/config/chains'
 
 interface ConfigurationGuardProps {
   children: ReactNode
@@ -25,43 +23,6 @@ interface ConfigurationGuardProps {
 
 export function ConfigurationGuard({ children, requireConfig = true }: ConfigurationGuardProps) {
   const { config, isConfigured, showConfigDialog, missingVars, recommendedVars, serverValidation, refreshServerValidation, isValidatingServer } = useConfiguration()
-
-  // Check for chain configuration errors first - these are critical
-  const chainConfigErrors = getChainConfigErrors()
-  const hasChainErrors = hasChainConfigErrors()
-
-  // If there are chain configuration errors, block the app
-  if (hasChainErrors) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background to-muted">
-        <div className="w-full max-w-md space-y-4">
-          <div className="text-center space-y-2">
-            <div className="mx-auto h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center">
-              <Link2Off className="h-6 w-6 text-destructive" />
-            </div>
-            <h1 className="text-xl font-bold">Chain Configuration Error</h1>
-          </div>
-
-          <Card className="border-destructive/50">
-            <CardContent className="p-4 space-y-3">
-              {chainConfigErrors.map((error, index) => (
-                <div key={index} className="text-sm">
-                  <Badge variant="destructive" className="text-xs mb-1">
-                    {error.type === 'app_mode' ? 'APP_MODE' : 'SUPPORTED_CHAINS'}
-                  </Badge>
-                  <p className="text-muted-foreground">{error.message}</p>
-                </div>
-              ))}
-
-              <Button onClick={() => window.location.reload()} className="w-full" size="sm">
-                Reload
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
-  }
 
   // If using defaults, always allow through
   if (config.isDefaults) {

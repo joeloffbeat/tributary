@@ -33,19 +33,19 @@ export function VaultCard({ vault }: VaultCardProps) {
 
   return (
     <Link href={`/vault/${vault.id}`}>
-      <div className="card-premium p-6 h-full flex flex-col cursor-pointer hover:shadow-md transition-shadow">
+      <div className="p-6 h-full flex flex-col cursor-pointer hover:bg-muted/30 transition-all">
         {/* Token Info */}
         <div className="mb-6">
           <h3 className="font-title text-3xl text-text-primary mb-1">
             {vault.token.name}
           </h3>
           <p className="font-body text-xs text-text-secondary">
-            {vault.token.symbol} • BY {shortenAddress(vault.creator)}
+            {vault.token.symbol.toUpperCase()} • BY {shortenAddress(vault.creator)}
           </p>
         </div>
 
         {/* Divider */}
-        <div className="divider border-t border-cream-dark mb-6" />
+        <div className="divider border-t border-muted mb-6" />
 
         {/* Price & Change */}
         {price && (

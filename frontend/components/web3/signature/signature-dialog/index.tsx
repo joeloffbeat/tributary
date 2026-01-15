@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useAccount, useWalletClient } from '@/lib/web3'
 import { SignatureDialogProps, SignatureType } from '@/lib/types/web3/components'
 import { toast } from 'sonner'
+import { getTransactionErrorMessage } from '@/lib/utils/transaction'
 import { 
   PenTool, 
   AlertCircle,
@@ -72,10 +73,10 @@ export function SignatureDialog({
         description: `Signed ${type === SignatureType.MESSAGE ? 'message' : 'typed data'}`
       })
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to sign'
+      const errorMessage = getTransactionErrorMessage(err)
       setError(errorMessage)
       onError?.(err instanceof Error ? err : new Error(errorMessage))
-      
+
       toast.error('Signature failed', {
         description: errorMessage
       })

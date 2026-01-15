@@ -167,22 +167,17 @@ function FeaturedVaultCard({ vault }: { vault: FeaturedVault }) {
 
   return (
     <Link href={`/vault/${vault.id}`}>
-      <div className="card-premium p-6 hover:shadow-lg transition-all duration-300 cursor-pointer group">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-            <span className="font-title text-2xl text-primary">
-              {vault.token.symbol.charAt(0)}
-            </span>
-          </div>
-          <div>
-            <h3 className="font-stat text-lg text-foreground group-hover:text-primary transition-colors">
-              {vault.token.name}
-            </h3>
-            <p className="font-body text-xs text-muted-foreground">
-              {vault.token.symbol}
-            </p>
-          </div>
+      <div className="p-6 hover:bg-muted/30 transition-all duration-300 cursor-pointer group">
+        <div className="mb-4">
+          <h3 className="font-title text-3xl text-foreground group-hover:text-primary transition-colors">
+            {vault.token.name}
+          </h3>
+          <p className="font-body text-xs text-muted-foreground">
+            {vault.token.symbol.toUpperCase()}
+          </p>
         </div>
+
+        <div className="divider border-t border-muted mb-4" />
 
         <div className="space-y-3">
           <div className="flex justify-between items-center">

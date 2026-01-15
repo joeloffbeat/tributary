@@ -7,6 +7,7 @@ import { formatUnits } from 'viem'
 import { toast } from 'sonner'
 import { HandCoins, Loader2, CheckCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { getTransactionErrorMessage } from '@/lib/utils/transaction'
 
 const CLAIM_ABI = [{
   type: 'function', name: 'claim', inputs: [],
@@ -67,7 +68,7 @@ export function ClaimButton({
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Claim failed')
       setHasError(true)
-      toast.error(error.message || 'Failed to claim rewards')
+      toast.error(getTransactionErrorMessage(err))
       onError?.(error)
     }
   }, [address, publicClient, chainId, vaultAddress, writeContract, onSuccess, onError])

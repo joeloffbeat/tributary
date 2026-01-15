@@ -1,0 +1,41 @@
+# =============================================================================
+# Mantle Sepolia Testnet - Chain Metadata for Hyperlane
+# =============================================================================
+# Documentation: https://docs.mantle.xyz/
+# Faucet: https://faucet.sepolia.mantle.xyz/
+
+# Chain identification
+chainId: 5003
+domainId: 5003
+name: mantlesepolia
+displayName: Mantle Sepolia Testnet
+protocol: ethereum
+isTestnet: true
+
+# RPC endpoints (fallback - override via RPC_MANTLE_SEPOLIA env var)
+rpcUrls:
+  - http: https://rpc.sepolia.mantle.xyz
+
+# Native token configuration
+nativeToken:
+  name: MNT
+  symbol: MNT
+  decimals: 18
+
+# Block configuration
+blocks:
+  confirmations: 1
+  estimateBlockTime: 2
+  reorgPeriod: 0
+
+# Index configuration (for Alchemy free tier compatibility)
+index:
+  chunk: 9
+  from: 1000000
+
+# Block explorer configuration
+blockExplorers:
+  - name: Mantle Sepolia Explorer
+    url: https://sepolia.mantlescan.xyz
+    apiUrl: https://api-sepolia.mantlescan.xyz/api
+    family: blockscout

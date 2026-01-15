@@ -9,8 +9,8 @@ import {
   type Account
 } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
-import { config } from './config.js'
-import { TributaryAMMABI, ERC20ABI } from './abis.js'
+import { config } from './config'
+import { TributaryAMMABI, ERC20ABI } from './abis'
 
 // Mantle Sepolia chain config
 const mantleSepolia: Chain = {

@@ -27,7 +27,7 @@ export function ChainSelectItem({ chain, isSelected }: ChainSelectItemProps) {
           }}
         />
       )}
-      <span className="truncate flex-1">{chain.name}</span>
+      <span className="truncate flex-1 font-body text-sm tracking-wider">{chain.name.toUpperCase()}</span>
       {chain.testnet && (
         <Badge variant="outline" className="text-xs ml-auto">
           Testnet

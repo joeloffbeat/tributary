@@ -49,7 +49,7 @@ export function ChainSelect({
           ) : selectedChain ? (
             <div className="flex items-center gap-2">
               <ChainLogo chainId={selectedChain.chainId} name={selectedChain.name} size="sm" />
-              <span className="font-medium truncate">{selectedChain.name}</span>
+              <span className="font-body text-sm tracking-wider truncate">{selectedChain.name.toUpperCase()}</span>
             </div>
           ) : (
             <span className="text-muted-foreground">Select chain</span>
@@ -97,8 +97,8 @@ export function ChainSelect({
                 >
                   <ChainLogo chainId={chain.chainId} name={chain.name} size="md" />
                   <div className="flex-1 text-left">
-                    <span className={cn('font-medium', isDisabled && 'text-muted-foreground')}>
-                      {chain.name}
+                    <span className={cn('font-body text-sm tracking-wider', isDisabled && 'text-muted-foreground')}>
+                      {chain.name.toUpperCase()}
                     </span>
                     {isDisabled && (
                       <p className="text-xs text-muted-foreground/70 truncate">

@@ -26,7 +26,7 @@ export function CandlestickChart({ poolId, interval }: CandlestickChartProps) {
       if (!chartContainerRef.current || !candles?.length) return
 
       try {
-        const { createChart, ColorType } = await import('lightweight-charts')
+        const { createChart, ColorType, CandlestickSeries } = await import('lightweight-charts')
 
         // Clean up existing chart
         if (chartRef.current) {
@@ -53,25 +53,28 @@ export function CandlestickChart({ poolId, interval }: CandlestickChartProps) {
           },
         })
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const candlestickSeries = (chart as any).addCandlestickSeries({
+        // Use new v5.0 API: chart.addSeries(SeriesType, options)
+        const candlestickSeries = chart.addSeries(CandlestickSeries, {
           upColor: '#167a5f',
-          downColor: '#ef4444',
+          downColor: '#000000',
           borderUpColor: '#167a5f',
-          borderDownColor: '#ef4444',
+          borderDownColor: '#000000',
           wickUpColor: '#167a5f',
-          wickDownColor: '#ef4444',
+          wickDownColor: '#000000',
         })
 
         candlestickSeries.setData(
           candles.map((c) => ({
-            time: Number(c.timestamp) as any,
+            time: Number(c.timestamp),
             open: parseFloat(c.open),
             high: parseFloat(c.high),
             low: parseFloat(c.low),
             close: parseFloat(c.close),
           }))
         )
+
+        // Fit content to show all data
+        chart.timeScale().fitContent()
 
         chartRef.current = chart
 

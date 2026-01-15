@@ -7,6 +7,7 @@ import { parseUnits, formatUnits, createPublicClient, http, Hex, encodeAbiParame
 import { sepolia, polygonAmoy, avalancheFuji } from 'viem/chains'
 import { defineChain } from 'viem'
 import { useAccount, usePublicClient, useWalletClient } from '@/lib/web3'
+import { getTransactionErrorMessage } from '@/lib/utils/transaction'
 import type { BridgeState, BridgeQuote } from '../types'
 import {
   USDC_CHAINS,
@@ -332,7 +333,7 @@ export function useBridgeUsdc() {
     } catch (error) {
       setBridgeState({
         step: 'error',
-        error: error instanceof Error ? error.message : 'Bridge failed',
+        error: getTransactionErrorMessage(error),
         currentStepIndex: 0,
         totalSteps: 5
       })

@@ -33,6 +33,7 @@ export const CHAIN_IDS = {
   CELO: 42220,
   MOONBEAM: 1284,
   STORY_AENID: 1315,
+  MANTLE_SEPOLIA: 5003,
 } as const
 
 // Chain metadata with logo sources
@@ -200,10 +201,16 @@ export const CHAIN_METADATA: Record<number, {
     logo: 'https://coin-logos.simplr.sh/images/moonbeam/standard.png'
   },
   [CHAIN_IDS.STORY_AENID]: {
-    name: 'Story Aenid',
+    name: 'Story Aeneid',
     symbol: 'IP',
     color: '#8B5CF6',
-    logo: 'https://raw.githubusercontent.com/storyprotocol/brand-assets/main/logo/logo-circle.png'
+    logo: '/story.png'
+  },
+  [CHAIN_IDS.MANTLE_SEPOLIA]: {
+    name: 'Mantle Sepolia',
+    symbol: 'MNT',
+    color: '#000000',
+    logo: '/mantle.png'
   },
 }
 

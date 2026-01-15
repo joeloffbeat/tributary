@@ -20,10 +20,18 @@ const birthstone = Birthstone({
 })
 
 export const metadata: Metadata = {
-  title: process.env.NEXT_PUBLIC_APP_NAME || 'Web3 App',
-  description: process.env.NEXT_PUBLIC_APP_DESCRIPTION || 'A comprehensive Web3 application powered by Reown AppKit',
-  icons: {
-    icon: process.env.NEXT_PUBLIC_APP_ICON || '/logo.png',
+  title: 'Tributary | IP Royalty Tokenization',
+  description: 'Tokenize royalty streams from your intellectual property on Story Protocol. Invest in IP-backed revenue sharing vaults.',
+  openGraph: {
+    title: 'Tributary | IP Royalty Tokenization',
+    description: 'Tokenize royalty streams from your intellectual property on Story Protocol. Invest in IP-backed revenue sharing vaults.',
+    images: ['/logo.png'],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Tributary | IP Royalty Tokenization',
+    description: 'Tokenize royalty streams from your intellectual property on Story Protocol. Invest in IP-backed revenue sharing vaults.',
+    images: ['/logo.png'],
   },
 }
 

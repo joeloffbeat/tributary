@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import type { Address } from 'viem'
 import { useWalletClient, usePublicClient, useAccount } from '@/lib/web3'
 import { MARKETPLACE_ADDRESS, MARKETPLACE_ABI, ERC20_ABI } from '@/constants/tributary'
+import { getTransactionErrorMessage } from '@/lib/utils/transaction'
 
 interface CreateListingParams {
   vaultAddress: Address
@@ -65,7 +66,7 @@ export function useCreateListing() {
 
         await publicClient.waitForTransactionReceipt({ hash })
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Failed to create listing'
+        const message = getTransactionErrorMessage(err)
         setError(message)
         throw err
       } finally {

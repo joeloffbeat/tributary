@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ArrowLeftRight, MessageSquare, Wallet, History, Network, Activity, Globe, Server, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { hyperlaneService } from '@/lib/services/hyperlane-service'
-import { APP_MODE, getSupportedChainList } from '@/lib/config/chains'
+import { getSupportedChainList } from '@/lib/config/chains'
 import { type HyperlaneMode, getSupportedChains, isHyperlaneDeployed, getHyperlaneDeployment } from '@/constants/hyperlane'
 import { BridgeTab, MessageTab, ICATab, HistoryTab, NetworksTab, StatusTab } from './components'
 import { useMessageHistory } from './hooks'
@@ -30,7 +30,7 @@ export default function HyperlanePage() {
   const { trackedMessages, isPolling, trackMessage, clearHistory, removeFromHistory, refreshStatuses, addManualMessage } = useMessageHistory()
 
   const isOnSupportedChain = chainId ? hyperlaneService.isChainSupported(chainId) : false
-  const shouldShowTestnet = APP_MODE === 'testnet' || (APP_MODE === 'both' && chainId ? hyperlaneService.isTestnetChain(chainId) : true)
+  const shouldShowTestnet = true // Only testnet mode supported
   const needsChainSwitch = isConnected && sourceChain !== null && chainId !== sourceChain.chainId
 
   // Load mode from localStorage

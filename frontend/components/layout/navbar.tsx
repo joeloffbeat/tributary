@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
@@ -24,8 +25,15 @@ export function Navbar() {
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="font-title text-4xl text-primary">
-            Tributary
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src="/logo.png"
+              alt="Tributary"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
+            <span className="font-title text-4xl text-primary">Tributary</span>
           </Link>
 
           {/* Desktop Navigation Links */}

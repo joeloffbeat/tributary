@@ -54,6 +54,9 @@ chain_to_env_var() {
         fuji|avalanche-fuji)
             env_var="RPC_AVALANCHE_FUJI"
             ;;
+        mantlesepolia)
+            env_var="RPC_MANTLE"
+            ;;
         *)
             # Convert to uppercase and add RPC_ prefix
             env_var="RPC_$(echo "$chain_name" | tr '[:lower:]-' '[:upper:]_')"

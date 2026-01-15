@@ -3,6 +3,7 @@ import { useState, useCallback, useEffect } from 'react'
 import type { Address } from 'viem'
 import { useAccount, usePublicClient, useWalletClient } from '@/lib/web3'
 import { getTributaryContracts, MARKETPLACE_ABI, TOKEN_ABI } from '@/constants/tributary'
+import { getTransactionErrorMessage } from '@/lib/utils/transaction'
 import type { TributaryVault } from '../types'
 
 type BuyStatus = 'idle' | 'pending' | 'success' | 'error'
@@ -76,7 +77,7 @@ export function useBuyTokens(vault: TributaryVault) {
       setAllowance(amount)
       setStatus('idle')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Approval failed')
+      setError(getTransactionErrorMessage(err))
       setStatus('error')
     }
   }, [walletClient, address, publicClient, usdcAddress, marketplaceAddress, chainId])
@@ -101,7 +102,7 @@ export function useBuyTokens(vault: TributaryVault) {
       setStatus('success')
       return hash
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Purchase failed')
+      setError(getTransactionErrorMessage(err))
       setStatus('error')
       return null
     }

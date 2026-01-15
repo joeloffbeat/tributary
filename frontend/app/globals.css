@@ -173,3 +173,58 @@
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
+
+/* ==================== INPUT FOCUS & AUTOFILL FIXES ==================== */
+
+/* Remove default focus outline */
+*:focus-visible {
+  outline: none !important;
+}
+
+/* Subtle focus styles for inputs - just border color change */
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove focus ring from buttons */
+button:focus,
+button:focus-visible,
+[role="button"]:focus,
+[role="button"]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Override browser autofill/autocomplete styles */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus,
+select:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #f5f3ed inset !important;
+  -webkit-text-fill-color: #1a1a1a !important;
+  background-color: #f5f3ed !important;
+  caret-color: #1a1a1a !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Firefox autofill */
+input:autofill,
+textarea:autofill,
+select:autofill {
+  background-color: #f5f3ed !important;
+  color: #1a1a1a !important;
+}

@@ -30,6 +30,7 @@ CLEAN_CACHE=false
 RELAY_CHAINS=""
 VERBOSITY=""
 LOG_FORMAT=""
+SKIP_RPC_UPDATE=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -44,6 +45,10 @@ while [[ $# -gt 0 ]]; do
         --log)
             LOG_FORMAT="$2"
             shift 2
+            ;;
+        --skip-rpc-update)
+            SKIP_RPC_UPDATE=true
+            shift
             ;;
         -*)
             echo -e "${RED}Unknown option: $1${NC}"
@@ -146,15 +151,23 @@ for chain in "${CHAIN_ARRAY[@]}"; do
     rpc_url=$(get_rpc_url "$chain")
 
     if [ -z "$rpc_url" ]; then
-        MISSING_RPCS+=("$env_var (for $chain)")
+        if [ "$SKIP_RPC_UPDATE" = true ]; then
+            echo -e "  ${YELLOW}⚠${NC} $env_var not set (using metadata.yaml RPC)"
+        else
+            MISSING_RPCS+=("$env_var (for $chain)")
+        fi
     else
         echo -e "  ${GREEN}✓${NC} $env_var is set"
-        # Update the registry-clone with the env var RPC URL
-        update_registry_rpc "$chain" "$rpc_url"
+        # Update the registry-clone with the env var RPC URL (unless skipped)
+        if [ "$SKIP_RPC_UPDATE" = false ]; then
+            update_registry_rpc "$chain" "$rpc_url"
+        else
+            echo -e "  ${YELLOW}⚠${NC} Skipping RPC update for $chain"
+        fi
     fi
 done
 
-if [ ${#MISSING_RPCS[@]} -gt 0 ]; then
+if [ ${#MISSING_RPCS[@]} -gt 0 ] && [ "$SKIP_RPC_UPDATE" = false ]; then
     echo ""
     echo -e "${RED}Error: Missing required RPC environment variables:${NC}"
     for missing in "${MISSING_RPCS[@]}"; do
@@ -166,6 +179,8 @@ if [ ${#MISSING_RPCS[@]} -gt 0 ]; then
         var_name=$(echo "$missing" | cut -d' ' -f1)
         echo -e "  ${BLUE}$var_name=https://your-rpc-url${NC}"
     done
+    echo ""
+    echo -e "Or use --skip-rpc-update to use RPCs from metadata.yaml"
     exit 1
 fi
 

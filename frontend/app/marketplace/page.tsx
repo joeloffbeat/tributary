@@ -36,7 +36,7 @@ export default function MarketplacePage() {
             placeholder="SEARCH VAULTS..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="input-premium w-full pl-12"
+            className="input-premium w-full pl-12 bg-transparent"
           />
         </div>
 
@@ -69,10 +69,15 @@ function VaultGridSkeleton() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="card-premium p-6 animate-pulse">
-          <div className="h-32 bg-cream-dark rounded mb-4" />
-          <div className="h-6 bg-cream-dark rounded w-3/4 mb-2" />
-          <div className="h-4 bg-cream-dark rounded w-1/2" />
+        <div key={i} className="p-6 animate-pulse">
+          <div className="h-10 bg-muted rounded w-3/4 mb-2" />
+          <div className="h-4 bg-muted rounded w-1/2 mb-6" />
+          <div className="h-px bg-muted mb-6" />
+          <div className="h-8 bg-muted rounded w-1/3 mb-6" />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="h-12 bg-muted rounded" />
+            <div className="h-12 bg-muted rounded" />
+          </div>
         </div>
       ))}
     </div>

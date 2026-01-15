@@ -1,15 +1,15 @@
 /**
- * Connect Button - Privy Implementation
+ * Connect Button - Privy Implementation with Chain Switcher
  *
- * Uses Privy's usePrivy and useLogin hooks for wallet connection
- * with a custom dropdown for the connected state.
+ * Shows chain dropdown + USD balance + wallet address when connected
  */
 
 'use client'
 
 import { useState } from 'react'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
-import { useBalance } from 'wagmi'
+import { useBalance, useReadContract } from 'wagmi'
+import { formatUnits } from 'viem'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,46 +18,97 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Copy, ExternalLink, LogOut, Check, ArrowLeftRight } from 'lucide-react'
-import { BridgeUsdcDialog } from './bridge-usdc'
-import { getChainById } from '@/lib/config/chains'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Copy, LogOut, Check, Droplets } from 'lucide-react'
+import { SUPPORTED_CHAINS, MANTLE_SEPOLIA_CHAIN_ID, STORY_AENEID_CHAIN_ID } from '@/lib/config/chains'
+import { TRIBUTARY_CONTRACTS, MOCK_USDT_ABI } from '@/constants/tributary'
+import Link from 'next/link'
 
 interface ConnectButtonProps {
   className?: string
 }
 
+// Chain icons/colors
+const CHAIN_CONFIG = {
+  [MANTLE_SEPOLIA_CHAIN_ID]: {
+    name: 'MANTLE SEPOLIA',
+    shortName: 'MANTLE',
+    logo: '/mantle.png',
+  },
+  [STORY_AENEID_CHAIN_ID]: {
+    name: 'STORY AENEID',
+    shortName: 'STORY',
+    logo: '/story.png',
+  },
+}
+
 /**
- * Custom Wallet Details Dropdown Component
+ * Chain Switcher Dropdown
+ */
+function ChainSwitcher({ currentChainId, onSwitch }: { currentChainId: number; onSwitch: (chainId: number) => void }) {
+  const chainConfig = CHAIN_CONFIG[currentChainId as keyof typeof CHAIN_CONFIG]
+
+  return (
+    <Select value={String(currentChainId)} onValueChange={(val) => onSwitch(Number(val))}>
+      <SelectTrigger className="w-auto btn-secondary gap-2 [&_svg:last-child]:hidden !border-[#167a5f]">
+        {chainConfig?.logo && (
+          <img
+            src={chainConfig.logo}
+            alt={chainConfig.shortName}
+            className="w-5 h-5 rounded-full object-cover"
+          />
+        )}
+        <SelectValue>
+          <span className="font-body text-sm tracking-wider">{chainConfig?.shortName || 'UNKNOWN'}</span>
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        {Object.entries(CHAIN_CONFIG).map(([chainId, config]) => (
+          <SelectItem key={chainId} value={chainId}>
+            <div className="flex items-center gap-2">
+              <img
+                src={config.logo}
+                alt={config.shortName}
+                className="w-5 h-5 rounded-full object-cover"
+              />
+              <span className="font-body text-sm tracking-wider">{config.name}</span>
+            </div>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  )
+}
+
+/**
+ * Wallet Details Dropdown
  */
 function WalletDetailsDropdown({
-  className,
   address,
+  chainId,
   onLogout,
 }: {
-  className?: string
   address: `0x${string}`
+  chainId: number
   onLogout: () => void
 }) {
   const [copied, setCopied] = useState(false)
-  const [bridgeDialogOpen, setBridgeDialogOpen] = useState(false)
-  const { wallets } = useWallets()
 
-  // Get the current chain from the wallet
-  const activeWallet = wallets.find((w) => w.address === address)
-  const chainId = activeWallet?.chainId ? parseInt(activeWallet.chainId.split(':')[1] || '1') : 1
-
-  // Get balance
-  const { data: balance } = useBalance({
+  // Get native balance
+  const { data: nativeBalance } = useBalance({
     address,
     chainId,
   })
 
-  // Get chain config
-  const chainConfig = getChainById(chainId)
-
   const truncatedAddress = `${address.slice(0, 6)}...${address.slice(-4)}`
-  const formattedBalance = balance
-    ? `${Number(balance.formatted).toFixed(4)} ${balance.symbol}`
+  const formattedNativeBalance = nativeBalance
+    ? `${Number(nativeBalance.formatted).toFixed(4)} ${nativeBalance.symbol}`
     : '...'
 
   const handleCopy = async () => {
@@ -66,85 +117,157 @@ function WalletDetailsDropdown({
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const explorerUrl = chainConfig?.chain.blockExplorers?.default?.url
-    ? `${chainConfig.chain.blockExplorers.default.url}/address/${address}`
-    : null
+  const isOnMantleSepolia = chainId === MANTLE_SEPOLIA_CHAIN_ID
 
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <div
-            role="button"
-            tabIndex={0}
-            className={`inline-flex items-center gap-2 btn-secondary text-sm py-2 px-4 cursor-pointer ${className || ''}`}
-          >
-            <span className="text-muted-foreground">{formattedBalance}</span>
-            <span className="text-primary">{truncatedAddress}</span>
-          </div>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-64">
-          <DropdownMenuLabel className="font-normal">
-            <div className="flex flex-col space-y-1">
-              <p className="font-body text-xs">CONNECTED WALLET</p>
-              <p className="font-stat text-xs text-muted-foreground">{truncatedAddress}</p>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="btn-secondary text-sm py-2 px-4">
+          <span className="text-primary font-mono">{truncatedAddress}</span>
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-64">
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="font-body text-xs text-muted-foreground">WALLET ADDRESS</p>
+            <div className="flex items-center justify-between">
+              <p className="font-mono text-sm">{truncatedAddress}</p>
+              <button
+                onClick={handleCopy}
+                className="p-1 hover:bg-muted rounded transition-colors"
+              >
+                {copied ? (
+                  <Check className="h-3 w-3 text-green-500" />
+                ) : (
+                  <Copy className="h-3 w-3 text-muted-foreground" />
+                )}
+              </button>
             </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
+          </div>
+        </DropdownMenuLabel>
 
-          {/* Bridge USDC Button */}
-          <DropdownMenuItem
-            onClick={() => setBridgeDialogOpen(true)}
-            className="cursor-pointer font-body text-xs"
-          >
-            <ArrowLeftRight className="mr-2 h-4 w-4" />
-            BRIDGE USDC
-          </DropdownMenuItem>
+        <DropdownMenuSeparator />
 
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleCopy} className="cursor-pointer font-body text-xs">
-            {copied ? (
-              <Check className="mr-2 h-4 w-4 text-green-500" />
-            ) : (
-              <Copy className="mr-2 h-4 w-4" />
-            )}
-            {copied ? 'COPIED!' : 'COPY ADDRESS'}
-          </DropdownMenuItem>
-          {explorerUrl && (
-            <DropdownMenuItem asChild className="cursor-pointer font-body text-xs">
-              <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="mr-2 h-4 w-4" />
-                VIEW ON EXPLORER
-              </a>
+        <div className="px-2 py-2">
+          <p className="font-body text-xs text-muted-foreground mb-1">NATIVE BALANCE</p>
+          <p className="font-stat text-sm">{formattedNativeBalance}</p>
+        </div>
+
+        <DropdownMenuSeparator />
+
+        {isOnMantleSepolia && (
+          <>
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/faucet" className="flex items-center gap-2 font-body text-xs">
+                <Droplets className="h-4 w-4 text-blue-500" />
+                GET TEST USD
+              </Link>
             </DropdownMenuItem>
-          )}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={onLogout}
-            className="cursor-pointer font-body text-xs text-red-500 focus:text-red-500"
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            DISCONNECT
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <DropdownMenuSeparator />
+          </>
+        )}
 
-      {/* Bridge USDC Dialog */}
-      <BridgeUsdcDialog open={bridgeDialogOpen} onOpenChange={setBridgeDialogOpen} />
-    </>
+        <DropdownMenuItem
+          onClick={onLogout}
+          className="cursor-pointer font-body text-xs text-red-500 focus:text-red-500"
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          DISCONNECT
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+/**
+ * Connected State - Shows Chain Switcher + USD Balance + Wallet Dropdown
+ */
+function ConnectedState({
+  address,
+  chainId,
+  onSwitchChain,
+  onLogout,
+}: {
+  address: `0x${string}`
+  chainId: number
+  onSwitchChain: (chainId: number) => void
+  onLogout: () => void
+}) {
+  // Get USD (mock USDT) balance - only available on Mantle Sepolia
+  const mockUsdtAddress = TRIBUTARY_CONTRACTS[MANTLE_SEPOLIA_CHAIN_ID]?.mockUsdt
+
+  const { data: usdBalance } = useReadContract({
+    address: mockUsdtAddress,
+    abi: MOCK_USDT_ABI,
+    functionName: 'balanceOf',
+    args: [address],
+    chainId: MANTLE_SEPOLIA_CHAIN_ID,
+  })
+
+  const formattedUsdBalance = usdBalance
+    ? `$${Number(formatUnits(usdBalance as bigint, 6)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    : '$0.00'
+
+  return (
+    <div className="flex items-center gap-2">
+      {/* Chain Switcher */}
+      <ChainSwitcher currentChainId={chainId} onSwitch={onSwitchChain} />
+
+      {/* USD Balance Display */}
+      <div className="btn-secondary text-sm py-2 px-3 font-stat">
+        {formattedUsdBalance}
+      </div>
+
+      {/* Wallet Dropdown */}
+      <WalletDetailsDropdown
+        address={address}
+        chainId={chainId}
+        onLogout={onLogout}
+      />
+    </div>
   )
 }
 
 /**
  * Connect Button Component
- *
- * Uses Privy for authentication and wallet connection.
  */
 export function ConnectButton({ className }: ConnectButtonProps) {
   const { ready, authenticated, user, login, logout } = usePrivy()
+  const { wallets, ready: walletsReady } = useWallets()
 
-  // Get the user's wallet address
-  const walletAddress = user?.wallet?.address as `0x${string}` | undefined
+  // Get wallet address from multiple sources
+  // 1. First try wallets array (for both embedded and external wallets)
+  // 2. Then fallback to user.wallet.address (for embedded wallets)
+  // 3. Finally check linked accounts for wallet address
+  const embeddedWallet = wallets.find((w) => w.walletClientType === 'privy')
+  const externalWallet = wallets.find((w) => w.walletClientType !== 'privy')
+  const activeWallet = embeddedWallet || externalWallet || wallets[0]
+
+  // Get wallet address from various sources
+  const walletFromWallets = activeWallet?.address
+  const walletFromUser = user?.wallet?.address
+  const walletFromLinkedAccounts = user?.linkedAccounts?.find(
+    (account): account is { type: 'wallet'; address: string } =>
+      account.type === 'wallet'
+  )?.address
+
+  const walletAddress = (walletFromWallets || walletFromUser || walletFromLinkedAccounts) as `0x${string}` | undefined
+
+  // Get current chain from active wallet, default to Mantle Sepolia
+  const currentChainId = activeWallet?.chainId
+    ? parseInt(activeWallet.chainId.split(':')[1] || String(MANTLE_SEPOLIA_CHAIN_ID))
+    : MANTLE_SEPOLIA_CHAIN_ID
+
+  // Switch chain handler
+  const handleSwitchChain = async (chainId: number) => {
+    if (activeWallet) {
+      try {
+        await activeWallet.switchChain(chainId)
+      } catch (error) {
+        console.error('Failed to switch chain:', error)
+      }
+    }
+  }
 
   // Don't render until Privy is ready
   if (!ready) {
@@ -158,12 +281,25 @@ export function ConnectButton({ className }: ConnectButtonProps) {
     )
   }
 
-  // If authenticated and has wallet, show dropdown
+  // If authenticated but wallet not ready yet, show loading
+  if (authenticated && !walletsReady) {
+    return (
+      <button
+        className={`btn-primary text-sm py-2 px-4 opacity-50 cursor-not-allowed ${className || ''}`}
+        disabled
+      >
+        LOADING WALLET...
+      </button>
+    )
+  }
+
+  // If authenticated and has wallet, show connected state
   if (authenticated && walletAddress) {
     return (
-      <WalletDetailsDropdown
-        className={className}
+      <ConnectedState
         address={walletAddress}
+        chainId={currentChainId}
+        onSwitchChain={handleSwitchChain}
         onLogout={logout}
       />
     )

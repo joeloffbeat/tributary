@@ -3,7 +3,9 @@ export const CHAIN_LOGOS = {
   8453: '/chain-logos/base.png',       // Base
   137: '/chain-logos/polygon.png',     // Polygon
   534352: '/chain-logos/scroll.jpg',   // Scroll
-  97476: '/chain-logos/doma.png',   // Doma Testnet
+  97476: '/chain-logos/doma.png',      // Doma Testnet
+  1315: '/story.png',                  // Story Aeneid
+  5003: '/mantle.png',                 // Mantle Sepolia
 } as const
 
 export const TOKEN_LOGOS = {
@@ -21,6 +23,11 @@ export const CHAIN_LOGO_MAPPINGS = {
   polygon: '/chain-logos/polygon.png',
   scroll: '/chain-logos/scroll.jpg',
   doma: '/chain-logos/doma.png',
+  story: '/story.png',
+  'story-aeneid': '/story.png',
+  'story-aeneid-testnet': '/story.png',
+  mantle: '/mantle.png',
+  'mantle-sepolia': '/mantle.png',
 } as const
 
 export const TOKEN_LOGO_MAPPINGS = {

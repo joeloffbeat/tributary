@@ -45,7 +45,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { type EnvConfig, type SocialProvider, DEFAULT_CONFIG } from '@/lib/config/env-config'
-import { MAINNET_CHAIN_NAMES, TESTNET_CHAIN_NAMES } from '@/lib/config/chains'
+import { SUPPORTED_CHAINS } from '@/lib/config/chains'
 
 // Validation schema
 const configSchema = z.object({
@@ -82,20 +82,10 @@ interface ConfigurationDialogProps {
   onConfigSave: (config: Partial<EnvConfig>) => void
 }
 
-// Chains available in the configuration dialog
+// Chains available in the configuration dialog (only supported chains)
 const AVAILABLE_CHAINS: { value: string; label: string; description: string; isTestnet: boolean }[] = [
-  // Mainnets
-  { value: 'ethereum', label: 'Ethereum', description: 'Ethereum Mainnet', isTestnet: false },
-  { value: 'polygon', label: 'Polygon', description: 'Polygon PoS network', isTestnet: false },
-  { value: 'arbitrum', label: 'Arbitrum One', description: 'Arbitrum L2', isTestnet: false },
-  { value: 'optimism', label: 'Optimism', description: 'Optimism L2', isTestnet: false },
-  { value: 'base', label: 'Base', description: 'Coinbase L2', isTestnet: false },
-  // Testnets
-  { value: 'sepolia', label: 'Sepolia', description: 'Ethereum testnet', isTestnet: true },
-  { value: 'amoy', label: 'Polygon Amoy', description: 'Polygon testnet', isTestnet: true },
-  { value: 'arbitrum-sepolia', label: 'Arbitrum Sepolia', description: 'Arbitrum testnet', isTestnet: true },
-  { value: 'optimism-sepolia', label: 'Optimism Sepolia', description: 'Optimism testnet', isTestnet: true },
-  { value: 'base-sepolia', label: 'Base Sepolia', description: 'Base testnet', isTestnet: true },
+  { value: 'mantle-sepolia', label: 'Mantle Sepolia', description: 'Mantle testnet for contracts', isTestnet: true },
+  { value: 'story-aeneid', label: 'Story Aeneid', description: 'Story Protocol testnet for IPs', isTestnet: true },
 ]
 
 const SOCIAL_PROVIDERS: { value: SocialProvider; label: string; icon: string }[] = [
@@ -136,7 +126,7 @@ export function ConfigurationDialog({ open, onClose, missingVars, recommendedVar
       bundlerUrl: '',
       themeMode: DEFAULT_CONFIG.themeMode,
       allWallets: DEFAULT_CONFIG.allWallets,
-      enableTestnets: false, // Controlled by NEXT_PUBLIC_APP_MODE now
+      enableTestnets: true, // Only testnet mode supported
     }
   })
 
