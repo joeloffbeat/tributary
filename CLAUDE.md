@@ -30,10 +30,10 @@ git config user.email "gabrielantony56@gmail.com"
 
 | Setting | Value |
 |---------|-------|
-| **Vercel Project** | `tributary` |
+| **Vercel Project** | `tributary-mantle` |
 | **Vercel Team** | `gabrielaxy` |
-| **Production URL** | `https://tributary.vercel.app` |
-| **Root Directory** | `frontend` |
+| **Production URL** | `https://tributary-mantle.vercel.app` |
+| **Root Directory** | `.` (frontend directory) |
 
 ### Deployment Commands
 
@@ -43,16 +43,16 @@ When pushing changes that require deployment:
 # 1. Push to GitHub first
 git push origin main
 
-# 2. Then deploy to Vercel (from project root, NOT frontend/)
-cd /path/to/tributary  # Project root
+# 2. Then deploy to Vercel (from frontend/ directory)
+cd /path/to/tributary/frontend
 vercel deploy --prod --yes
 ```
 
 ### Important Notes
 
-- **Always deploy from project root** - The Vercel project has `frontend` set as root directory
+- **Deploy from frontend/ directory** - The .vercel config is in frontend/
 - **GitHub and Vercel are NOT linked** - Manual deployment required after each push
-- **Set environment variables on Vercel** - Go to https://vercel.com/gabrielaxy/tributary/settings/environment-variables
+- **Set environment variables on Vercel** - Go to https://vercel.com/gabrielaxy/tributary-mantle/settings/environment-variables
 - Required env vars: `NEXT_PUBLIC_PRIVY_APP_ID` and others from `.env.local`
 
 ---

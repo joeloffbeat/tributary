@@ -32,9 +32,14 @@ interface IDisputeModule {
     ) external returns (uint256);
 }
 
+/// @title ISpecifiesInterchainSecurityModule
+interface ISpecifiesInterchainSecurityModule {
+    function interchainSecurityModule() external view returns (address);
+}
+
 /// @title StoryReceiver
 /// @notice Receives cross-chain messages from Mantle and executes Story Protocol operations
-contract StoryReceiver is Ownable {
+contract StoryReceiver is Ownable, ISpecifiesInterchainSecurityModule {
     // ============ Message Types ============
     uint8 public constant MSG_PAY_ROYALTY = 1;
     uint8 public constant MSG_CLAIM_REVENUE = 2;
@@ -47,6 +52,7 @@ contract StoryReceiver is Ownable {
 
     // ============ Hyperlane ============
     address public immutable mailbox;
+    address public customIsm;
     uint32 public mantleDomainId;
     bytes32 public mantleBridge;
 
@@ -204,5 +210,13 @@ contract StoryReceiver is Ownable {
 
     function setMantleDomainId(uint32 newDomainId) external onlyOwner {
         mantleDomainId = newDomainId;
+    }
+
+    function setInterchainSecurityModule(address _ism) external onlyOwner {
+        customIsm = _ism;
+    }
+
+    function interchainSecurityModule() external view override returns (address) {
+        return customIsm;
     }
 }
