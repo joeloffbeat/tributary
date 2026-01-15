@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { querySubgraph } from '@/lib/services/subgraph'
+import { fetchIPAssetById, getIPAssetImageUrl, getIPAssetDisplayName } from '@/lib/services/story-api-service'
 
 export interface FilterState {
   sortBy?: 'volume' | 'dividend' | 'newest' | 'price'
@@ -38,13 +39,9 @@ const ALL_VAULTS_QUERY = `
   }
 `
 
-export interface VaultData {
+interface RawVaultData {
   id: string
-  token: {
-    id: string
-    name: string
-    symbol: string
-  }
+  token: { id: string; name: string; symbol: string }
   creator: string
   storyIPId: string
   dividendBps: string
@@ -52,16 +49,32 @@ export interface VaultData {
   totalDeposited: string
   totalDistributed: string
   createdAt: string
-  pool?: {
-    id: string
-    reserveToken: string
-    reserveQuote: string
-    volumeQuote: string
-  }
+  pool?: { id: string; reserveToken: string; reserveQuote: string; volumeQuote: string }
+}
+
+export interface VaultData extends RawVaultData {
+  imageUrl?: string | null
+  ipName?: string
 }
 
 interface AllVaultsResponse {
-  vaults: VaultData[]
+  vaults: RawVaultData[]
+}
+
+async function enrichVaultWithIPData(vault: RawVaultData): Promise<VaultData> {
+  if (!vault.storyIPId) {
+    return vault
+  }
+  try {
+    const ipAsset = await fetchIPAssetById(vault.storyIPId)
+    return {
+      ...vault,
+      imageUrl: ipAsset ? getIPAssetImageUrl(ipAsset) : null,
+      ipName: ipAsset ? getIPAssetDisplayName(ipAsset) : vault.token.name,
+    }
+  } catch {
+    return vault
+  }
 }
 
 export function useAllVaults(filters: FilterState) {
@@ -87,7 +100,10 @@ export function useAllVaults(filters: FilterState) {
         vaults = vaults.filter((v) => parseInt(v.tradingFeeBps) <= filters.maxTradeFee! * 100)
       }
 
-      return vaults
+      // Enrich with IP asset data (images)
+      const enrichedVaults = await Promise.all(vaults.map(enrichVaultWithIPData))
+      return enrichedVaults
     },
+    staleTime: 30_000,
   })
 }

@@ -1,7 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { formatUnits } from 'viem'
+import { Vault } from 'lucide-react'
 import { useProtocolStats } from '@/hooks/use-protocol-stats'
 import { useFeaturedVaults, FeaturedVault } from '@/hooks/use-featured-vaults'
 import { formatNumber, formatAddress } from '@/lib/utils'
@@ -164,36 +166,56 @@ function StepCard({
 function FeaturedVaultCard({ vault }: { vault: FeaturedVault }) {
   const totalDeposited = parseFloat(formatUnits(BigInt(vault.totalDeposited || '0'), 6))
   const dividendRate = parseInt(vault.dividendBps) / 100
+  const tradeFee = parseInt(vault.tradingFeeBps) / 100
+  const displayName = vault.ipName || vault.token.name
 
   return (
     <Link href={`/vault/${vault.id}`}>
-      <div className="p-6 hover:bg-muted/30 transition-all duration-300 cursor-pointer group">
-        <div className="mb-4">
-          <h3 className="font-title text-3xl text-foreground group-hover:text-primary transition-colors">
-            {vault.token.name}
-          </h3>
-          <p className="font-body text-xs text-muted-foreground">
-            {vault.token.symbol.toUpperCase()}
-          </p>
+      <div className="h-full flex flex-col hover:bg-muted/30 transition-all cursor-pointer group">
+        {/* Image Section - 70% of card height */}
+        <div className="relative aspect-[4/5] w-full overflow-hidden">
+          {vault.imageUrl ? (
+            <Image
+              src={vault.imageUrl}
+              alt={displayName}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-muted/20">
+              <Vault className="h-16 w-16 text-muted-foreground/30" />
+            </div>
+          )}
         </div>
 
-        <div className="divider border-t border-muted mb-4" />
-
-        <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="font-body text-xs text-muted-foreground">TVL</span>
-            <span className="font-stat text-foreground">
-              ${formatNumber(totalDeposited)}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="font-body text-xs text-muted-foreground">DIVIDEND</span>
-            <span className="font-stat text-primary">{dividendRate}%</span>
-          </div>
-          <div className="pt-3 border-t border-muted">
+        {/* Info Section */}
+        <div className="p-4 flex-1 flex flex-col">
+          <div className="mb-3">
+            <h3 className="font-title text-2xl text-foreground group-hover:text-primary transition-colors truncate">
+              {displayName}
+            </h3>
             <p className="font-body text-xs text-muted-foreground">
-              BY {formatAddress(vault.creator)}
+              ${vault.token.symbol.toUpperCase()} • {formatAddress(vault.creator)}
             </p>
+          </div>
+
+          {/* Stats Row: TVL | Dividend | Fee */}
+          <div className="flex items-center justify-between text-center mt-auto">
+            <div>
+              <p className="font-stat text-lg">${formatNumber(totalDeposited)}</p>
+              <p className="font-body text-[10px] text-muted-foreground">TVL</p>
+            </div>
+            <div className="h-8 w-px bg-muted" />
+            <div>
+              <p className="font-stat text-lg text-primary">{dividendRate.toFixed(1)}%</p>
+              <p className="font-body text-[10px] text-muted-foreground">DIVIDEND</p>
+            </div>
+            <div className="h-8 w-px bg-muted" />
+            <div>
+              <p className="font-stat text-lg">{tradeFee.toFixed(1)}%</p>
+              <p className="font-body text-[10px] text-muted-foreground">FEE</p>
+            </div>
           </div>
         </div>
       </div>
