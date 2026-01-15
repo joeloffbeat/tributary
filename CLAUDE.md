@@ -24,6 +24,39 @@ git config user.email "gabrielantony56@gmail.com"
 
 ---
 
+## Vercel Deployment (MANDATORY)
+
+**This project has SEPARATE GitHub and Vercel accounts - NOT auto-deployed.**
+
+| Setting | Value |
+|---------|-------|
+| **Vercel Project** | `tributary` |
+| **Vercel Team** | `gabrielaxy` |
+| **Production URL** | `https://tributary.vercel.app` |
+| **Root Directory** | `frontend` |
+
+### Deployment Commands
+
+When pushing changes that require deployment:
+
+```bash
+# 1. Push to GitHub first
+git push origin main
+
+# 2. Then deploy to Vercel (from project root, NOT frontend/)
+cd /path/to/tributary  # Project root
+vercel deploy --prod --yes
+```
+
+### Important Notes
+
+- **Always deploy from project root** - The Vercel project has `frontend` set as root directory
+- **GitHub and Vercel are NOT linked** - Manual deployment required after each push
+- **Set environment variables on Vercel** - Go to https://vercel.com/gabrielaxy/tributary/settings/environment-variables
+- Required env vars: `NEXT_PUBLIC_PRIVY_APP_ID` and others from `.env.local`
+
+---
+
 ## Critical Rules
 
 **NEVER mock or create placeholder code.** If blocked, STOP and explain why.
