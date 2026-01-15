@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useWalletClient, usePublicClient } from '@/lib/web3'
 import { TRIBUTARY_CONTRACTS } from '@/constants/tributary'
-import { FACTORY_ABI } from '@/constants/tributary/abis'
+import { FACTORY_ABI } from '@/constants/tributary/abis/index'
 
 export interface VaultFormData {
   // Step 1: IP Selection

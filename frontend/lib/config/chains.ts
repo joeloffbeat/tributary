@@ -122,3 +122,33 @@ export const SUPPORTED_CHAIN_IDS = getSupportedChainIds()
 // Chain IDs for easy reference
 export const MANTLE_SEPOLIA_CHAIN_ID = 5003
 export const STORY_AENEID_CHAIN_ID = 1315
+
+// =============================================================================
+// Additional Utility Functions
+// =============================================================================
+
+export function getChainName(chainId: number): string {
+  const chain = getChainById(chainId)
+  return chain?.name ?? `Chain ${chainId}`
+}
+
+export function getExplorerUrl(chainId: number): string {
+  const chain = getChainById(chainId)
+  return chain?.explorerUrl ?? ''
+}
+
+export function getExplorerLink(chainId: number, hash: string, type: 'tx' | 'address' = 'tx'): string {
+  const explorerUrl = getExplorerUrl(chainId)
+  if (!explorerUrl) return ''
+  return `${explorerUrl}/${type}/${hash}`
+}
+
+export function isTestnet(chainId: number): boolean {
+  const chain = getChainById(chainId)
+  return chain?.isTestnet ?? true
+}
+
+export function getChainIcon(chainId: number): string {
+  const chain = getChainById(chainId)
+  return chain?.iconUrl ?? ''
+}
