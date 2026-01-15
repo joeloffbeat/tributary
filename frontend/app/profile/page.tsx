@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useAccount, ConnectButton } from '@/lib/web3'
 import { useUserIPs } from '@/hooks/use-user-ips'
 import { useUserHoldings } from '@/hooks/use-user-holdings'

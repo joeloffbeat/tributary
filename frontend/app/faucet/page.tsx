@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState } from 'react'
 import { useAccount, useWalletClient, usePublicClient, ConnectButton } from '@/lib/web3'
 import { parseUnits, formatUnits } from 'viem'

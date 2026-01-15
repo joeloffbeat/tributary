@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from 'react'
 import { useAccount, useSwitchChain, ConnectButton } from '@/lib/web3'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
