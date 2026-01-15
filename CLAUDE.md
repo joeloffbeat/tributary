@@ -12,7 +12,7 @@ Tributary enables IP creators to tokenize royalty streams from their intellectua
 |---------|-------|
 | **User Name** | `gabrielantonyxaviour` |
 | **User Email** | `gabrielantony56@gmail.com` |
-| **Remote** | `https://github.com/gabrielantonyxaviour/ipay.git` |
+| **GitHub Repo** | `joeloffbeat/tributary` |
 
 Before making any commits, ALWAYS run:
 ```bash
@@ -24,36 +24,28 @@ git config user.email "gabrielantony56@gmail.com"
 
 ---
 
-## Vercel Deployment (MANDATORY)
+## Vercel Deployment (AUTO-DEPLOYED)
 
-**This project has SEPARATE GitHub and Vercel accounts - NOT auto-deployed.**
+**GitHub and Vercel are linked - commits to `main` auto-deploy to production.**
 
 | Setting | Value |
 |---------|-------|
-| **Vercel Project** | `tributary-mantle` |
-| **Vercel Team** | `gabrielaxy` |
-| **Production URL** | `https://tributary-mantle.vercel.app` |
-| **Root Directory** | `.` (frontend directory) |
+| **GitHub Repo** | `joeloffbeat/tributary` |
+| **Vercel Account** | `joeloffbeat` |
+| **Root Directory** | `frontend` |
 
-### Deployment Commands
+### Deployment
 
-When pushing changes that require deployment:
+Simply push to GitHub - Vercel will automatically deploy:
 
 ```bash
-# 1. Push to GitHub first
 git push origin main
-
-# 2. Then deploy to Vercel (from frontend/ directory)
-cd /path/to/tributary/frontend
-vercel deploy --prod --yes
+# Vercel auto-deploys from the frontend/ directory
 ```
 
-### Important Notes
+### Environment Variables
 
-- **Deploy from frontend/ directory** - The .vercel config is in frontend/
-- **GitHub and Vercel are NOT linked** - Manual deployment required after each push
-- **Set environment variables on Vercel** - Go to https://vercel.com/gabrielaxy/tributary-mantle/settings/environment-variables
-- Required env vars: `NEXT_PUBLIC_PRIVY_APP_ID` and others from `.env.local`
+Set environment variables on Vercel dashboard if needed (e.g., `NEXT_PUBLIC_PRIVY_APP_ID`)
 
 ---
 
